@@ -19,8 +19,20 @@ export default async function DashboardLayout({
     redirect('/auth/login')
   }
 
-  // Auto-create workspace on first login and mark profile as onboarded (D-015)
+  // Auto-create workspace on first login (D-015)
   await getOrCreateWorkspace()
+
+  // Gate on commitments — zero means the user has not been through onboarding.
+  // Applies to new users and to users who signed up before onboarding was built.
+  const { count } = await supabase
+    .from('commitments')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .is('deleted_at', null)
+
+  if (count === 0) {
+    redirect('/onboarding')
+  }
 
   const { data: profile } = await supabase
     .from('profiles')
