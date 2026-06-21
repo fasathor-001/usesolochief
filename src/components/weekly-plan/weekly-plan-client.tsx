@@ -190,11 +190,15 @@ export function WeeklyPlanClient({
                 disabled={locked}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose your main focus..." />
+                  <SelectValue placeholder="Choose your main focus...">
+                    {(value: string | null) =>
+                      value ? (mainFocusOptions.find((c) => c.id === value)?.title ?? value) : null
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {mainFocusOptions.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+                    <SelectItem key={c.id} value={c.id} label={c.title}>{c.title}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -210,11 +214,15 @@ export function WeeklyPlanClient({
                 disabled={locked}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="None" />
+                  <SelectValue placeholder="None">
+                    {(value: string | null) =>
+                      value ? (overrideOptions.find((c) => c.id === value)?.title ?? value) : null
+                    }
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {overrideOptions.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+                    <SelectItem key={c.id} value={c.id} label={c.title}>{c.title}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
