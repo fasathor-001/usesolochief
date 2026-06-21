@@ -8,18 +8,10 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
 
-    if (!error && data.user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('workspace_id, onboarded_at')
-        .eq('user_id', data.user.id)
-        .single()
-
-      if (!profile?.onboarded_at) {
-        return NextResponse.redirect(`${appUrl}/onboarding`)
-      }
+    if (!error) {
+      // Workspace auto-creation and onboarding happen inside the dashboard layout
       return NextResponse.redirect(`${appUrl}/dashboard`)
     }
   }
