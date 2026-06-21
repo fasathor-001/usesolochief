@@ -1,6 +1,7 @@
 // ============================================================
 // SoloChief — TypeScript types aligned to Supabase schema
 // Updated by migration 001 (commitment fields)
+// Updated by migration 002 (intelligence infrastructure)
 // ============================================================
 
 export type CommitmentCategory =
@@ -30,6 +31,26 @@ export type AdviceConfidence = 'high' | 'medium' | 'low'
 export type CommitmentEventType =
   | 'stage_changed' | 'permission_changed' | 'wrongly_touched'
   | 'approved_switch' | 'checklist_closed' | 'parked' | 'reactivated'
+
+export type PatternEventType =
+  | 'repeated_slip' | 'wrong_switch' | 'idea_spike'
+  | 'follow_up_miss' | 'launch_avoidance' | 'focus_drift'
+
+export type StreakType = 'monday_plan' | 'friday_review' | 'weekly_rhythm'
+
+export type MemoryReferenceType =
+  | 'stated_priority' | 'missed_followup' | 'parked_idea'
+  | 'slipped_outcome' | 'expressed_intention'
+
+export type SwitchRequestDecision = 'approved' | 'blocked' | 'pending'
+
+export type OnboardingTemplate =
+  | 'solo_founder' | 'freelancer' | 'student_builder'
+  | 'creator' | 'professional' | 'scratch'
+
+// ============================================================
+// Core entities
+// ============================================================
 
 export interface Profile {
   id: string
@@ -90,7 +111,239 @@ export interface CommitmentEvent {
   updated_at: string
 }
 
+// ============================================================
+// Weekly planning
+// ============================================================
+
+export interface WeeklyPlan {
+  id: string
+  user_id: string
+  workspace_id: string
+  week_start: string            // date string YYYY-MM-DD
+  theme: string | null
+  priorities: unknown[]
+  notes: string | null
+  locked_at: string | null      // null = draft, non-null = active
+  main_focus_commitment_id: string | null  // added in migration 002
+  override_commitment_id: string | null    // added in migration 002
+  created_at: string
+  updated_at: string
+}
+
+export interface WeeklyOutcome {
+  id: string
+  user_id: string
+  workspace_id: string
+  weekly_plan_id: string
+  commitment_id: string | null
+  description: string
+  achieved: boolean | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface StopListItem {
+  id: string
+  user_id: string
+  workspace_id: string
+  description: string
+  reason: string | null
+  active: boolean
+  resolved_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================
+// Daily execution
+// ============================================================
+
+export interface DailyFocus {
+  id: string
+  user_id: string
+  workspace_id: string
+  commitment_id: string
+  focus_date: string    // date string
+  sort_order: number
+  confirmed: boolean
+  confirmed_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface NotTodayItem {
+  id: string
+  user_id: string
+  workspace_id: string
+  commitment_id: string | null
+  description: string
+  blocked_date: string  // date string
+  reason: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface DailyLog {
+  id: string
+  user_id: string
+  workspace_id: string
+  commitment_id: string
+  log_date: string         // date string
+  status: DailyLogStatus
+  status_source: StatusSource
+  notes: string | null
+  time_spent_mins: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface SwitchRequest {
+  id: string
+  user_id: string
+  workspace_id: string
+  from_commitment_id: string | null
+  to_commitment_id: string | null
+  reason: string | null
+  decision: SwitchRequestDecision
+  decided_at: string | null
+  decision_note: string | null
+  source: StatusSource
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================
+// Follow-ups and parking
+// ============================================================
+
+export interface Followup {
+  id: string
+  user_id: string
+  workspace_id: string
+  commitment_id: string | null
+  title: string
+  description: string | null
+  due_date: string | null    // date string
+  completed_at: string | null
+  contact_name: string | null
+  contact_ref: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ParkingLotItem {
+  id: string
+  user_id: string
+  workspace_id: string
+  commitment_id: string | null
+  title: string
+  description: string | null
+  parked_at: string      // date string
+  reactivated_at: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================
+// Intelligence tables (migration 002)
+// ============================================================
+
+export interface PatternEvent {
+  id: string
+  user_id: string
+  workspace_id: string
+  event_type: PatternEventType
+  commitment_id: string | null
+  week_start_date: string | null
+  occurrence_count: number
+  confidence: number
+  first_seen_at: string
+  last_seen_at: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WeeklyScore {
+  id: string
+  user_id: string
+  workspace_id: string
+  week_start_date: string
+  score: number | null
+  outcomes_score: number | null
+  focus_score: number | null
+  followup_score: number | null
+  stop_list_respected: boolean | null
+  ideas_parked_not_acted: number | null
+  wrongly_touched_count: number | null
+  summary_text: string | null
+  score_visible: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface StreakRecord {
+  id: string
+  user_id: string
+  workspace_id: string
+  streak_type: StreakType
+  current_streak: number
+  longest_streak: number
+  last_completed_date: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface MemoryReference {
+  id: string
+  user_id: string
+  workspace_id: string
+  reference_type: MemoryReferenceType
+  content: string
+  source_table: string
+  source_id: string
+  confidence: number
+  surfaced_count: number
+  last_surfaced_at: string | null
+  expires_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface UserIntelligenceState {
+  id: string
+  user_id: string
+  workspace_id: string
+  total_daily_logs: number
+  total_weekly_reviews: number
+  total_switch_events: number
+  total_park_events: number
+  pattern_voice_unlocked: boolean
+  weekly_score_unlocked: boolean
+  streak_visible: boolean
+  first_weekly_plan_completed_at: string | null
+  first_friday_review_completed_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================
+// Utility
+// ============================================================
+
 export interface ActionResult<T = null> {
   data: T | null
   error: string | null
+}
+
+export interface DataSufficiency {
+  dailyLogs: number
+  weeklyReviews: number
+  switchEvents: number
+  parkEvents: number
+  patternVoiceUnlocked: boolean
+  weeklyScoreUnlocked: boolean
+  streakVisible: boolean
+  adviceConfidence: AdviceConfidence
 }
