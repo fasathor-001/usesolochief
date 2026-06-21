@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import type { OnboardingTemplate } from '@/types/database'
 import type { CommitmentDraft } from '@/lib/onboarding-data'
 import { ensureIntelligenceState } from '@/lib/intelligence/intelligence-service'
-import { getWeekStart } from '@/lib/actions/weekly-plan'
+import { getWeekStart } from '@/lib/utils/date-utils'
 
 export interface OnboardingInput {
   template: OnboardingTemplate

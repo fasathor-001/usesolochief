@@ -7,15 +7,7 @@ import type {
   ActionResult, WeeklyPlan, WeeklyOutcome, StopListItem, Followup, Commitment,
 } from '@/types/database'
 import { recordFirstWeeklyPlan } from '@/lib/intelligence/intelligence-service'
-
-// Returns YYYY-MM-DD for the Monday of the week containing the given date
-export function getWeekStart(date: Date = new Date()): string {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
-  d.setDate(diff)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
+import { getWeekStart } from '@/lib/utils/date-utils'
 
 export interface WeeklyPlanPageData {
   plan: WeeklyPlan
