@@ -14,3 +14,9 @@ This file is append-only. Never edit existing entries.
 | D-008 | AI proposes, system validates, database writes — AI never writes directly to database             | 2026-06-21    |
 | D-009 | Unknown is a first-class status — silence never equals completion                                 | 2026-06-21    |
 | D-010 | Context package loads before every AI call — no exceptions                                        | 2026-06-21    |
+| D-011 | Next.js 16.2.9 installed — proxy.ts used instead of middleware.ts                                 | 2026-06-21    |
+| D-012 | Commitment Inventory built as first real feature — core brain of product                          | 2026-06-21    |
+| D-013 | Stage changes always logged to commitment_events table                                            | 2026-06-21    |
+| D-014 | Permission level auto-suggested based on stage selection                                          | 2026-06-21    |
+| D-015 | Workspace auto-created on first login if none exists                                              | 2026-06-21    |
+| D-016 | Complete /docs suite created — mandatory Astor Stack build standard                               | 2026-06-21    |
