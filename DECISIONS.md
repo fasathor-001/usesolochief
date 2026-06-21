@@ -21,3 +21,4 @@ This file is append-only. Never edit existing entries.
 | D-015 | Workspace auto-created on first login if none exists                                              | 2026-06-21    |
 | D-016 | Complete /docs suite created — mandatory Astor Stack build standard                               | 2026-06-21    |
 | D-019 | Auth redirect URL derived from NEXT_PUBLIC_APP_URL — never from request.url. Supabase site URL set to https://solochief.app. Callback at /auth/callback. | 2026-06-21    |
+| D-020 | Next.js NEXT_PUBLIC_* vars must be passed as Docker build args — they are baked into the bundle at build time not injected at runtime. Standalone output mode used for Railway deployment. | 2026-06-21    |
