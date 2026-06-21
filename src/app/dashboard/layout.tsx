@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getOrCreateWorkspace } from '@/lib/actions/workspace'
 import { SidebarNav } from '@/components/sidebar-nav'
 
 export default async function DashboardLayout({
@@ -18,15 +19,14 @@ export default async function DashboardLayout({
     redirect('/auth/login')
   }
 
+  // Auto-create workspace on first login and mark profile as onboarded (D-015)
+  await getOrCreateWorkspace()
+
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, avatar_url, onboarded_at')
+    .select('full_name, avatar_url')
     .eq('user_id', user.id)
     .single()
-
-  if (!profile?.onboarded_at) {
-    redirect('/onboarding')
-  }
 
   return (
     <div className="flex h-screen overflow-hidden">
