@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary meta -->
+  <title>SoloChief AI — Your Personal Chief of Staff</title>
+  <meta name="description" content="Plan your week. Protect your focus. Stay accountable on web and WhatsApp. Personal Chief of Staff for commitments, focus, and follow-ups.">
+
+  <!-- Open Graph -->
+  <meta property="og:title"       content="SoloChief AI — Your Personal Chief of Staff">
+  <meta property="og:description" content="Plan your week. Protect your focus. Stay accountable on web and WhatsApp.">
+  <meta property="og:image"       content="/og-image.png">
+  <meta property="og:url"         content="https://usesolochief.com">
+  <meta property="og:type"        content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@solochiefai">
+  <meta name="twitter:title"       content="SoloChief AI — Your Personal Chief of Staff">
+  <meta name="twitter:description" content="Plan your week. Protect your focus. Stay accountable on web and WhatsApp.">
+  <meta name="twitter:image"       content="/og-image.png">
+
+  <!-- Favicons -->
+  <link rel="icon"             type="image/png"     href="/favicon.png"         sizes="32x32">
+  <link rel="icon"             type="image/x-icon"  href="/favicon.ico">
+  <link rel="apple-touch-icon"                      href="/apple-touch-icon.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <style>
+    /* ── Design tokens ──────────────────────────────────────────────────── */
+    :root {
+      --bg:          #0F1B2D;
+      --bg-alt:      #0B1423;
+      --surface:     #1A273A;
+      --surface-hi:  #1E2D43;
+      --accent:      #00C2A8;
+      --accent-h:    #00A892;
+      --text:        #F0F4F8;
+      --muted:       #94A3B8;
+      --gray-300:    #CBD5E1;
+      --gray-400:    #94A3B8;
+      --border:      rgba(255,255,255,0.1);
+      --border-sub:  rgba(255,255,255,0.05);
+      --max-w:       80rem;
+    }
+
+    /* ── Reset ──────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── Background glow ────────────────────────────────────────────────── */
+    .bg-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(circle at center,
+        rgba(0,194,168,0.15) 0%,
+        rgba(15,27,45,0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────── */
+    .site-header {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .site-header { flex-direction: row; gap: 0; }
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      height: 34px;
+      width: auto;
+      background: #ffffff;
+      padding: 3px 10px;
+      border-radius: 7px;
+    }
+
+    .nav-by {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-tagline {
+      font-size: 0.875rem;
+      color: var(--gray-300);
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .nav-tagline { display: inline-block; }
+    }
+
+    /* ── Buttons ────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-family: inherit;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #0F1B2D;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+    .btn-primary:hover { background-color: var(--accent-h); }
+
+    .btn-cta {
+      background-color: var(--accent);
+      color: #0F1B2D;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      justify-content: center;
+    }
+    .btn-cta:hover { background-color: var(--accent-h); }
+
+    .btn-card-confirm {
+      background-color: var(--accent);
+      color: #0F1B2D;
+      font-weight: 600;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      box-shadow: 0 4px 12px rgba(0,194,168,0.3);
+      flex: 1;
+    }
+    .btn-card-confirm:hover { background-color: var(--accent-h); }
+
+    .btn-card-ghost {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-weight: 600;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.875rem;
+      flex: 1;
+    }
+    .btn-card-ghost:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── Main ───────────────────────────────────────────────────────────── */
+    main { flex: 1; position: relative; z-index: 10; }
+
+    /* ── Hero ───────────────────────────────────────────────────────────── */
+    .hero {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 5rem 1.5rem 6rem;
+      display: grid;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        padding: 8rem 1.5rem 8rem;
+      }
+    }
+
+    .hero-content {
+      max-width: 36rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0,194,168,0.1);
+      border: 1px solid rgba(0,194,168,0.2);
+      border-radius: 9999px;
+      padding: 0.25rem 0.75rem;
+      margin-bottom: 2rem;
+      width: fit-content;
+    }
+
+    .badge-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      min-width: 0.5rem;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .badge-text {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .hero-headline {
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    @media (min-width: 768px) { .hero-headline { font-size: 3rem; } }
+    @media (min-width: 1024px) { .hero-headline { font-size: 3.75rem; } }
+
+    .hero-desc {
+      font-size: 1.125rem;
+      color: var(--gray-300);
+      line-height: 1.75;
+      max-width: 36rem;
+    }
+
+    /* ── CTA Form ───────────────────────────────────────────────────────── */
+    .cta-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 28rem;
+    }
+
+    @media (min-width: 640px) {
+      .cta-form { flex-direction: row; }
+    }
+
+    .cta-form input[type="email"] {
+      flex: 1;
+      background: #ffffff;
+      color: #111827;
+      border: none;
+      border-radius: 0.375rem;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .cta-form input[type="email"]:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    /* ── Hero Visual (3-D card) ─────────────────────────────────────────── */
+    .hero-visual {
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      .hero-visual {
+        display: block;
+        perspective: 2000px;
+      }
+    }
+
+    .hero-card {
+      position: relative;
+      margin-left: auto;
+      width: 100%;
+      max-width: 500px;
+      aspect-ratio: 4 / 5;
+      background: var(--surface);
+      border-radius: 1rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow:
+        -40px 40px 80px rgba(0,0,0,0.6),
+        inset 1px 1px 0 rgba(255,255,255,0.1);
+      transform: rotateY(-15deg) rotateX(5deg) rotateZ(8deg);
+      transform-style: preserve-3d;
+    }
+
+    .card-shine {
+      position: absolute;
+      inset: 0;
+      border-radius: 1rem;
+      pointer-events: none;
+      z-index: 10;
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.03) 0%,
+        rgba(255,255,255,0) 50%);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 20;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-icon-wrap {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: rgba(0,194,168,0.1);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0,194,168,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .card-icon-wrap .material-symbols-outlined {
+      color: var(--accent);
+      font-size: 1.25rem;
+    }
+
+    .card-title-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .card-pill {
+      background: rgba(0,194,168,0.1);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.625rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(0,194,168,0.2);
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      flex: 1;
+      position: relative;
+      z-index: 20;
+    }
+
+    .card-field label {
+      font-size: 0.875rem;
+      color: var(--gray-400);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-field p {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: #ffffff;
+    }
+
+    .card-not-today {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 0.75rem;
+      padding: 1rem;
+    }
+
+    .card-not-today .nt-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: rgba(248,113,113,0.9);
+      margin-bottom: 0.25rem;
+    }
+
+    .card-not-today p {
+      font-size: 0.875rem;
+      color: var(--gray-300);
+    }
+
+    .card-followup {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-300);
+      font-size: 0.875rem;
+    }
+
+    .card-followup .material-symbols-outlined {
+      font-size: 1rem;
+    }
+
+    .card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      position: relative;
+      z-index: 20;
+    }
+
+    /* ── Features ───────────────────────────────────────────────────────── */
+    .features {
+      width: 100%;
+      background: var(--bg-alt);
+      padding: 6rem 0;
+    }
+
+    .features-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .features-hd {
+      text-align: center;
+      max-width: 48rem;
+      margin: 0 auto 4rem;
+    }
+
+    .features-hd h3 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+
+    @media (min-width: 768px) {
+      .features-hd h3 { font-size: 2.25rem; }
+    }
+
+    .features-hd p {
+      color: var(--gray-300);
+      font-size: 1.125rem;
+    }
+
+    .features-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .features-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border-radius: 0.75rem;
+      padding: 2rem;
+      border: 1px solid var(--border-sub);
+      transition: border-color 0.15s;
+    }
+
+    .feature-card:hover { border-color: var(--border); }
+
+    .feature-icon {
+      width: 3rem;
+      height: 3rem;
+      background: rgba(0,194,168,0.1);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(0,194,168,0.2);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .feature-icon svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      stroke: var(--accent);
+    }
+
+    .feature-card h4 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #ffffff;
+    }
+
+    .feature-card p {
+      color: var(--gray-400);
+      line-height: 1.6;
+      font-size: 0.875rem;
+    }
+
+    /* ── Trust panel ────────────────────────────────────────────────────── */
+    .trust {
+      width: 100%;
+      padding: 6rem 1.5rem;
+      background: var(--bg-alt);
+    }
+
+    .trust-card {
+      max-width: 56rem;
+      margin: 0 auto;
+      background: var(--surface-hi);
+      border-radius: 1rem;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      border: 1px solid var(--border-sub);
+    }
+
+    @media (min-width: 768px) { .trust-card { padding: 4rem; } }
+
+    .trust-eyebrow {
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .trust-card h3 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #ffffff;
+    }
+
+    @media (min-width: 768px) { .trust-card h3 { font-size: 3rem; } }
+
+    .trust-card p {
+      color: var(--gray-300);
+      font-size: 1.125rem;
+      line-height: 1.75;
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) { .trust-card p { font-size: 1.25rem; } }
+
+    /* ── Footer ─────────────────────────────────────────────────────────── */
+    .site-footer {
+      width: 100%;
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border-sub);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%;
+      padding: 3rem 1.5rem;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .footer-inner {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) { .footer-brand { align-items: flex-start; } }
+
+    .footer-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .footer-tagline {
+      font-size: 0.875rem;
+      color: var(--gray-400);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-size: 0.875rem;
+      color: #ffffff;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-copy {
+      font-size: 0.875rem;
+      color: var(--gray-400);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Subtle background glow -->
+<div class="bg-glow" aria-hidden="true"></div>
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <a href="/" class="nav-logo">
+    <img src="logo_title.png" alt="SoloChief AI">
+    <span class="nav-by">by Astor Stack</span>
+  </a>
+  <div class="nav-actions">
+    <span class="nav-tagline">Private beta opening soon</span>
+    <a href="#join" class="btn btn-primary">Join early access <span aria-hidden="true">→</span></a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-content">
+
+      <!-- Badge -->
+      <div class="hero-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        <span class="badge-text">Command Center on web. Chief of Staff in your hands. One brain behind both.</span>
+      </div>
+
+      <!-- Headline -->
+      <h1 class="hero-headline">
+        Your personal Chief of Staff for commitments, focus, and follow-ups.
+      </h1>
+
+      <!-- Description -->
+      <p class="hero-desc">
+        SoloChief AI helps you turn scattered responsibilities into a clear weekly plan, protect today's focus, park distractions, and stay accountable through simple check-ins.<br><br>
+        Built for solo founders, builders, freelancers, and busy operators managing too many open loops.
+      </p>
+
+      <!-- CTA Form -->
+      <form id="join" class="cta-form" action="/api/subscribe" method="POST">
+        <input type="hidden" name="source" value="coming-soon-page">
+        <input type="email" name="email" placeholder="Enter your email" required autocomplete="email">
+        <button type="submit" class="btn btn-cta">Join early access <span aria-hidden="true">→</span></button>
+      </form>
+
+    </div>
+
+    <!-- Hero Visual — 3-D dashboard card -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-card">
+        <div class="card-shine"></div>
+
+        <div class="card-top">
+          <div class="card-title-row">
+            <div class="card-icon-wrap">
+              <span class="material-symbols-outlined">target</span>
+            </div>
+            <h2 class="card-title-text">Today's Focus</h2>
+          </div>
+          <span class="card-pill">Active</span>
+        </div>
+
+        <div class="card-body">
+          <div class="card-field">
+            <label>Project</label>
+            <p>RevenueLoop</p>
+          </div>
+          <div class="card-field">
+            <label>One Outcome</label>
+            <p>Finish launch page</p>
+          </div>
+          <div class="card-not-today">
+            <p class="nt-label">Not Today</p>
+            <p>New ideas, redesigns, random fixes</p>
+          </div>
+          <div class="card-followup">
+            <span class="material-symbols-outlined">schedule</span>
+            <span>Paystack at 2pm</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-card-confirm">Confirm</button>
+          <button class="btn btn-card-ghost">Park Idea</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ──────────────────────────────────────────────────────────── -->
+  <section class="features">
+    <div class="features-inner">
+      <div class="features-hd">
+        <h3>SoloChief helps you decide what deserves attention today.</h3>
+        <p>A simple rhythm for planning the week, protecting the day, and reviewing what actually happened.</p>
+      </div>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+          </div>
+          <h4>Plan the week</h4>
+          <p>Set your main focus, three outcomes, one override, and a stop list before the week runs away.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.965 11.965 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+          </div>
+          <h4>Protect the day</h4>
+          <p>Start each day with one clear focus and challenge unnecessary context switching before it steals your time.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            </svg>
+          </div>
+          <h4>Close the loop</h4>
+          <p>Log what happened, correct mistakes, review the week, and make the next plan smarter.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Trust panel ────────────────────────────────────────────────────────── -->
+  <section class="trust">
+    <div class="trust-card">
+      <p class="trust-eyebrow">The SoloChief Principle</p>
+      <h3>SoloChief does not guess.</h3>
+      <p>
+        It asks at the right moment, logs what you confirm, tracks what actually happened,
+        and gives advice based on reality — not just your plan.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-name">SoloChief AI</span>
+      <span class="footer-tagline">SoloChief AI is a product by Astor Stack.</span>
+    </div>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Contact</a>
+    </nav>
+    <span class="footer-copy">© 2026 Astor Stack. All rights reserved.</span>
+  </div>
+</footer>
+
+</body>
+</html>
