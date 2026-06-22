@@ -445,6 +445,25 @@
 
 .sc-card-sm { padding: 14px 16px; }
 
+/* Weekly-plan CTA card — stronger teal tint, clearly actionable */
+.sc-plan-cta {
+  background-color: rgba(0,194,168,0.10) !important;
+  border-color: rgba(0,194,168,0.40) !important;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.sc-plan-cta:hover {
+  background-color: rgba(0,194,168,0.16) !important;
+  border-color: rgba(0,194,168,0.55) !important;
+}
+.dark .sc-plan-cta {
+  background-color: rgba(0,194,168,0.12) !important;
+  border-color: rgba(0,194,168,0.35) !important;
+}
+.dark .sc-plan-cta:hover {
+  background-color: rgba(0,194,168,0.18) !important;
+  border-color: rgba(0,194,168,0.50) !important;
+}
+
 .sc-card-label {
   font-size: 10px;
   font-weight: 500;

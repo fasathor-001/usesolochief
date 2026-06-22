@@ -136,17 +136,11 @@ export default async function CommandCentrePage() {
             {!plan && (
               <Link
                 href="/dashboard/weekly-plan"
-                className="sc-card"
-                style={{
-                  display: 'block',
-                  borderColor: 'rgba(0,194,168,0.3)',
-                  backgroundColor: 'rgba(0,194,168,0.04)',
-                  marginBottom: 20,
-                  textDecoration: 'none',
-                }}
+                className="sc-card sc-plan-cta"
+                style={{ display: 'block', marginBottom: 20, textDecoration: 'none' }}
               >
-                <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Set this week&apos;s plan →</p>
-                <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 3 }}>
+                <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--sc-text)' }}>Set this week&apos;s plan →</p>
+                <p style={{ fontSize: 12, color: 'var(--sc-text-2)', marginTop: 4 }}>
                   Define your focus commitment and three outcomes for the week.
                 </p>
               </Link>

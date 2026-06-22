@@ -1,10 +1,12 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { MessageCircle, Sun, Settings } from 'lucide-react'
+import { MessageCircle, Sun, Moon, Monitor, Settings } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { applyTheme, cycleTheme, getStoredTheme, setStoredTheme, THEME_LABELS } from '@/lib/theme'
+import type { ThemeValue } from '@/lib/theme'
 
 const SECTION_LABELS: Record<string, string> = {
   '/dashboard': 'Command Centre',
@@ -19,21 +21,41 @@ const SECTION_LABELS: Record<string, string> = {
   '/dashboard/settings': 'Settings',
 }
 
-function applyTheme(value: string) {
-  const root = document.documentElement
-  if (value === 'dark') root.classList.add('dark')
-  else if (value === 'light') root.classList.remove('dark')
-  else {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (prefersDark) root.classList.add('dark')
-    else root.classList.remove('dark')
-  }
+const THEME_ICONS: Record<ThemeValue, React.ElementType> = {
+  light: Sun,
+  dark: Moon,
+  system: Monitor,
 }
 
 export function DashboardTopbar() {
   const pathname = usePathname()
   const router = useRouter()
   const section = SECTION_LABELS[pathname] ?? 'SoloChief'
+  const [theme, setTheme] = useState<ThemeValue>('system')
+
+  useEffect(() => {
+    const stored = getStoredTheme()
+    setTheme(stored)
+    applyTheme(stored)
+  }, [])
+
+  useEffect(() => {
+    function onStorage(e: StorageEvent) {
+      if (e.key === 'sc-theme' && e.newValue) {
+        const next = e.newValue as ThemeValue
+        setTheme(next)
+        applyTheme(next)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
+  function handleThemeToggle() {
+    const next = cycleTheme(theme)
+    setTheme(next)
+    setStoredTheme(next)
+  }
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -41,10 +63,7 @@ export function DashboardTopbar() {
     router.push('/auth/login')
   }
 
-  useEffect(() => {
-    const stored = localStorage.getItem('sc-theme') ?? 'system'
-    applyTheme(stored)
-  }, [])
+  const ThemeIcon = THEME_ICONS[theme]
 
   return (
     <div className="sc-topbar">
@@ -61,13 +80,14 @@ export function DashboardTopbar() {
             Ask SoloChief
           </Link>
         )}
-        <Link
-          href="/dashboard/settings?section=appearance"
+        <button
+          type="button"
+          onClick={handleThemeToggle}
           className="sc-topbar-icon-btn"
-          title="Appearance"
+          title={`Theme: ${THEME_LABELS[theme]} — click to cycle`}
         >
-          <Sun size={15} />
-        </Link>
+          <ThemeIcon size={15} />
+        </button>
         <Link
           href="/dashboard/settings"
           className="sc-topbar-icon-btn"

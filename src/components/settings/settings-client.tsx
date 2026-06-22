@@ -9,9 +9,9 @@ import {
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
 import { createClient } from '@/lib/supabase/client'
+import { applyTheme, setStoredTheme } from '@/lib/theme'
+import type { ThemeValue } from '@/lib/theme'
 import type { UserPreferences } from '@/types/database'
-
-type ThemeValue = 'light' | 'dark' | 'system'
 type Section =
   | 'communication'
   | 'focus-rules'
@@ -56,17 +56,6 @@ const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: 'data-privacy',  label: 'Data & Privacy', icon: Lock },
   { id: 'danger-zone',   label: 'Danger Zone',   icon: Trash2 },
 ]
-
-function applyTheme(value: ThemeValue) {
-  const root = document.documentElement
-  if (value === 'dark') root.classList.add('dark')
-  else if (value === 'light') root.classList.remove('dark')
-  else {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (prefersDark) root.classList.add('dark')
-    else root.classList.remove('dark')
-  }
-}
 
 function formatMemberSince(dateStr: string): string {
   try {
@@ -148,7 +137,7 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
     // Apply saved theme on mount
     const storedTheme = (preferences?.theme as ThemeValue | undefined) ?? (localStorage.getItem('sc-theme') ?? 'system') as ThemeValue
     setTheme(storedTheme)
-    applyTheme(storedTheme)
+    applyTheme(storedTheme)  // direct call on mount — no need to dispatch storage event
 
     // Honour ?section=... deep-link from topbar shortcuts
     const params = new URLSearchParams(window.location.search)
@@ -171,8 +160,7 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
 
   function handleThemeChange(value: ThemeValue) {
     setTheme(value)
-    localStorage.setItem('sc-theme', value)
-    applyTheme(value)
+    setStoredTheme(value)
   }
 
   function handleInstall() {
