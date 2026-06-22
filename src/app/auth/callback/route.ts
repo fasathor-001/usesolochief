@@ -9,10 +9,10 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      if (type === 'recovery') {
+      if (type === 'recovery' || data.session?.user?.recovery_sent_at) {
         return NextResponse.redirect(`${origin}/auth/reset-password`)
       }
       return NextResponse.redirect(`${origin}${next}`)
