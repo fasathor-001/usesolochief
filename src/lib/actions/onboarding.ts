@@ -1,6 +1,5 @@
 'use server'
 
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import type { OnboardingTemplate } from '@/types/database'
 import type { CommitmentDraft } from '@/lib/onboarding-data'
@@ -120,6 +119,4 @@ export async function saveOnboarding(input: OnboardingInput): Promise<void> {
     const email = welcomeEmail(profileRes?.full_name ?? '')
     await sendEmail({ to: user.email, ...email })
   }
-
-  redirect('/dashboard')
 }

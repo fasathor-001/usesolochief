@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { saveOnboarding } from '@/lib/actions/onboarding'
 import { TEMPLATE_DEFAULTS, TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS } from '@/lib/onboarding-data'
 import type { OnboardingTemplate } from '@/types/database'
@@ -28,6 +29,7 @@ interface OnboardingClientProps {
 }
 
 export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
+  const router = useRouter()
   const [step, setStep] = useState<Step>(initialStep)
   const [template, setTemplate] = useState<OnboardingTemplate>('solo_founder')
   const [fullName, setFullName] = useState('')
@@ -111,8 +113,9 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           stopItem,
           followupTitle,
         })
+        router.replace('/dashboard')
       } catch (err) {
-        if (err instanceof Error && !err.message.includes('NEXT_REDIRECT')) {
+        if (err instanceof Error) {
           setError(err.message)
         }
       }
