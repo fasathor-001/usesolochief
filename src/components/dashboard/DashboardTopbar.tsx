@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { MessageCircle, Sun, Settings } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const SECTION_LABELS: Record<string, string> = {
   '/dashboard': 'Command Centre',
@@ -31,7 +32,14 @@ function applyTheme(value: string) {
 
 export function DashboardTopbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const section = SECTION_LABELS[pathname] ?? 'SoloChief'
+
+  async function handleSignOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/auth/login')
+  }
 
   useEffect(() => {
     const stored = localStorage.getItem('sc-theme') ?? 'system'
@@ -67,6 +75,24 @@ export function DashboardTopbar() {
         >
           <Settings size={15} />
         </Link>
+        <button
+          onClick={handleSignOut}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 12px',
+            background: 'transparent',
+            border: '0.5px solid var(--sc-border)',
+            borderRadius: 'var(--sc-r)',
+            fontSize: '12px',
+            color: 'var(--sc-muted)',
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Sign out
+        </button>
       </div>
     </div>
   )

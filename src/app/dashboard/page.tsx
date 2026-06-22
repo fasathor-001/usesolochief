@@ -59,7 +59,9 @@ export default async function CommandCentrePage() {
   const commitments = (commitmentsRes.data ?? []) as Commitment[]
   const followups = (followupsRes.data ?? []) as Followup[]
   const parkingItems = (parkingRes.data ?? []) as ParkingLotItem[]
-  const firstName = (profileRes.data as { full_name: string | null } | null)?.full_name?.split(' ')[0]
+  const firstName =
+    (profileRes.data as { full_name: string | null } | null)?.full_name?.split(' ')[0]
+    ?? user.email?.split('@')[0]
 
   let focusCommitment: Commitment | null = null
   let todayLog: DailyLog | null = null
