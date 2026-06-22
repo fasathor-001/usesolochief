@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { getWeekStart } from '@/lib/utils/date-utils'
 import { getDataSufficiency } from '@/lib/intelligence/intelligence-service'
 import { Archive, CheckCircle, Clock, LayoutDashboard, RotateCcw } from 'lucide-react'
+import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
+import { MetricRow } from '@/components/ui/solochief/MetricRow'
 import type { Commitment, WeeklyPlan, WeeklyOutcome, DailyLog, Followup, ParkingLotItem } from '@/types/database'
 
 function todayString(): string {
@@ -85,7 +87,6 @@ export default async function CommandCentrePage() {
   const dueToday = followups.filter(f => f.due_date === today)
   const outcomesComplete = outcomes.filter(o => o.achieved === true).length
 
-  // Attention items
   type AttentionItem = { dot: string; text: string; sub: string; href: string }
   const attentionItems: AttentionItem[] = []
 
@@ -124,203 +125,234 @@ export default async function CommandCentrePage() {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="sc-content sc-content-narrow">
-        {/* Greeting */}
-        <div style={{ marginBottom: 28 }}>
-          <h1 className="sc-page-title">{greetingLabel(firstName)}</h1>
-          <p className="sc-page-subtitle">
-            {plan
-              ? `Week ${weekNum} is active. Here is what needs attention today.`
-              : 'No weekly plan set. Start by defining your focus for the week.'}
-          </p>
-        </div>
+      {/* Two-column layout */}
+      <div className="sc-content">
+        <div className="sc-grid-main">
 
-        {/* No plan CTA */}
-        {!plan && (
-          <Link
-            href="/dashboard/weekly-plan"
-            className="sc-card"
-            style={{
-              display: 'block',
-              borderColor: 'rgba(0,194,168,0.3)',
-              backgroundColor: 'rgba(0,194,168,0.04)',
-              marginBottom: 20,
-              textDecoration: 'none',
-            }}
-          >
-            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Set this week&apos;s plan →</p>
-            <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 3 }}>
-              Define your focus commitment and three outcomes for the week.
-            </p>
-          </Link>
-        )}
+          {/* ── Left column ─────────────────────────────────── */}
+          <div className="sc-grid-col">
 
-        {/* Three-card row: Today's Focus + This Week + Needs Attention */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 20 }}>
-          {/* Today's Focus */}
-          <div className="sc-card">
-            <p className="sc-card-label">Today&apos;s focus</p>
-            {focusCommitment ? (
-              <>
-                <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.1px', lineHeight: 1.3, marginBottom: 6 }}>
-                  {focusCommitment.title}
+            {/* Greeting */}
+            <div style={{ marginBottom: 24 }}>
+              <h1 className="sc-page-title">{greetingLabel(firstName)}</h1>
+              <p className="sc-page-subtitle">
+                {plan
+                  ? `Week ${weekNum} is active. Here is what needs attention today.`
+                  : 'No weekly plan set. Start by defining your focus for the week.'}
+              </p>
+            </div>
+
+            {/* No plan CTA */}
+            {!plan && (
+              <Link
+                href="/dashboard/weekly-plan"
+                className="sc-card"
+                style={{
+                  display: 'block',
+                  borderColor: 'rgba(0,194,168,0.3)',
+                  backgroundColor: 'rgba(0,194,168,0.04)',
+                  marginBottom: 20,
+                  textDecoration: 'none',
+                }}
+              >
+                <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Set this week&apos;s plan →</p>
+                <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 3 }}>
+                  Define your focus commitment and three outcomes for the week.
                 </p>
-                {todayLog?.notes ? (
-                  <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 10 }}>
-                    {todayLog.notes}
-                  </p>
-                ) : (
-                  <Link
-                    href="/dashboard/today"
-                    style={{ fontSize: 12, color: 'var(--sc-teal)', display: 'block', marginBottom: 10 }}
-                  >
-                    Set today&apos;s outcome →
-                  </Link>
-                )}
-                {todayLog && (
-                  <span
-                    className="sc-badge"
-                    style={{
-                      backgroundColor: todayLog.status === 'done' ? 'var(--sc-teal-10)' : 'rgba(59,130,246,0.10)',
-                      color: todayLog.status === 'done' ? '#007a6b' : '#185FA5',
-                    }}
-                  >
-                    {statusLabel[todayLog.status] ?? todayLog.status}
-                  </span>
-                )}
-              </>
-            ) : (
-              <Link href="/dashboard/weekly-plan" style={{ fontSize: 13, color: 'var(--sc-teal)' }}>
-                No focus set — set one now →
               </Link>
+            )}
+
+            {/* Today's focus */}
+            <div
+              className="sc-focus-card"
+              style={{ marginBottom: 14 }}
+            >
+              <p className="sc-card-label" style={{ color: 'var(--sc-teal)' }}>Today&apos;s focus</p>
+              {focusCommitment ? (
+                <>
+                  <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.1px', lineHeight: 1.3, marginBottom: 8 }}>
+                    {focusCommitment.title}
+                  </p>
+                  {todayLog?.notes ? (
+                    <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 8 }}>
+                      {todayLog.notes}
+                    </p>
+                  ) : (
+                    <Link
+                      href="/dashboard/today"
+                      style={{ fontSize: 12, color: 'var(--sc-teal)', display: 'block', marginBottom: 8 }}
+                    >
+                      Set today&apos;s outcome →
+                    </Link>
+                  )}
+                  {todayLog && (
+                    <span
+                      className="sc-badge"
+                      style={{
+                        backgroundColor: todayLog.status === 'done' ? 'var(--sc-teal-10)' : 'rgba(59,130,246,0.10)',
+                        color: todayLog.status === 'done' ? '#007a6b' : '#185FA5',
+                      }}
+                    >
+                      {statusLabel[todayLog.status] ?? todayLog.status}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <Link href="/dashboard/weekly-plan" style={{ fontSize: 13, color: 'var(--sc-teal)' }}>
+                  No focus set — set one now →
+                </Link>
+              )}
+            </div>
+
+            {/* Needs attention */}
+            <div className="sc-card" style={{ marginBottom: 14 }}>
+              <p
+                className="sc-card-label"
+                style={{ color: attentionItems.length > 0 ? '#F59E0B' : 'var(--sc-muted)' }}
+              >
+                Needs attention
+              </p>
+              {attentionItems.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 4 }}>
+                  {attentionItems.slice(0, 5).map((item, i) => (
+                    <Link
+                      key={i}
+                      href={item.href}
+                      style={{
+                        display: 'block',
+                        padding: '7px 10px',
+                        borderRadius: 6,
+                        borderLeft: `3px solid ${item.dot}`,
+                        backgroundColor: 'var(--sc-bg)',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--sc-text)', lineHeight: 1.3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                        {item.text}
+                      </p>
+                      <p className="sc-meta">{item.sub}</p>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ marginTop: 4 }}>
+                  <p style={{ fontSize: 13, color: 'var(--sc-teal)', fontWeight: 500 }}>All clear.</p>
+                  <p className="sc-meta" style={{ marginTop: 2 }}>Everything is on track.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Quick actions */}
+            <div style={{ marginBottom: 14 }}>
+              <p className="sc-section-label" style={{ marginTop: 0 }}>Quick actions</p>
+              <div className="sc-quick-grid">
+                {[
+                  { label: 'Park an idea', href: '/dashboard/parking-lot', Icon: Archive },
+                  { label: 'Add follow-up', href: '/dashboard/follow-ups', Icon: Clock },
+                  { label: 'Log today', href: '/dashboard/today', Icon: CheckCircle },
+                  { label: 'Start review', href: '/dashboard/review', Icon: RotateCcw },
+                ].map(({ label, href, Icon }) => (
+                  <Link key={label} href={href} className="sc-quick-action">
+                    <Icon />
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Progressive disclosure */}
+            {sufficiency.weeklyScoreUnlocked && (
+              <div
+                className="sc-card"
+                style={{ borderColor: 'rgba(0,194,168,0.2)', backgroundColor: 'rgba(0,194,168,0.03)' }}
+              >
+                <p className="sc-card-label" style={{ color: 'var(--sc-teal)' }}>Weekly score unlocked</p>
+                <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 8 }}>
+                  Complete this week&apos;s Friday Review to see your weekly score.
+                </p>
+                <Link href="/dashboard/review" style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>
+                  Go to Friday Review →
+                </Link>
+              </div>
             )}
           </div>
 
-          {/* This Week */}
-          <div className="sc-card">
-            <p className="sc-card-label">This week</p>
-            {outcomes.length > 0 ? (
-              <>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+          {/* ── Right column — context panel ────────────────── */}
+          <ContextPanel>
+            {/* Week at a glance */}
+            <ContextBlock title="Week at a glance">
+              <MetricRow
+                label="Outcomes"
+                value={`${outcomesComplete} / ${outcomes.length || 3}`}
+              />
+              <MetricRow
+                label="Overdue"
+                value={overdueFollowups.length}
+                variant={overdueFollowups.length > 0 ? 'danger' : 'default'}
+              />
+              <MetricRow
+                label="Due today"
+                value={dueToday.length}
+              />
+              <MetricRow
+                label="Parked"
+                value={parkingItems.length}
+              />
+            </ContextBlock>
+
+            {/* This week outcomes */}
+            {outcomes.length > 0 && (
+              <ContextBlock title="This week">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {outcomes.slice(0, 3).map((o) => (
                     <div key={o.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                       <CheckCircle
-                        size={14}
+                        size={13}
                         style={{
                           flexShrink: 0,
-                          marginTop: 1,
+                          marginTop: 2,
                           color: o.achieved ? 'var(--sc-teal)' : 'var(--sc-border)',
                         }}
                       />
-                      <span style={{ fontSize: 12, color: o.achieved ? 'var(--sc-muted)' : 'var(--sc-text)', lineHeight: 1.4 }}>
+                      <span style={{ fontSize: 12, color: o.achieved ? 'var(--sc-muted)' : 'var(--sc-text-2)', lineHeight: 1.4 }}>
                         {o.description}
                       </span>
                     </div>
                   ))}
                 </div>
-                <p style={{ fontSize: 11, color: 'var(--sc-muted)', marginTop: 12 }}>
-                  {outcomesComplete} of {outcomes.length} outcomes complete
-                </p>
-              </>
-            ) : (
-              <Link href="/dashboard/weekly-plan" style={{ fontSize: 13, color: 'var(--sc-teal)' }}>
-                No outcomes set →
-              </Link>
+                {/* Progress bar */}
+                <div style={{ marginTop: 12 }}>
+                  <div className="sc-progress-bar">
+                    <div
+                      className="sc-progress-fill"
+                      style={{ width: `${outcomes.length ? (outcomesComplete / outcomes.length) * 100 : 0}%` }}
+                    />
+                  </div>
+                  <p style={{ fontSize: 11, color: 'var(--sc-muted)', marginTop: 5 }}>
+                    {outcomesComplete} of {outcomes.length} complete
+                  </p>
+                </div>
+              </ContextBlock>
             )}
-          </div>
 
-          {/* Needs Attention */}
-          <div className="sc-card">
-            <p className="sc-card-label" style={{ color: attentionItems.length > 0 ? '#F59E0B' : 'var(--sc-muted)' }}>
-              Needs attention
-            </p>
-            {attentionItems.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 4 }}>
-                {attentionItems.slice(0, 5).map((item, i) => (
-                  <Link
-                    key={i}
-                    href={item.href}
-                    style={{
-                      display: 'block',
-                      padding: '7px 10px',
-                      borderRadius: 6,
-                      borderLeft: `3px solid ${item.dot}`,
-                      backgroundColor: 'var(--sc-bg)',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--sc-text)', lineHeight: 1.3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                      {item.text}
-                    </p>
-                    <p className="sc-meta">{item.sub}</p>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div style={{ marginTop: 8 }}>
-                <p style={{ fontSize: 13, color: 'var(--sc-teal)', fontWeight: 500 }}>All clear.</p>
-                <p className="sc-meta" style={{ marginTop: 2 }}>Everything is on track.</p>
-              </div>
-            )}
-          </div>
+            {/* Commitments summary */}
+            <ContextBlock title="Commitments">
+              <MetricRow
+                label="Active"
+                value={commitments.filter(c => c.stage === 'active').length}
+              />
+              <MetricRow
+                label="Launch checklists"
+                value={commitments.filter(c => c.stage === 'launch_checklist').length}
+              />
+              <MetricRow
+                label="Total"
+                value={commitments.length}
+              />
+            </ContextBlock>
+          </ContextPanel>
+
         </div>
-
-        {/* Stats strip */}
-        <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 28 }}>
-          <div className="sc-stat">
-            <p className="sc-stat-value">{outcomesComplete}/{outcomes.length || 3}</p>
-            <p className="sc-stat-label">outcomes</p>
-          </div>
-          <div className="sc-stat">
-            <p className={`sc-stat-value${overdueFollowups.length > 0 ? ' danger' : ''}`}>
-              {overdueFollowups.length}
-            </p>
-            <p className="sc-stat-label">overdue</p>
-          </div>
-          <div className="sc-stat">
-            <p className="sc-stat-value">{dueToday.length}</p>
-            <p className="sc-stat-label">due today</p>
-          </div>
-          <div className="sc-stat">
-            <p className="sc-stat-value">{parkingItems.length}</p>
-            <p className="sc-stat-label">parked</p>
-          </div>
-        </div>
-
-        {/* Quick actions */}
-        <div>
-          <p className="sc-section-label" style={{ marginTop: 0 }}>Quick actions</p>
-          <div className="sc-quick-grid">
-            {[
-              { label: 'Park an idea', href: '/dashboard/parking-lot', Icon: Archive },
-              { label: 'Add follow-up', href: '/dashboard/follow-ups', Icon: Clock },
-              { label: 'Log today', href: '/dashboard/today', Icon: CheckCircle },
-              { label: 'Start review', href: '/dashboard/review', Icon: RotateCcw },
-            ].map(({ label, href, Icon }) => (
-              <Link key={label} href={href} className="sc-quick-action">
-                <Icon />
-                {label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Progressive disclosure */}
-        {sufficiency.weeklyScoreUnlocked && (
-          <div
-            className="sc-card"
-            style={{ borderColor: 'rgba(0,194,168,0.2)', backgroundColor: 'rgba(0,194,168,0.03)', marginTop: 20 }}
-          >
-            <p className="sc-card-label" style={{ color: 'var(--sc-teal)' }}>Weekly score unlocked</p>
-            <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 8 }}>
-              Complete this week&apos;s Friday Review to see your weekly score.
-            </p>
-            <Link href="/dashboard/review" style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>
-              Go to Friday Review →
-            </Link>
-          </div>
-        )}
       </div>
     </>
   )

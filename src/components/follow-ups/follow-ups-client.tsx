@@ -239,11 +239,7 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
                 return (
                   <div
                     key={f.id}
-                    className="flex items-start gap-3 p-4 rounded-xl border"
-                    style={{
-                      borderColor: isOverdue ? 'rgba(239,68,68,0.3)' : 'var(--sc-border)',
-                      backgroundColor: 'var(--sc-surface)',
-                    }}
+                    className={`sc-followup-card${isOverdue ? ' overdue' : ''}`}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-1">

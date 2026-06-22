@@ -157,11 +157,8 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
               </div>
 
               {cards.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-[var(--sc-border)] p-6 text-center text-sm text-[var(--sc-muted)]">
-                  No commitments in this stage yet.
-                  {stage === 'main_focus' && (
-                    <p className="mt-1 text-xs">Your main focus is the one thing you're actively building.</p>
-                  )}
+                <div className="sc-stage-empty-row">
+                  {stage === 'main_focus' ? 'No main focus set — add one to get started.' : 'No commitments in this stage.'}
                 </div>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

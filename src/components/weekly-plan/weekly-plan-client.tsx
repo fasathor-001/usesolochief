@@ -18,6 +18,7 @@ import {
 } from '@/lib/actions/weekly-plan'
 import type { WeeklyPlan, WeeklyOutcome, Commitment, StopListItem, Followup } from '@/types/database'
 import { Lock, X, Plus, CheckCircle } from 'lucide-react'
+import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
 
 interface WeeklyPlanClientProps {
   plan: WeeklyPlan
@@ -168,8 +169,9 @@ export function WeeklyPlanClient({
         </div>
       </div>
 
-    <div className="sc-content sc-content-narrow">
-
+    <div className="sc-content">
+      <div className="sc-grid-main">
+      <div className="sc-grid-col">
       <div className="space-y-8">
         {/* Section 1 — Focus */}
         <section>
@@ -400,6 +402,51 @@ export function WeeklyPlanClient({
           </div>
         )}
       </div>
+      </div>{/* sc-grid-col */}
+
+      {/* ── Context panel: Planning Rules ──────── */}
+      <ContextPanel>
+        <ContextBlock title="Planning rules">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              'One main focus commitment per week.',
+              'Exactly three outcomes — no more, no less.',
+              'Lock the plan by Monday morning.',
+              'Stop list items are hard blocks — no exceptions.',
+              'Override is for genuine emergencies only.',
+            ].map((rule, i) => (
+              <div key={i} style={{ display: 'flex', gap: 10 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-teal)', flexShrink: 0, marginTop: 1 }}>
+                  {i + 1}
+                </span>
+                <p style={{ fontSize: 12, color: 'var(--sc-muted)', lineHeight: 1.5 }}>{rule}</p>
+              </div>
+            ))}
+          </div>
+        </ContextBlock>
+
+        <ContextBlock title="Status">
+          <div>
+            <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 4 }}>Plan state</p>
+            <span
+              className="sc-badge"
+              style={{
+                backgroundColor: locked ? 'var(--sc-teal-10)' : 'rgba(59,130,246,0.10)',
+                color: locked ? '#007a6b' : '#185FA5',
+              }}
+            >
+              {locked ? 'Active — locked' : 'Draft — not locked'}
+            </span>
+          </div>
+          {!locked && (
+            <p style={{ fontSize: 11, color: 'var(--sc-muted)', marginTop: 10, lineHeight: 1.5 }}>
+              Fill in your focus, three outcomes, and stop list, then lock the plan.
+            </p>
+          )}
+        </ContextBlock>
+      </ContextPanel>
+
+      </div>{/* sc-grid-main */}
     </div>
     </>
   )

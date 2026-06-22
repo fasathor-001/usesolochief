@@ -49,33 +49,46 @@
 }
 
 :root {
-  /* SoloChief brand tokens */
+  /* ── SoloChief brand tokens ──────────────────────────────────────── */
   --sc-midnight:      #0F1B2D;
   --sc-teal:          #00C2A8;
   --sc-teal-10:       rgba(0,194,168,0.10);
   --sc-teal-15:       rgba(0,194,168,0.15);
+  --sc-teal-20:       rgba(0,194,168,0.20);
   --sc-bg:            #F8F9FA;
   --sc-surface:       #FFFFFF;
+  --sc-surface-2:     #F1F5F9;
   --sc-text:          #0D0D0D;
+  --sc-text-2:        #374151;
   --sc-muted:         #64748B;
+  --sc-hint:          rgba(100,116,139,0.55);
   --sc-border:        #E2E8F0;
-  --sc-border-strong: #CBD5E1;
+  --sc-border-2:      #CBD5E1;
   --sc-success:       #10B981;
   --sc-warning:       #F59E0B;
   --sc-error:         #EF4444;
 
-  /* Aliases for backward compatibility */
-  --sc-primary:    var(--sc-midnight);
-  --sc-accent:     var(--sc-teal);
-  --sc-background: var(--sc-bg);
+  /* Backward-compat aliases */
+  --sc-primary:       var(--sc-midnight);
+  --sc-accent:        var(--sc-teal);
+  --sc-background:    var(--sc-bg);
+  --sc-border-strong: var(--sc-border-2);
 
-  /* Layout */
-  --sc-sidebar-width:  224px;
-  --sc-topbar-height:  56px;
-  --sc-radius:         8px;
-  --sc-radius-lg:      12px;
+  /* Layout — canonical names */
+  --sc-sidebar-w:     224px;
+  --sc-topbar-h:      56px;
+  --sc-r:             8px;
+  --sc-r-sm:          5px;
+  --sc-r-lg:          12px;
+  --sc-r-xl:          16px;
 
-  /* shadcn/ui theme variables */
+  /* Layout — backward-compat aliases */
+  --sc-sidebar-width: var(--sc-sidebar-w);
+  --sc-topbar-height: var(--sc-topbar-h);
+  --sc-radius:        var(--sc-r);
+  --sc-radius-lg:     var(--sc-r-lg);
+
+  /* ── shadcn/ui theme variables (do not remove) ───────────────────── */
   --background: oklch(0.982 0.002 247.839);
   --foreground: oklch(0.08 0.02 240);
   --card: oklch(1 0 0);
@@ -162,13 +175,16 @@
   html { @apply font-sans; }
 }
 
-/* ─── SoloChief Design System ─────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   SoloChief Design System
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* Layout */
+/* ── App shell ──────────────────────────────────────────────────── */
+
 .sc-app { display: flex; min-height: 100vh; }
 
 .sc-sidebar {
-  width: var(--sc-sidebar-width);
+  width: var(--sc-sidebar-w);
   background: var(--sc-midnight);
   position: fixed;
   left: 0; top: 0; bottom: 0;
@@ -178,7 +194,7 @@
 }
 
 .sc-main {
-  margin-left: var(--sc-sidebar-width);
+  margin-left: var(--sc-sidebar-w);
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -186,8 +202,10 @@
   background: var(--sc-bg);
 }
 
+/* ── Topbar ─────────────────────────────────────────────────────── */
+
 .sc-topbar {
-  height: var(--sc-topbar-height);
+  height: var(--sc-topbar-h);
   background: var(--sc-surface);
   border-bottom: 0.5px solid var(--sc-border);
   display: flex;
@@ -197,12 +215,57 @@
   position: sticky;
   top: 0;
   z-index: 40;
+  flex-shrink: 0;
 }
+
+.sc-topbar-left { display: flex; flex-direction: column; gap: 1px; }
+.sc-topbar-title { font-size: 15px; font-weight: 500; color: var(--sc-text); }
+.sc-topbar-sub { font-size: 11px; color: var(--sc-muted); }
+.sc-topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+/* ── Content areas ──────────────────────────────────────────────── */
 
 .sc-content { padding: 28px; flex: 1; }
 .sc-content-narrow { max-width: 860px; }
 
-/* Sidebar */
+/* Two-column grid: main content + 300px sticky context panel */
+.sc-grid-main {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.sc-grid-col { min-width: 0; }
+
+/* ── Context panel ──────────────────────────────────────────────── */
+
+.sc-context-panel {
+  position: sticky;
+  top: calc(var(--sc-topbar-h) + 28px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sc-context-block {
+  background: var(--sc-surface);
+  border: 0.5px solid var(--sc-border);
+  border-radius: var(--sc-r-lg);
+  padding: 16px 18px;
+}
+
+.sc-context-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--sc-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────── */
+
 .sc-logo {
   padding: 18px 16px 14px;
   border-bottom: 0.5px solid rgba(255,255,255,0.07);
@@ -234,7 +297,7 @@
   align-items: center;
   gap: 9px;
   padding: 7px 10px;
-  border-radius: var(--sc-radius);
+  border-radius: var(--sc-r);
   color: rgba(255,255,255,0.48);
   font-size: 13px;
   text-decoration: none;
@@ -264,7 +327,7 @@
   align-items: center;
   gap: 8px;
   padding: 7px 10px;
-  border-radius: var(--sc-radius);
+  border-radius: var(--sc-r);
   border: 0.5px solid rgba(239,68,68,0.18);
   background: rgba(239,68,68,0.04);
   color: rgba(255,255,255,0.45);
@@ -300,19 +363,14 @@
 .sc-user-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); }
 .sc-user-email { font-size: 11px; color: rgba(255,255,255,0.32); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px; }
 
-/* Topbar */
-.sc-topbar-left { display: flex; flex-direction: column; gap: 1px; }
-.sc-topbar-title { font-size: 15px; font-weight: 500; color: var(--sc-text); }
-.sc-topbar-sub { font-size: 11px; color: var(--sc-muted); }
-.sc-topbar-actions { display: flex; align-items: center; gap: 8px; }
+/* ── Buttons ────────────────────────────────────────────────────── */
 
-/* Buttons */
 .sc-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  border-radius: var(--sc-radius);
+  border-radius: var(--sc-r);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -331,11 +389,12 @@
 .sc-btn-sm { padding: 5px 11px; font-size: 12px; }
 .sc-btn-icon { padding: 7px; }
 
-/* Cards */
+/* ── Cards ──────────────────────────────────────────────────────── */
+
 .sc-card {
   background: var(--sc-surface);
   border: 0.5px solid var(--sc-border);
-  border-radius: var(--sc-radius-lg);
+  border-radius: var(--sc-r-lg);
   padding: 18px 20px;
 }
 
@@ -355,20 +414,90 @@
 
 .sc-card-label svg { width: 14px; height: 14px; }
 
-/* Page header */
+/* Focus card — teal left border accent */
+.sc-focus-card {
+  background: var(--sc-surface);
+  border: 0.5px solid var(--sc-border);
+  border-left: 3px solid var(--sc-teal);
+  border-radius: var(--sc-r-lg);
+  padding: 18px 20px;
+}
+
+/* Commitment card */
+.sc-commitment-card {
+  background: var(--sc-surface);
+  border: 0.5px solid var(--sc-border);
+  border-radius: var(--sc-r-lg);
+  padding: 14px 16px;
+  transition: box-shadow 0.12s;
+}
+
+.sc-commitment-card:hover {
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+
+/* Follow-up card */
+.sc-followup-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--sc-surface);
+  border: 0.5px solid var(--sc-border);
+  border-radius: var(--sc-r-lg);
+  transition: border-color 0.1s;
+}
+
+.sc-followup-card.overdue { border-color: rgba(239,68,68,0.3); }
+
+/* ── Page header ────────────────────────────────────────────────── */
+
 .sc-page-header { margin-bottom: 24px; display: flex; align-items: flex-start; justify-content: space-between; }
 .sc-page-header-left h1 { font-size: 20px; font-weight: 500; color: var(--sc-text); letter-spacing: -0.2px; }
 .sc-page-header-left p { font-size: 13px; color: var(--sc-muted); margin-top: 3px; }
 
-/* Stats */
+/* ── Stats ──────────────────────────────────────────────────────── */
+
 .sc-stats-row { display: grid; gap: 10px; }
-.sc-stat { background: var(--sc-bg); border-radius: var(--sc-radius); padding: 12px 14px; }
+.sc-stat { background: var(--sc-bg); border-radius: var(--sc-r); padding: 12px 14px; }
 .sc-stat-value { font-size: 24px; font-weight: 500; color: var(--sc-text); line-height: 1; }
 .sc-stat-value.danger { color: var(--sc-error); }
 .sc-stat-value.success { color: var(--sc-success); }
 .sc-stat-label { font-size: 11px; color: var(--sc-muted); margin-top: 3px; }
 
-/* Badges */
+/* Metric row — compact horizontal stat */
+.sc-metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--sc-border);
+}
+
+.sc-metric-row:last-child { border-bottom: none; }
+.sc-metric-label { font-size: 12px; color: var(--sc-muted); }
+.sc-metric-value { font-size: 13px; font-weight: 500; color: var(--sc-text); }
+.sc-metric-value.danger { color: var(--sc-error); }
+.sc-metric-value.success { color: var(--sc-success); }
+
+/* ── Progress bar ───────────────────────────────────────────────── */
+
+.sc-progress-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--sc-border);
+  overflow: hidden;
+}
+
+.sc-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--sc-teal);
+  transition: width 0.3s ease;
+}
+
+/* ── Badges ─────────────────────────────────────────────────────── */
+
 .sc-badge {
   display: inline-flex;
   align-items: center;
@@ -389,7 +518,19 @@
 .sc-badge-slate  { background: #F1F5F9; color: #475569; }
 .sc-badge-dark   { background: rgba(15,27,45,0.08); color: var(--sc-midnight); }
 
-/* Form elements */
+/* Status pill */
+.sc-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── Form elements ──────────────────────────────────────────────── */
+
 .sc-field { margin-bottom: 14px; }
 .sc-label { display: block; font-size: 12px; font-weight: 500; color: var(--sc-muted); margin-bottom: 5px; }
 .sc-label-required::after { content: ' *'; color: var(--sc-error); }
@@ -398,7 +539,7 @@
   width: 100%;
   padding: 8px 11px;
   border: 0.5px solid var(--sc-border);
-  border-radius: var(--sc-radius);
+  border-radius: var(--sc-r);
   font-size: 13px;
   color: var(--sc-text);
   background: var(--sc-surface);
@@ -413,13 +554,25 @@
 .sc-textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
 .sc-select { appearance: none; cursor: pointer; }
 
-/* Empty states */
+/* ── Empty states ───────────────────────────────────────────────── */
+
 .sc-empty { text-align: center; padding: 52px 24px; }
-.sc-empty-icon { font-size: 28px; color: var(--sc-border-strong); margin-bottom: 14px; }
+.sc-empty-icon { font-size: 28px; color: var(--sc-border-2); margin-bottom: 14px; }
 .sc-empty h3 { font-size: 14px; font-weight: 500; color: var(--sc-text); margin-bottom: 6px; }
 .sc-empty p { font-size: 13px; color: var(--sc-muted); max-width: 280px; margin: 0 auto; line-height: 1.55; }
 
-/* Attention items */
+/* Compact empty stage row in Commitments */
+.sc-stage-empty-row {
+  padding: 10px 14px;
+  border: 1px dashed var(--sc-border);
+  border-radius: var(--sc-r);
+  font-size: 12px;
+  color: var(--sc-hint);
+  text-align: center;
+}
+
+/* ── Attention items ────────────────────────────────────────────── */
+
 .sc-attention-item {
   display: flex;
   align-items: center;
@@ -435,7 +588,8 @@
 .sc-attention-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .sc-attention-text { font-size: 13px; color: var(--sc-text); flex: 1; }
 
-/* Quick actions */
+/* ── Quick actions ──────────────────────────────────────────────── */
+
 .sc-quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
 .sc-quick-action {
@@ -458,7 +612,8 @@
 .sc-quick-action:hover { border-color: var(--sc-teal); }
 .sc-quick-action svg { width: 16px; height: 16px; color: var(--sc-teal); flex-shrink: 0; }
 
-/* Section labels */
+/* ── Section labels ─────────────────────────────────────────────── */
+
 .sc-section-label {
   font-size: 10px;
   font-weight: 500;
@@ -470,7 +625,8 @@
 
 .sc-divider { border: none; border-top: 0.5px solid var(--sc-border); margin: 16px 0; }
 
-/* Utilities */
+/* ── Utilities ──────────────────────────────────────────────────── */
+
 .sc-flex { display: flex; }
 .sc-flex-center { display: flex; align-items: center; }
 .sc-flex-between { display: flex; align-items: center; justify-content: space-between; }
@@ -486,7 +642,8 @@
 .sc-text-muted { color: var(--sc-muted); }
 .sc-font-medium { font-weight: 500; }
 
-/* Typography scale */
+/* ── Typography scale ───────────────────────────────────────────── */
+
 .sc-page-title {
   font-size: 22px;
   font-weight: 500;
@@ -533,12 +690,33 @@
   line-height: 1.4;
 }
 
-/* Scrollbar */
+/* ── Modal ──────────────────────────────────────────────────────── */
+
+.sc-modal {
+  background: var(--sc-surface);
+  border: 0.5px solid var(--sc-border);
+  border-radius: var(--sc-r-xl);
+  padding: 24px;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--sc-border-strong); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--sc-border-2); border-radius: 4px; }
 
-/* Mobile responsive */
+/* ── Mobile responsive ──────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .sc-grid-main {
+    grid-template-columns: 1fr;
+  }
+
+  .sc-context-panel {
+    position: static;
+  }
+}
+
 @media (max-width: 768px) {
   .sc-sidebar {
     transform: translateX(-100%);

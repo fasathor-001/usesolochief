@@ -50,7 +50,7 @@ const STATUS_GROUPS: { status: ParkingLotStatus[]; label: string }[] = [
   { status: ['waiting'], label: 'Waiting for review' },
   { status: ['scheduled'], label: 'Scheduled for Monday review' },
   { status: ['cleared', 'actioned'], label: 'Cleared / actioned' },
-  { status: ['killed'], label: 'Killed' },
+  { status: ['killed'], label: 'Archived' },
 ]
 
 function daysParked(dateStr: string): number {
