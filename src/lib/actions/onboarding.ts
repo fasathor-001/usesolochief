@@ -6,6 +6,8 @@ import type { OnboardingTemplate } from '@/types/database'
 import type { CommitmentDraft } from '@/lib/onboarding-data'
 import { ensureIntelligenceState } from '@/lib/intelligence/intelligence-service'
 import { getWeekStart } from '@/lib/utils/date-utils'
+import { sendEmail } from '@/lib/email/resend'
+import { welcomeEmail } from '@/lib/email/templates/welcome'
 
 export interface OnboardingInput {
   template: OnboardingTemplate
@@ -107,6 +109,17 @@ export async function saveOnboarding(input: OnboardingInput): Promise<void> {
 
   // Initialise intelligence state
   await ensureIntelligenceState(user.id, workspace.id)
+
+  // Send welcome email
+  if (user.email) {
+    const { data: profileRes } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', user.id)
+      .single()
+    const email = welcomeEmail(profileRes?.full_name ?? '')
+    await sendEmail({ to: user.email, ...email })
+  }
 
   redirect('/dashboard')
 }
