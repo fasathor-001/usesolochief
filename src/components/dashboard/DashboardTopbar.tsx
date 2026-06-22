@@ -42,6 +42,20 @@ export function DashboardTopbar() {
     <div className="sc-topbar">
       <span className="sc-topbar-workspace">{section}</span>
       <div className="sc-topbar-actions">
+        <span style={{
+          fontSize: 10,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+          color: 'var(--sc-muted)',
+          border: '0.5px solid var(--sc-border)',
+          borderRadius: 4,
+          padding: '2px 8px',
+          flexShrink: 0,
+          whiteSpace: 'nowrap',
+        }}>
+          Private beta
+        </span>
         {pathname !== '/dashboard/chat' && (
           <Link
             href="/dashboard/chat"

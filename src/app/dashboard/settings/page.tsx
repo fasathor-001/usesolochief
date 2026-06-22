@@ -666,7 +666,7 @@ export default function SettingsPage() {
               <div style={{ borderTop: '0.5px solid var(--sc-border)', marginTop: 20, paddingTop: 18 }}>
                 <p className="sc-section-heading" style={{ marginBottom: 8 }}>PUSH NOTIFICATIONS</p>
                 <p style={{ fontSize: 12, color: 'var(--sc-muted)' }}>
-                  Push notification support is planned for a future release. Daily check-in reminders will be available once enabled.
+                  Push notifications will be added only after reminder rules are finalised.
                 </p>
               </div>
             </div>
@@ -759,6 +759,28 @@ export default function SettingsPage() {
               >
                 Save account
               </button>
+
+              {/* Private beta card */}
+              <div style={{
+                marginTop: 24,
+                padding: '14px 16px',
+                borderRadius: 'var(--sc-r)',
+                border: '0.5px solid var(--sc-border)',
+                backgroundColor: 'var(--sc-bg)',
+              }}>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 8 }}>
+                  Private beta
+                </p>
+                <p style={{ fontSize: 12, color: 'var(--sc-muted)', lineHeight: 1.6 }}>
+                  SoloChief is currently in private beta. Some features may be refined as the product learns from real usage.
+                </p>
+                <a
+                  href="mailto:hello@astorstack.com?subject=SoloChief%20AI%20Feedback"
+                  style={{ display: 'inline-block', marginTop: 12, fontSize: 12, color: 'var(--sc-teal)', fontWeight: 500 }}
+                >
+                  Send feedback →
+                </a>
+              </div>
             </div>
           )}
 
@@ -779,7 +801,7 @@ export default function SettingsPage() {
                   <Download size={13} />
                   Export my data
                 </button>
-                <p className="sc-meta" style={{ marginTop: 6 }}>Data export is available in an upcoming release.</p>
+                <p className="sc-meta" style={{ marginTop: 6 }}>Data export is not yet available in private beta.</p>
               </div>
 
               <div style={{ borderTop: '0.5px solid var(--sc-border)', paddingTop: 18 }}>

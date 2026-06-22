@@ -57,7 +57,7 @@ export function InstallPrompt() {
             Install SoloChief
           </p>
           <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 2 }}>
-            Add to your home screen for faster daily check-ins.
+            Add SoloChief to your home screen for faster daily check-ins.
           </p>
         </div>
         <button

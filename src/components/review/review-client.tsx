@@ -223,7 +223,7 @@ export function ReviewClient({
                   View this week's plan
                 </Link>
                 <Link
-                  href="/dashboard/plan"
+                  href="/dashboard/weekly-plan"
                   className="flex items-center gap-2 text-sm transition-colors"
                   style={{ color: 'var(--sc-text)' }}
                 >
@@ -329,25 +329,25 @@ export function ReviewClient({
           </div>
         </section>
 
-        {/* Section 1 — What shipped */}
+        {/* What shipped */}
         <ReviewSection
-          label="Section 1 — What actually got done this week?"
+          label="What got done this week?"
           value={shippedText}
           onChange={setShippedText}
           placeholder="Describe what shipped, was completed, or moved forward..."
         />
 
-        {/* Section 2 — What slipped */}
+        {/* What slipped */}
         <ReviewSection
-          label="Section 2 — What did not get done that should have?"
+          label="What did not get done?"
           value={slippedText}
           onChange={setSlippedText}
           placeholder="Be honest. What was planned but did not happen?"
         />
 
-        {/* Section 3 — Wrongly touched */}
+        {/* Wrongly touched */}
         <ReviewSection
-          label="Section 3 — What did you work on that was not planned?"
+          label="What pulled you off plan?"
           value={wronglyTouchedText}
           onChange={setWronglyTouchedText}
           placeholder="What pulled you away from your focus? No judgement — just data."
@@ -357,7 +357,7 @@ export function ReviewClient({
         {overdueFollowups.length > 0 && (
           <section>
             <h2 className="text-sm font-semibold mb-1 uppercase tracking-wide" style={{ color: 'var(--sc-muted)' }}>
-              Section 4 — Missed follow-ups
+              Missed follow-ups
             </h2>
             <p className="text-xs mb-3" style={{ color: 'var(--sc-muted)' }}>
               These follow-ups are overdue. Confirm or dismiss each.
@@ -400,7 +400,7 @@ export function ReviewClient({
         {parkingItemsThisWeek.length > 0 && (
           <section>
             <h2 className="text-sm font-semibold mb-1 uppercase tracking-wide" style={{ color: 'var(--sc-muted)' }}>
-              Section 5 — What got parked this week
+              What got parked this week
             </h2>
             <p className="text-xs mb-3" style={{ color: 'var(--sc-muted)' }}>
               {parkingItemsThisWeek.length} idea{parkingItemsThisWeek.length !== 1 ? 's' : ''} parked.
@@ -420,18 +420,18 @@ export function ReviewClient({
           </section>
         )}
 
-        {/* Section 6 — Below your level */}
+        {/* Below your level */}
         <ReviewSection
-          label="Section 6 — What work this week was below your level or should not have been yours to do?"
+          label="What work was below your level this week?"
           value={belowLevelText}
           onChange={setBelowLevelText}
           placeholder="Admin tasks, low-value work, things that should be delegated or automated..."
         />
 
-        {/* Section 7 — Next week intention */}
+        {/* Next week */}
         <section>
           <h2 className="text-sm font-semibold mb-1 uppercase tracking-wide" style={{ color: 'var(--sc-muted)' }}>
-            Section 7 — Next week intention
+            Next week
           </h2>
           <div className="space-y-3 mt-3">
             <div>

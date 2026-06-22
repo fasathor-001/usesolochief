@@ -143,10 +143,10 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
               </div>
               <div>
                 <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>
-                  Your Chief of Staff is ready.
+                  What do you need help deciding?
                 </p>
                 <p style={{ fontSize: 13, color: 'var(--sc-muted)', maxWidth: 320 }}>
-                  Ask about your focus, park an idea, check what is overdue, or talk through what is blocking you.
+                  Ask SoloChief about focus, follow-ups, parked ideas, or what should wait.
                 </p>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', maxWidth: 440, marginTop: 8 }}>
@@ -285,13 +285,13 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
           {/* Weekly progress */}
           <div>
             <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Weekly progress</p>
-            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Loaded from plan</p>
+            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Not enough data yet</p>
           </div>
 
           {/* Stop list */}
           <div>
             <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Stop list</p>
-            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Loaded from settings</p>
+            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Not enough data yet</p>
           </div>
 
         </div>
