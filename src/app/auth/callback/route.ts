@@ -1,11 +1,11 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
+  const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const type = searchParams.get('type')
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL!
+  const next = searchParams.get('next') ?? '/dashboard'
 
   if (code) {
     const supabase = await createClient()
@@ -13,11 +13,11 @@ export async function GET(request: Request) {
 
     if (!error) {
       if (type === 'recovery') {
-        return NextResponse.redirect(`${appUrl}/auth/reset-password`)
+        return NextResponse.redirect(`${origin}/auth/reset-password`)
       }
-      return NextResponse.redirect(`${appUrl}/dashboard`)
+      return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
-  return NextResponse.redirect(`${appUrl}/auth/login?error=auth_failed`)
+  return NextResponse.redirect(`${origin}/auth/login?error=auth_failed`)
 }
