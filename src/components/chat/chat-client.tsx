@@ -103,6 +103,11 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
     }
   }
 
+  function handleSuggestedPrompt(prompt: string) {
+    setInput(prompt)
+    inputRef.current?.focus()
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: 0, minHeight: '100vh' }}>
       {/* Topbar */}
@@ -119,28 +124,59 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
       {/* Messages */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-16">
-            <MessageCircle size={36} style={{ color: 'var(--sc-muted)' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: '48px 24px', gap: 16 }}>
+            <div style={{
+              width: 48,
+              height: 48,
+              borderRadius: '50%',
+              backgroundColor: 'var(--sc-teal-10)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <MessageCircle size={22} style={{ color: 'var(--sc-teal)' }} />
+            </div>
             <div>
-              <p className="text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>
-                What is on your mind?
+              <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>
+                Your Chief of Staff is ready.
               </p>
-              <p className="text-xs max-w-xs mx-auto" style={{ color: 'var(--sc-muted)' }}>
-                Ask about today&apos;s focus, park an idea, add a follow-up, or talk through what is blocking you.
+              <p style={{ fontSize: 13, color: 'var(--sc-muted)', maxWidth: 320 }}>
+                Ask about your focus, park an idea, check what is overdue, or talk through what is blocking you.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 justify-center mt-2">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', maxWidth: 440, marginTop: 8 }}>
               {[
-                'What should I work on today?',
-                'What is overdue?',
+                'What should I focus on today?',
+                'What is overdue right now?',
                 'How was my week?',
+                'Help me think through a decision.',
+                'What is in my parking lot?',
+                'I need to log today\'s outcome.',
               ].map(prompt => (
                 <button
                   key={prompt}
                   type="button"
-                  onClick={() => setInput(prompt)}
-                  className="px-3 py-1.5 rounded-full text-xs border transition-colors hover:border-[var(--sc-accent)]"
-                  style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
+                  onClick={() => handleSuggestedPrompt(prompt)}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: 'var(--sc-radius)',
+                    border: '0.5px solid var(--sc-border)',
+                    backgroundColor: 'var(--sc-surface)',
+                    color: 'var(--sc-muted)',
+                    fontSize: 12,
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    lineHeight: 1.4,
+                    transition: 'border-color 0.12s, color 0.12s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = 'var(--sc-border-strong)'
+                    e.currentTarget.style.color = 'var(--sc-text)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'var(--sc-border)'
+                    e.currentTarget.style.color = 'var(--sc-muted)'
+                  }}
                 >
                   {prompt}
                 </button>

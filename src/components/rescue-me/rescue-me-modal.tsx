@@ -69,38 +69,42 @@ export function RescueMeModal({ open, onOpenChange }: RescueMeModalProps) {
           </p>
         </DialogHeader>
 
-        <div className="space-y-2 mt-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
           {RESCUE_OPTIONS.map((option) => (
             <a
               key={option.id}
               href={option.action}
               onClick={() => onOpenChange(false)}
-              className="block p-3 rounded-lg border transition-all group"
               style={{
-                borderColor: 'var(--sc-border)',
+                display: 'block',
+                padding: '12px 14px',
+                borderRadius: 8,
+                border: '0.5px solid var(--sc-border)',
                 backgroundColor: 'var(--sc-surface)',
                 textDecoration: 'none',
+                transition: 'background-color 0.12s, border-color 0.12s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--sc-accent)'
+                e.currentTarget.style.backgroundColor = 'var(--sc-bg)'
+                e.currentTarget.style.borderColor = 'var(--sc-border-strong)'
               }}
               onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--sc-surface)'
                 e.currentTarget.style.borderColor = 'var(--sc-border)'
               }}
             >
-              <div className="flex items-start justify-between gap-2">
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                 <div>
-                  <p className="text-sm font-medium" style={{ color: 'var(--sc-text)' }}>
+                  <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--sc-text)', lineHeight: 1.3 }}>
                     {option.label}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--sc-muted)' }}>
+                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 2, lineHeight: 1.4 }}>
                     {option.detail}
                   </p>
                 </div>
                 <ArrowRight
                   size={14}
-                  className="shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ color: 'var(--sc-accent)' }}
+                  style={{ flexShrink: 0, marginTop: 2, color: 'var(--sc-muted)' }}
                 />
               </div>
             </a>

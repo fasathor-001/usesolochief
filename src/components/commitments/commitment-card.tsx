@@ -61,15 +61,12 @@ export function CommitmentCard({ commitment, onEdit, onDelete }: CommitmentCardP
   const stageColour = STAGE_COLOURS[commitment.stage] ?? '#64748B'
 
   return (
-    <div className="sc-card sc-card-sm" style={{ transition: 'box-shadow 0.12s' }}>
+    <div className="sc-card sc-card-sm" style={{ padding: '14px 16px', transition: 'box-shadow 0.12s' }}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-[var(--sc-text)] truncate">{commitment.title}</h3>
-          {commitment.next_action && (
-            <p className="text-sm text-[var(--sc-muted)] mt-1 truncate">
-              → {commitment.next_action}
-            </p>
-          )}
+          <h3 style={{ fontSize: 14, fontWeight: 500, color: 'var(--sc-text)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+            {commitment.title}
+          </h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
             <Badge
               className="text-white text-xs px-2 py-0.5 border-0"
@@ -84,9 +81,19 @@ export function CommitmentCard({ commitment, onEdit, onDelete }: CommitmentCardP
               {PERMISSION_LABELS[commitment.permission_level] ?? commitment.permission_level}
             </Badge>
           </div>
+          {commitment.next_action && (
+            <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 6, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              → {commitment.next_action}
+            </p>
+          )}
           {commitment.due_date && (
-            <p className="text-xs text-[var(--sc-muted)] mt-1.5">
+            <p className="sc-meta" style={{ marginTop: 4 }}>
               Due {new Date(commitment.due_date).toLocaleDateString('en-GB')}
+            </p>
+          )}
+          {commitment.last_touched_at && (
+            <p className="sc-meta" style={{ marginTop: 2 }}>
+              Last touched: {new Date(commitment.last_touched_at).toLocaleDateString('en-GB')}
             </p>
           )}
         </div>

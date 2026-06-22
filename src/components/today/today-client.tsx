@@ -162,12 +162,12 @@ export function TodayClient({
           <div
             className="sc-card"
             style={{
-              borderColor: 'rgba(0,194,168,0.25)',
+              borderLeft: '3px solid var(--sc-teal)',
               marginBottom: 20,
             }}
           >
             {/* Focus header */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
               <div>
                 <p
                   className="sc-card-label"
@@ -175,12 +175,12 @@ export function TodayClient({
                 >
                   TODAY&apos;S FOCUS
                 </p>
-                <h2 style={{ fontSize: 20, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.2px', lineHeight: 1.3 }}>
+                <h2 className="sc-focus-title">
                   {focusCommitment.title}
                 </h2>
                 {focusCommitment.next_action && (
-                  <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginTop: 4 }}>
-                    Next: {focusCommitment.next_action}
+                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 3 }}>
+                    → {focusCommitment.next_action}
                   </p>
                 )}
               </div>
@@ -198,16 +198,20 @@ export function TodayClient({
               )}
             </div>
 
+            <hr style={{ border: 'none', borderTop: '0.5px solid var(--sc-border)', margin: '0 0 14px 0' }} />
+
             {/* Outcome input */}
             <div className="sc-field">
-              <label className="sc-label">Today&apos;s one outcome</label>
+              <label className="sc-label" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.6px' }}>
+                Today&apos;s one outcome
+              </label>
               <input
                 type="text"
                 value={outcome}
                 onChange={(e) => setOutcome(e.target.value)}
                 placeholder="What will be done by end of day?"
                 className="sc-input"
-                style={{ fontSize: 14 }}
+                style={{ fontSize: 15, padding: '10px 12px' }}
               />
             </div>
 
@@ -299,14 +303,20 @@ export function TodayClient({
 
         {/* Not today */}
         <div className="sc-card" style={{ marginBottom: 20 }}>
-          <div style={{ marginBottom: 10 }}>
-            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
-              Not today{notTodayItems.length > 0 ? ` · ${notTodayItems.length + stopItems.length}` : ''}
-            </p>
-            <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 2 }}>
-              Stop list and commitments blocked for today.
-            </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <p className="sc-section-heading" style={{ marginBottom: 0 }}>NOT TODAY</p>
+            {(notTodayItems.length + stopItems.length) > 0 && (
+              <span
+                className="sc-badge"
+                style={{ fontSize: 10, padding: '2px 7px', backgroundColor: 'var(--sc-bg)', color: 'var(--sc-muted)' }}
+              >
+                {notTodayItems.length + stopItems.length}
+              </span>
+            )}
           </div>
+          <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 10 }}>
+            These commitments and items are blocked for today.
+          </p>
 
           {(stopItems.length > 0 || notTodayItems.length > 0) && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
@@ -368,9 +378,7 @@ export function TodayClient({
         {/* Follow-ups due */}
         {followups.length > 0 && (
           <div className="sc-card">
-            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 12 }}>
-              Follow-ups due today
-            </p>
+            <p className="sc-section-heading">FOLLOW-UPS DUE TODAY</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {followups.map((f) => (
                 <div

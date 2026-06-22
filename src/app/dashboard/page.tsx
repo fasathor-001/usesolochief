@@ -14,11 +14,10 @@ function daysSince(dateStr: string): number {
   return Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 86400000)
 }
 
-function greetingLabel(): string {
+function greetingLabel(name?: string): string {
   const h = new Date().getHours()
-  if (h < 12) return 'Good morning.'
-  if (h < 17) return 'Good afternoon.'
-  return 'Good evening.'
+  const timeWord = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening'
+  return name ? `Good ${timeWord}, ${name}.` : `Good ${timeWord}.`
 }
 
 function weekNumber(date: Date): number {
@@ -43,18 +42,21 @@ export default async function CommandCentrePage() {
     followupsRes,
     parkingRes,
     sufficiency,
+    profileRes,
   ] = await Promise.all([
     supabase.from('weekly_plans').select('*').eq('user_id', user.id).eq('week_start', weekStart).maybeSingle(),
     supabase.from('commitments').select('*').eq('user_id', user.id).is('deleted_at', null).order('priority'),
     supabase.from('followups').select('*').eq('user_id', user.id).is('deleted_at', null).not('status', 'in', '(completed,cancelled)').order('due_date'),
     supabase.from('parking_lot_items').select('*').eq('user_id', user.id).in('status', ['waiting', 'scheduled']).order('created_at', { ascending: false }),
     getDataSufficiency(),
+    supabase.from('profiles').select('full_name').eq('user_id', user.id).maybeSingle(),
   ])
 
   const plan = planRes.data as WeeklyPlan | null
   const commitments = (commitmentsRes.data ?? []) as Commitment[]
   const followups = (followupsRes.data ?? []) as Followup[]
   const parkingItems = (parkingRes.data ?? []) as ParkingLotItem[]
+  const firstName = (profileRes.data as { full_name: string | null } | null)?.full_name?.split(' ')[0]
 
   let focusCommitment: Commitment | null = null
   let todayLog: DailyLog | null = null
@@ -126,10 +128,8 @@ export default async function CommandCentrePage() {
       <div className="sc-content sc-content-narrow">
         {/* Greeting */}
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.3px', lineHeight: 1.2 }}>
-            {greetingLabel()}
-          </h1>
-          <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginTop: 4 }}>
+          <h1 className="sc-page-title">{greetingLabel(firstName)}</h1>
+          <p className="sc-page-subtitle">
             {plan
               ? `Week ${weekNum} is active. Here is what needs attention today.`
               : 'No weekly plan set. Start by defining your focus for the week.'}
@@ -156,14 +156,14 @@ export default async function CommandCentrePage() {
           </Link>
         )}
 
-        {/* Two-card row: Today's Focus + This Week */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+        {/* Three-card row: Today's Focus + This Week + Needs Attention */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 20 }}>
           {/* Today's Focus */}
           <div className="sc-card">
             <p className="sc-card-label">Today&apos;s focus</p>
             {focusCommitment ? (
               <>
-                <p style={{ fontSize: 18, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.1px', lineHeight: 1.3, marginBottom: 6 }}>
+                <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.1px', lineHeight: 1.3, marginBottom: 6 }}>
                   {focusCommitment.title}
                 </p>
                 {todayLog?.notes ? (
@@ -203,7 +203,7 @@ export default async function CommandCentrePage() {
             {outcomes.length > 0 ? (
               <>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-                  {outcomes.slice(0, 3).map((o, i) => (
+                  {outcomes.slice(0, 3).map((o) => (
                     <div key={o.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                       <CheckCircle
                         size={14}
@@ -229,6 +229,41 @@ export default async function CommandCentrePage() {
               </Link>
             )}
           </div>
+
+          {/* Needs Attention */}
+          <div className="sc-card">
+            <p className="sc-card-label" style={{ color: attentionItems.length > 0 ? '#F59E0B' : 'var(--sc-muted)' }}>
+              Needs attention
+            </p>
+            {attentionItems.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 5, marginTop: 4 }}>
+                {attentionItems.slice(0, 5).map((item, i) => (
+                  <Link
+                    key={i}
+                    href={item.href}
+                    style={{
+                      display: 'block',
+                      padding: '7px 10px',
+                      borderRadius: 6,
+                      borderLeft: `3px solid ${item.dot}`,
+                      backgroundColor: 'var(--sc-bg)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--sc-text)', lineHeight: 1.3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                      {item.text}
+                    </p>
+                    <p className="sc-meta">{item.sub}</p>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div style={{ marginTop: 8 }}>
+                <p style={{ fontSize: 13, color: 'var(--sc-teal)', fontWeight: 500 }}>All clear.</p>
+                <p className="sc-meta" style={{ marginTop: 2 }}>Everything is on track.</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Stats strip */}
@@ -252,20 +287,6 @@ export default async function CommandCentrePage() {
             <p className="sc-stat-label">parked</p>
           </div>
         </div>
-
-        {/* Needs attention */}
-        {attentionItems.length > 0 && (
-          <div style={{ marginBottom: 28 }}>
-            <p className="sc-section-label" style={{ marginTop: 0 }}>Needs attention</p>
-            {attentionItems.map((item, i) => (
-              <Link key={i} href={item.href} className="sc-attention-item">
-                <span className="sc-attention-dot" style={{ backgroundColor: item.dot }} />
-                <span className="sc-attention-text">{item.text}</span>
-                <span style={{ fontSize: 11, color: 'var(--sc-muted)', flexShrink: 0 }}>{item.sub}</span>
-              </Link>
-            ))}
-          </div>
-        )}
 
         {/* Quick actions */}
         <div>
@@ -304,4 +325,3 @@ export default async function CommandCentrePage() {
     </>
   )
 }
-
