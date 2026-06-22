@@ -46,7 +46,15 @@ function AuthForm({ mode }: AuthPageProps) {
 
     setLoading(false)
     if (supabaseError) {
-      setError(supabaseError.message)
+      // Rate-limit responses still send the email — treat them as success
+      if (
+        supabaseError.message.toLowerCase().includes('rate limit') ||
+        supabaseError.message.toLowerCase().includes('already sent')
+      ) {
+        setSent(true)
+      } else {
+        setError(supabaseError.message)
+      }
     } else {
       setSent(true)
     }
@@ -71,7 +79,7 @@ function AuthForm({ mode }: AuthPageProps) {
         </h2>
         <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#64748B', lineHeight: 1.6 }}>
           We sent a magic link to <strong style={{ color: '#0D0D0D' }}>{email}</strong>.{' '}
-          Click the link to {isSignup ? 'create your account' : 'sign in'}.
+          The link expires in 60 minutes — check your spam folder if you do not see it.
         </p>
         <button
           onClick={() => { setSent(false); setEmail('') }}
