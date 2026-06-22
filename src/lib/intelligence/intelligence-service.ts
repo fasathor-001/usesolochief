@@ -138,6 +138,31 @@ export async function incrementSwitchEvents(userId: string): Promise<void> {
     .eq('user_id', userId)
 }
 
+export async function incrementParkEvents(userId: string): Promise<void> {
+  const supabase = await createClient()
+  const { data: state } = await supabase
+    .from('user_intelligence_state')
+    .select('total_daily_logs, total_weekly_reviews, total_switch_events, total_park_events')
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  if (!state) return
+
+  const newParks = state.total_park_events + 1
+  const patternUnlocked =
+    state.total_weekly_reviews >= 2 ||
+    state.total_daily_logs >= 10 ||
+    state.total_switch_events + newParks >= 5
+
+  await supabase
+    .from('user_intelligence_state')
+    .update({
+      total_park_events: newParks,
+      pattern_voice_unlocked: patternUnlocked,
+    })
+    .eq('user_id', userId)
+}
+
 export async function recordFirstWeeklyPlan(userId: string): Promise<void> {
   const supabase = await createClient()
   const { data: state } = await supabase

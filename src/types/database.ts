@@ -48,6 +48,15 @@ export type OnboardingTemplate =
   | 'solo_founder' | 'freelancer' | 'student_builder'
   | 'creator' | 'professional' | 'scratch'
 
+export type CheckInType = 'morning_confirm' | 'midday_check' | 'end_day' | 'friday_review'
+
+export type ParkingLotStatus = 'waiting' | 'scheduled' | 'cleared' | 'killed' | 'actioned'
+export type ParkingLotCategory = 'new_product' | 'feature' | 'content' | 'personal' | 'other'
+export type ParkingLotSource = 'web' | 'whatsapp'
+
+export type FollowupStatus = 'open' | 'waiting' | 'completed' | 'cancelled'
+export type FollowupUrgency = 'critical' | 'high' | 'normal' | 'low'
+
 // ============================================================
 // Core entities
 // ============================================================
@@ -228,6 +237,10 @@ export interface Followup {
   completed_at: string | null
   contact_name: string | null
   contact_ref: string | null
+  status: FollowupStatus
+  urgency: FollowupUrgency
+  next_action: string | null
+  deleted_at: string | null
   created_at: string
   updated_at: string
 }
@@ -241,6 +254,48 @@ export interface ParkingLotItem {
   description: string | null
   parked_at: string      // date string
   reactivated_at: string | null
+  notes: string | null
+  status: ParkingLotStatus
+  category: ParkingLotCategory
+  source: ParkingLotSource
+  review_date: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================
+// Reviews (tables: reviews, review_items)
+// ============================================================
+
+export interface Review {
+  id: string
+  user_id: string
+  workspace_id: string
+  weekly_plan_id: string | null
+  review_date: string
+  review_type: CheckInType
+  summary: string | null
+  energy_rating: number | null
+  focus_rating: number | null
+  completed_at: string | null
+  shipped_text: string | null
+  slipped_text: string | null
+  wrongly_touched_text: string | null
+  below_level_text: string | null
+  next_week_focus_commitment_id: string | null
+  next_week_stop_list_change: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ReviewItem {
+  id: string
+  user_id: string
+  workspace_id: string
+  review_id: string
+  commitment_id: string | null
+  description: string
+  outcome: DailyLogStatus | null
   notes: string | null
   created_at: string
   updated_at: string
