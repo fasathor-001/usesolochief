@@ -46,7 +46,7 @@ export type SwitchRequestDecision = 'approved' | 'blocked' | 'pending'
 
 export type OnboardingTemplate =
   | 'solo_founder' | 'freelancer' | 'student_builder'
-  | 'creator' | 'professional' | 'scratch'
+  | 'creator' | 'professional' | 'personal_family' | 'scratch'
 
 export type CheckInType = 'morning_confirm' | 'midday_check' | 'end_day' | 'friday_review'
 

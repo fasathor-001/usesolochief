@@ -44,23 +44,32 @@ export const TEMPLATE_DEFAULTS: Record<OnboardingTemplate, CommitmentDraft[]> = 
     { title: 'Pending emails / Replies', category: 'admin', stage: 'follow_up', permission_level: 'follow_up_only', priority: 4 },
     { title: 'Ideas / Learning', category: 'idea', stage: 'parked', permission_level: 'parked', priority: 5 },
   ],
+  personal_family: [
+    { title: 'Health & fitness',    category: 'personal', stage: 'main_focus',  permission_level: 'can_interrupt',   priority: 1 },
+    { title: 'Family admin',        category: 'personal', stage: 'active',       permission_level: 'protected_block', priority: 2 },
+    { title: 'Finance follow-ups',  category: 'finance',  stage: 'follow_up',    permission_level: 'follow_up_only',  priority: 3 },
+    { title: 'Personal goals',      category: 'personal', stage: 'active',       permission_level: 'protected_block', priority: 4 },
+    { title: 'Home and errands',    category: 'personal', stage: 'follow_up',    permission_level: 'follow_up_only',  priority: 5 },
+  ],
   scratch: [],
 }
 
 export const TEMPLATE_LABELS: Record<OnboardingTemplate, string> = {
-  solo_founder: 'Solo Founder / Builder',
-  freelancer: 'Freelancer',
+  solo_founder:    'Founder',
+  freelancer:      'Freelancer',
   student_builder: 'Student',
-  creator: 'Creator',
-  professional: 'Professional',
-  scratch: 'Start from Scratch',
+  creator:         'Creator',
+  professional:    'Professional',
+  personal_family: 'Personal / Family',
+  scratch:         'Start from Scratch',
 }
 
 export const TEMPLATE_DESCRIPTIONS: Record<OnboardingTemplate, string> = {
-  solo_founder: 'Building a product, managing a side project, and staying on top of admin.',
-  freelancer: 'Juggling clients, business development, and invoicing.',
+  solo_founder:    'Managing a business, product, or venture — and everything that comes with it.',
+  freelancer:      'Juggling clients, business development, and invoicing.',
   student_builder: 'Assignments, exams, work, personal admin, and anything else you are managing.',
-  creator: 'Producing content, managing brand deals, and growing an audience.',
-  professional: 'Leading work projects while building a side income.',
-  scratch: 'Set up your commitments from scratch — no suggestions.',
+  creator:         'Producing content, managing brand deals, and growing an audience.',
+  professional:    'Leading work projects while building a side income.',
+  personal_family: 'Household responsibilities, health, family, finances, and personal goals.',
+  scratch:         'Set up your commitments from scratch — no suggestions.',
 }
