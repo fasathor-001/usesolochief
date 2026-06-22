@@ -37,9 +37,10 @@ interface SidebarNavProps {
   userEmail: string
   userName: string
   avatarUrl: string | null
+  overdueFollowupsCount?: number
 }
 
-export function SidebarNav({ userEmail, userName, avatarUrl }: SidebarNavProps) {
+export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCount = 0 }: SidebarNavProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [rescueOpen, setRescueOpen] = useState(false)
@@ -74,6 +75,7 @@ export function SidebarNav({ userEmail, userName, avatarUrl }: SidebarNavProps) 
             const isActive = href === '/dashboard'
               ? pathname === '/dashboard'
               : pathname.startsWith(href)
+            const isFollowUps = href === '/dashboard/follow-ups'
 
             return (
               <Link
@@ -89,7 +91,15 @@ export function SidebarNav({ userEmail, userName, avatarUrl }: SidebarNavProps) 
                   size={16}
                   style={{ color: isActive ? 'var(--sc-accent)' : 'rgba(255,255,255,0.45)' }}
                 />
-                {label}
+                <span className="flex-1">{label}</span>
+                {isFollowUps && overdueFollowupsCount > 0 && (
+                  <span
+                    className="ml-auto text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center"
+                    style={{ backgroundColor: '#EF4444', color: '#fff' }}
+                  >
+                    {overdueFollowupsCount > 9 ? '9+' : overdueFollowupsCount}
+                  </span>
+                )}
               </Link>
             )
           })}

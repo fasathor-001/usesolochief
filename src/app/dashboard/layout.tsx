@@ -34,11 +34,20 @@ export default async function DashboardLayout({
     redirect('/onboarding')
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, avatar_url')
-    .eq('user_id', user.id)
-    .single()
+  const today = new Date().toISOString().split('T')[0]
+
+  const [profileRes, overdueRes] = await Promise.all([
+    supabase.from('profiles').select('full_name, avatar_url').eq('user_id', user.id).single(),
+    supabase.from('followups')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .is('deleted_at', null)
+      .eq('status', 'open')
+      .lt('due_date', today),
+  ])
+
+  const profile = profileRes.data
+  const overdueFollowupsCount = overdueRes.count ?? 0
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -46,6 +55,7 @@ export default async function DashboardLayout({
         userEmail={user.email ?? ''}
         userName={profile?.full_name ?? ''}
         avatarUrl={profile?.avatar_url ?? null}
+        overdueFollowupsCount={overdueFollowupsCount}
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto" style={{ backgroundColor: 'var(--sc-background)' }}>
