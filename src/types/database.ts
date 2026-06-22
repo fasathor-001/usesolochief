@@ -384,6 +384,31 @@ export interface UserIntelligenceState {
 }
 
 // ============================================================
+// User preferences
+// ============================================================
+
+export interface UserPreferences {
+  id: string
+  user_id: string
+  checkin_intensity: 'light' | 'moderate' | 'intensive'
+  preferred_channel: 'email' | 'whatsapp' | 'inapp'
+  communication_mode: 'ai_first' | 'on_demand' | 'focused'
+  timezone: string
+  working_day_start: string
+  working_day_end: string
+  quiet_hours_start: string
+  quiet_hours_end: string
+  switch_protection: 'strict' | 'balanced' | 'light'
+  daily_focus_limit: 'one_only' | 'one_plus_override' | 'flexible'
+  ai_interpretation: 'always_confirm' | 'confirm_when_unsure' | 'log_automatically'
+  advice_style: 'direct' | 'gentle' | 'minimal'
+  show_confidence: boolean
+  theme: 'light' | 'dark' | 'system'
+  created_at: string
+  updated_at: string
+}
+
+// ============================================================
 // Utility
 // ============================================================
 
