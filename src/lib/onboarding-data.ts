@@ -55,21 +55,21 @@ export const TEMPLATE_DEFAULTS: Record<OnboardingTemplate, CommitmentDraft[]> = 
 }
 
 export const TEMPLATE_LABELS: Record<OnboardingTemplate, string> = {
-  solo_founder:    'Founder',
-  freelancer:      'Freelancer',
+  solo_founder:    'Founder / Builder',
+  freelancer:      'Freelancer / Consultant',
   student_builder: 'Student',
   creator:         'Creator',
   professional:    'Professional',
   personal_family: 'Personal / Family',
-  scratch:         'Start from Scratch',
+  scratch:         'Start from scratch',
 }
 
 export const TEMPLATE_DESCRIPTIONS: Record<OnboardingTemplate, string> = {
-  solo_founder:    'Managing a business, product, or venture — and everything that comes with it.',
-  freelancer:      'Juggling clients, business development, and invoicing.',
-  student_builder: 'Assignments, exams, work, personal admin, and anything else you are managing.',
-  creator:         'Producing content, managing brand deals, and growing an audience.',
-  professional:    'Managing work projects, deadlines, meetings, and professional responsibilities.',
-  personal_family: 'Household responsibilities, health, family, finances, and personal goals.',
-  scratch:         'Set up your commitments from scratch — no suggestions.',
+  solo_founder:    'Managing a business, project, product, or venture — and everything around it.',
+  freelancer:      'Managing clients, deadlines, proposals, invoices, and follow-ups.',
+  student_builder: 'Managing assignments, exams, work, personal admin, and everything else you are carrying.',
+  creator:         'Managing content, ideas, publishing, brand deals, and audience commitments.',
+  professional:    'Managing work projects, deadlines, meetings, and personal responsibilities.',
+  personal_family: 'Managing home, family, health, finance, errands, and personal responsibilities.',
+  scratch:         'Build your own setup without suggestions.',
 }

@@ -78,7 +78,7 @@ function AuthForm({ mode }: AuthPageProps) {
           Check your email
         </h2>
         <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#64748B', lineHeight: 1.6 }}>
-          We sent a magic link to <strong style={{ color: '#0D0D0D' }}>{email}</strong>.{' '}
+          We sent a secure sign-in link to <strong style={{ color: '#0D0D0D' }}>{email}</strong>.{' '}
           The link expires in 60 minutes — check your spam folder if you do not see it.
         </p>
         <button
@@ -112,8 +112,8 @@ function AuthForm({ mode }: AuthPageProps) {
       </h2>
       <p style={{ margin: '0 0 28px', fontSize: '14px', color: '#64748B', lineHeight: 1.5 }}>
         {isSignup
-          ? 'Enter your email and we will send you a magic link to get started.'
-          : 'Enter your email and we will send you a magic link to sign in.'}
+          ? 'Enter your email and we will send you a secure sign-in link. Start with your commitments — no setup complexity.'
+          : 'Enter your email and we will send you a secure sign-in link.'}
       </p>
 
       <form onSubmit={handleSubmit}>
@@ -261,14 +261,14 @@ export default function AuthPage({ mode }: AuthPageProps) {
             lineHeight: 1.6,
             maxWidth: '420px',
           }}>
-            For anyone managing too many open loops across work and life — regardless of what you do or where you are in life.
+            For anyone managing commitments across work, study, life, and everything in between.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {[
-              'What deserves your attention today',
-              'What can wait until later',
-              'What must not slip through the cracks',
+              'Choose what deserves attention today',
+              'Park what can wait',
+              'Keep follow-ups from slipping',
             ].map(line => (
               <div key={line} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{

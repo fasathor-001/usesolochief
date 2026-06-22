@@ -10,7 +10,7 @@ import { X, Plus } from 'lucide-react'
 type Step = 1 | 2 | 3 | 4
 
 const TEMPLATES: OnboardingTemplate[] = [
-  'solo_founder', 'freelancer', 'student_builder', 'creator', 'professional', 'scratch',
+  'solo_founder', 'freelancer', 'student_builder', 'creator', 'professional', 'personal_family', 'scratch',
 ]
 
 let draftCounter = 0
@@ -97,7 +97,7 @@ export function OnboardingClient() {
     })
   }
 
-  const stepTitles = ['Your Role', 'Commitments', 'Connect WhatsApp', 'This Week']
+  const stepTitles = ['Your setup', 'Commitments', 'Connect WhatsApp', 'This Week']
   const progress = ((step - 1) / 3) * 100
 
   return (
@@ -122,10 +122,10 @@ export function OnboardingClient() {
       {step === 1 && (
         <div>
           <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
-            What best describes you?
+            What are you mostly managing right now?
           </h2>
           <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
-            This sets up your initial commitments. You can change everything later.
+            This helps SoloChief suggest your first commitments. You can change everything later.
           </p>
           <div className="space-y-2 mb-6">
             {TEMPLATES.map((t) => (
