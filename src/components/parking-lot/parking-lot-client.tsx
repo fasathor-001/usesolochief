@@ -157,7 +157,7 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
   return (
     <>
 
-    <div className="sc-content" style={{ maxWidth: 1280 }}>
+    <div className="sc-content sc-page-container">
 
       <PageHeader
         title="Parking Lot"

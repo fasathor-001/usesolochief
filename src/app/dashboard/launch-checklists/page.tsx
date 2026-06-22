@@ -14,7 +14,7 @@ const CHECKLIST_RULES = [
 
 export default function LaunchChecklistsPage() {
   return (
-    <div className="sc-content" style={{ maxWidth: 1280 }}>
+    <div className="sc-content sc-page-container">
 
       <PageHeader
         title="Checklists"

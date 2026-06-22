@@ -266,7 +266,12 @@
 /* ── Content areas ──────────────────────────────────────────────── */
 
 .sc-content { padding: 28px; flex: 1; }
-.sc-content-narrow { max-width: 860px; }
+.sc-content-narrow { max-width: 860px; margin-left: auto; margin-right: auto; }
+
+/* ── Page-width centering containers ────────────────────────────── */
+.sc-page-container        { width: 100%; max-width: 1240px; margin-left: auto; margin-right: auto; }
+.sc-page-container-wide   { width: 100%; max-width: 1320px; margin-left: auto; margin-right: auto; }
+.sc-page-container-narrow { width: 100%; max-width: 920px;  margin-left: auto; margin-right: auto; }
 
 /* Two-column grid: main content + 300px sticky context panel */
 .sc-grid-main {

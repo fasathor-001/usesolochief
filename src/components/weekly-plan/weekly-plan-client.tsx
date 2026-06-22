@@ -141,7 +141,7 @@ export function WeeklyPlanClient({
   return (
     <>
 
-    <div className="sc-content">
+    <div className="sc-content sc-page-container">
       <PageHeader
         title="Weekly Plan"
         subtitle={formatWeekRange(plan.week_start)}

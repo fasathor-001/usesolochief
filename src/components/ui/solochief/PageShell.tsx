@@ -8,7 +8,7 @@ interface PageShellProps {
 
 export function PageShell({ children, narrow, className }: PageShellProps) {
   return (
-    <div className={`sc-content${narrow ? ' sc-content-narrow' : ''}${className ? ` ${className}` : ''}`}>
+    <div className={`sc-content ${narrow ? 'sc-page-container-narrow' : 'sc-page-container'}${className ? ` ${className}` : ''}`}>
       {children}
     </div>
   )

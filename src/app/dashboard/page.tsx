@@ -115,7 +115,7 @@ export default async function CommandCentrePage() {
     <>
 
       {/* Main content */}
-      <div className="sc-content">
+      <div className="sc-content sc-page-container">
 
         <PageHeader
           title={greetingLabel(firstName)}

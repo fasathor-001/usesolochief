@@ -154,7 +154,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="sc-content">
+    <div className="sc-content sc-page-container">
       <PageHeader title="Settings" subtitle="Manage how SoloChief works with you." />
 
       <div className="sc-settings-layout">

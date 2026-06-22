@@ -88,7 +88,7 @@ export function ReviewClient({
 
     return (
       <>
-        <div className="sc-content sc-content-narrow">
+        <div className="sc-content sc-page-container-narrow">
           <PageHeader title="Friday Review" subtitle={`Week of ${weekRange}`} />
 
           {/* Complete banner */}
@@ -250,7 +250,7 @@ export function ReviewClient({
   return (
     <>
 
-    <div className="sc-content sc-content-narrow">
+    <div className="sc-content sc-page-container-narrow">
       <PageHeader title="Friday Review" subtitle={`Week of ${weekRange} · Close the loop.`} />
 
       <div className="space-y-8">

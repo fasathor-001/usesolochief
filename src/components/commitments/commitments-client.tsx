@@ -88,7 +88,7 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
 
   return (
     <>
-      <div className="sc-content" style={{ maxWidth: 1280 }}>
+      <div className="sc-content sc-page-container">
 
         <PageHeader
           title="Commitments"

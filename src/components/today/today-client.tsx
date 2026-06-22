@@ -122,7 +122,7 @@ export function TodayClient({
     <>
 
       {/* Two-column layout */}
-      <div className="sc-content">
+      <div className="sc-content sc-page-container">
         <PageHeader title="Today" subtitle={todayLabel()} />
         <div className="sc-grid-main">
 

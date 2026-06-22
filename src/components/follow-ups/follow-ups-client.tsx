@@ -183,7 +183,7 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
   return (
     <>
 
-    <div className="sc-content" style={{ maxWidth: 1280 }}>
+    <div className="sc-content sc-page-container">
       <PageHeader
         title="Follow-ups"
         subtitle="Commitments waiting on someone or something."
