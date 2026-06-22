@@ -69,7 +69,7 @@ export const TEMPLATE_DESCRIPTIONS: Record<OnboardingTemplate, string> = {
   freelancer:      'Juggling clients, business development, and invoicing.',
   student_builder: 'Assignments, exams, work, personal admin, and anything else you are managing.',
   creator:         'Producing content, managing brand deals, and growing an audience.',
-  professional:    'Leading work projects while building a side income.',
+  professional:    'Managing work projects, deadlines, meetings, and professional responsibilities.',
   personal_family: 'Household responsibilities, health, family, finances, and personal goals.',
   scratch:         'Set up your commitments from scratch — no suggestions.',
 }
