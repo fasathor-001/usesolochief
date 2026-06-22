@@ -23,8 +23,12 @@ interface DraftItem extends CommitmentDraft {
   draftId: string
 }
 
-export function OnboardingClient() {
-  const [step, setStep] = useState<Step>(1)
+interface OnboardingClientProps {
+  initialStep?: Step
+}
+
+export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
+  const [step, setStep] = useState<Step>(initialStep)
   const [template, setTemplate] = useState<OnboardingTemplate>('solo_founder')
   const [fullName, setFullName] = useState('')
   const [commitments, setCommitments] = useState<DraftItem[]>(
@@ -73,9 +77,27 @@ export function OnboardingClient() {
     setNewCommitmentTitle('')
   }
 
+  function handleStep1Next() {
+    if (!fullName.trim()) {
+      setError('Please enter your name. SoloChief uses this to personalise your experience.')
+      return
+    }
+    setError(null)
+    setStep(2)
+  }
+
+  function handleStep2Next() {
+    if (commitments.length === 0) {
+      setError('Add at least one commitment to continue. You can change these later.')
+      return
+    }
+    setError(null)
+    setStep(3)
+  }
+
   function handleComplete() {
     if (!commitments[mainFocusIndex]) {
-      setError('Please select your main focus commitment')
+      setError('Select your main focus for this week. You can change this every Monday.')
       return
     }
     setError(null)
@@ -150,7 +172,7 @@ export function OnboardingClient() {
           </div>
           <div className="mb-6">
             <label className="block text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>
-              Your name (optional)
+              Your name
             </label>
             <input
               type="text"
@@ -165,9 +187,12 @@ export function OnboardingClient() {
               }}
             />
           </div>
+          {error && (
+            <p className="text-sm mb-4" style={{ color: 'var(--sc-error)' }}>{error}</p>
+          )}
           <button
             type="button"
-            onClick={() => setStep(2)}
+            onClick={handleStep1Next}
             className="w-full py-2.5 rounded-lg font-medium text-sm transition-colors"
             style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
           >
@@ -244,10 +269,13 @@ export function OnboardingClient() {
               <Plus size={16} />
             </button>
           </div>
+          {error && (
+            <p className="text-sm mb-4" style={{ color: 'var(--sc-error)' }}>{error}</p>
+          )}
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setStep(1)}
+              onClick={() => { setStep(1); setError(null) }}
               className="flex-1 py-2.5 rounded-lg font-medium text-sm border transition-colors"
               style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
             >
@@ -255,7 +283,7 @@ export function OnboardingClient() {
             </button>
             <button
               type="button"
-              onClick={() => setStep(3)}
+              onClick={handleStep2Next}
               className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
               style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
             >
@@ -293,7 +321,7 @@ export function OnboardingClient() {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setStep(2)}
+              onClick={() => { setStep(2); setError(null) }}
               className="flex-1 py-2.5 rounded-lg font-medium text-sm border transition-colors"
               style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
             >
@@ -401,7 +429,7 @@ export function OnboardingClient() {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setStep(3)}
+              onClick={() => { setStep(3); setError(null) }}
               className="flex-1 py-2.5 rounded-lg font-medium text-sm border transition-colors"
               style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
               disabled={isPending}

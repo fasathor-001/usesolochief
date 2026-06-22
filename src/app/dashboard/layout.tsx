@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getOrCreateWorkspace } from '@/lib/actions/workspace'
+import { getWeekStart } from '@/lib/utils/date-utils'
 import { SidebarNav } from '@/components/sidebar-nav'
 import { DashboardTopbar } from '@/components/dashboard/DashboardTopbar'
 import { InstallPrompt } from '@/components/pwa/InstallPrompt'
@@ -24,28 +25,47 @@ export default async function DashboardLayout({
   // Auto-create workspace on first login (D-015)
   await getOrCreateWorkspace()
 
-  // Gate on commitments — zero means the user has not been through onboarding.
-  const { count } = await supabase
-    .from('commitments')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .is('deleted_at', null)
-
-  if (count === 0) {
-    redirect('/onboarding')
-  }
-
   const today = new Date().toISOString().split('T')[0]
+  const weekStart = getWeekStart()
 
-  const [profileRes, overdueRes] = await Promise.all([
-    supabase.from('profiles').select('full_name, avatar_url').eq('user_id', user.id).single(),
-    supabase.from('followups')
+  const [commitmentRes, profileRes, weeklyPlanRes, overdueRes] = await Promise.all([
+    supabase
+      .from('commitments')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .is('deleted_at', null),
+    supabase
+      .from('profiles')
+      .select('full_name, avatar_url, onboarded_at')
+      .eq('user_id', user.id)
+      .single(),
+    supabase
+      .from('weekly_plans')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('week_start', weekStart),
+    supabase
+      .from('followups')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
       .is('deleted_at', null)
       .eq('status', 'open')
       .lt('due_date', today),
   ])
+
+  const commitmentCount = commitmentRes.count ?? 0
+  const hasName = !!(profileRes.data?.full_name?.trim())
+  const hasWeeklyPlan = (weeklyPlanRes.count ?? 0) > 0
+
+  // Gate: must have name and at least one commitment to enter dashboard
+  if (commitmentCount === 0 || !hasName) {
+    redirect('/onboarding')
+  }
+
+  // Resume: partial onboarding — has commitments but no weekly plan yet
+  if (!profileRes.data?.onboarded_at && !hasWeeklyPlan) {
+    redirect('/onboarding?step=3')
+  }
 
   const profile = profileRes.data
   const overdueFollowupsCount = overdueRes.count ?? 0
