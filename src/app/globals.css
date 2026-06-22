@@ -878,3 +878,29 @@
   }
   .sc-settings-nav-item { flex-shrink: 0; white-space: nowrap; }
 }
+
+/* ── PWA install prompt ─────────────────────────────────────────────── */
+
+.sc-install-prompt {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 60;
+  max-width: 360px;
+  width: calc(100% - 32px);
+}
+
+.sc-install-prompt-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--sc-surface);
+  border: 0.5px solid var(--sc-border);
+  border-radius: var(--sc-r-lg);
+  padding: 14px 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+}
+
+@media (max-width: 768px) {
+  .sc-install-prompt { bottom: 16px; right: 16px; }
+}

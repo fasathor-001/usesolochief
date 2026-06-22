@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getOrCreateWorkspace } from '@/lib/actions/workspace'
 import { SidebarNav } from '@/components/sidebar-nav'
 import { DashboardTopbar } from '@/components/dashboard/DashboardTopbar'
+import { InstallPrompt } from '@/components/pwa/InstallPrompt'
 
 export default async function DashboardLayout({
   children,
@@ -60,6 +61,7 @@ export default async function DashboardLayout({
       <div className="sc-main">
         <DashboardTopbar />
         {children}
+        <InstallPrompt />
       </div>
     </div>
   )
