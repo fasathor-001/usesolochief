@@ -55,7 +55,7 @@ export const TEMPLATE_DEFAULTS: Record<OnboardingTemplate, CommitmentDraft[]> = 
 }
 
 export const TEMPLATE_LABELS: Record<OnboardingTemplate, string> = {
-  solo_founder:    'Founder / Builder',
+  solo_founder:    'Business / Project owner',
   freelancer:      'Freelancer / Consultant',
   student_builder: 'Student',
   creator:         'Creator',
