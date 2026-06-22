@@ -14,11 +14,12 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error && data.session) {
+      const { data: { user } } = await supabase.auth.getUser()
+
       const isRecovery =
         type === 'recovery' ||
-        data.session.user?.recovery_sent_at != null ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (data.session as any).amr?.some((a: any) => a.method === 'recovery')
+        (user?.recovery_sent_at != null &&
+          new Date(user.recovery_sent_at) > new Date(Date.now() - 60 * 60 * 1000))
 
       if (isRecovery) {
         return NextResponse.redirect(`${appUrl}/auth/reset-password`)
