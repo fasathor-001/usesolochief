@@ -137,23 +137,19 @@ export function WeeklyPlanClient({
   const filledOutcomes = outcomeTexts.filter((t) => t.trim()).length
 
   return (
-    <div className="p-6 max-w-2xl">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-xl font-bold mb-0.5" style={{ color: 'var(--sc-text)' }}>
-            Monday Command Centre
-          </h1>
-          <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
-            {formatWeekRange(plan.week_start)}
-          </p>
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Weekly Plan</span>
+          <span className="sc-topbar-sub">{formatWeekRange(plan.week_start)}</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="sc-topbar-actions">
           <span
-            className="px-2.5 py-1 rounded-full text-xs font-medium"
+            className="sc-badge"
             style={{
-              backgroundColor: locked ? 'rgba(0,194,168,0.12)' : 'rgba(59,130,246,0.12)',
-              color: locked ? 'var(--sc-accent)' : '#3B82F6',
+              backgroundColor: locked ? 'var(--sc-teal-10)' : 'rgba(59,130,246,0.10)',
+              color: locked ? '#007a6b' : '#185FA5',
             }}
           >
             {locked ? 'Active' : 'Draft'}
@@ -163,15 +159,16 @@ export function WeeklyPlanClient({
               type="button"
               onClick={handleLock}
               disabled={isLocking || isSaving}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-              style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+              className="sc-btn sc-btn-primary sc-btn-sm"
             >
               <Lock size={13} />
-              {isLocking ? 'Locking...' : 'Lock Plan'}
+              {isLocking ? 'Locking...' : 'Lock plan'}
             </button>
           )}
         </div>
       </div>
+
+    <div className="sc-content sc-content-narrow">
 
       <div className="space-y-8">
         {/* Section 1 — Focus */}
@@ -396,14 +393,14 @@ export function WeeklyPlanClient({
               type="button"
               onClick={saveDraft}
               disabled={isSaving}
-              className="px-4 py-2 rounded-lg border text-sm font-medium transition-colors disabled:opacity-50"
-              style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
+              className="sc-btn sc-btn-ghost"
             >
-              {isSaving ? 'Saving...' : 'Save Draft'}
+              {isSaving ? 'Saving...' : 'Save draft'}
             </button>
           </div>
         )}
       </div>
     </div>
+    </>
   )
 }

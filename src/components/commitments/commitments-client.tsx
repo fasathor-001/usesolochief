@@ -73,23 +73,28 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
   }, [filtered])
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      {/* Page header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-[var(--sc-text)]">Commitments</h1>
-          <p className="text-sm text-[var(--sc-muted)] mt-0.5">
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Commitments</span>
+          <span className="sc-topbar-sub">
             {commitments.length} {commitments.length === 1 ? 'commitment' : 'commitments'} across all stages
-          </p>
+          </span>
         </div>
-        <Button
-          onClick={() => setAddOpen(true)}
-          style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-        >
-          <Plus className="h-4 w-4 mr-1.5" />
-          Add Commitment
-        </Button>
+        <div className="sc-topbar-actions">
+          <button
+            type="button"
+            onClick={() => setAddOpen(true)}
+            className="sc-btn sc-btn-primary sc-btn-sm"
+          >
+            <Plus size={14} />
+            Add commitment
+          </button>
+        </div>
       </div>
+
+    <div className="sc-content" style={{ maxWidth: 1100 }}>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
@@ -214,5 +219,6 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
         onClose={() => setEditTarget(null)}
       />
     </div>
+    </>
   )
 }

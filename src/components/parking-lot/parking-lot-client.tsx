@@ -146,41 +146,36 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
   }
 
   return (
-    <div className="p-6 max-w-2xl">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--sc-text)' }}>
-            Parking Lot
-          </h1>
-          <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
-            Ideas and distractions captured safely. They are not lost. They are waiting.
-          </p>
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Parking Lot</span>
+          <span className="sc-topbar-sub">Ideas captured safely. Not lost — waiting.</span>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shrink-0"
-          style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-        >
-          <Plus size={14} />
-          Park Idea
-        </button>
+        <div className="sc-topbar-actions">
+          <button
+            type="button"
+            onClick={() => setShowAdd(true)}
+            className="sc-btn sc-btn-primary sc-btn-sm"
+          >
+            <Plus size={14} />
+            Park idea
+          </button>
+        </div>
       </div>
 
-      {/* Stats bar */}
-      <div
-        className="flex gap-6 p-4 rounded-xl mb-8"
-        style={{ backgroundColor: 'var(--sc-surface)', border: '1px solid var(--sc-border)' }}
-      >
+    <div className="sc-content sc-content-narrow">
+      {/* Stats */}
+      <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
         {[
           { label: 'ideas parked', value: totalParked },
           { label: 'reviewed this week', value: reviewedThisWeek },
           { label: 'cleared this month', value: clearedThisMonth },
         ].map(({ label, value }) => (
-          <div key={label}>
-            <span className="text-xl font-bold" style={{ color: 'var(--sc-text)' }}>{value}</span>
-            <span className="text-xs ml-1.5" style={{ color: 'var(--sc-muted)' }}>{label}</span>
+          <div key={label} className="sc-stat">
+            <p className="sc-stat-value">{value}</p>
+            <p className="sc-stat-label">{label}</p>
           </div>
         ))}
       </div>
@@ -343,6 +338,8 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
         </DialogContent>
       </Dialog>
 
+    </div>
+
       {/* Add Idea Modal */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent className="max-w-md" style={{ backgroundColor: 'var(--sc-background)', border: '1px solid var(--sc-border)' }} showCloseButton>
@@ -427,6 +424,6 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }

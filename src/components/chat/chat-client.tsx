@@ -104,18 +104,20 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
   }
 
   return (
-    <div className="flex flex-col h-full" style={{ maxHeight: 'calc(100vh - 0px)' }}>
-      {/* Header */}
-      <div
-        className="px-6 py-5 border-b shrink-0"
-        style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-background)' }}
-      >
-        <h1 className="text-xl font-bold mb-0.5" style={{ color: 'var(--sc-text)' }}>AI Chat</h1>
-        <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>Your Chief of Staff is listening.</p>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: 0, minHeight: '100vh' }}>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">AI Chat</span>
+          <span className="sc-topbar-sub">Your Chief of Staff is listening.</span>
+        </div>
+        <div className="sc-topbar-actions">
+          <MessageCircle size={16} style={{ color: 'var(--sc-muted)' }} />
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center gap-3 py-16">
             <MessageCircle size={36} style={{ color: 'var(--sc-muted)' }} />
@@ -181,8 +183,7 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
 
       {/* Input */}
       <div
-        className="px-6 py-4 border-t shrink-0"
-        style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-background)' }}
+        style={{ padding: '12px 28px 20px', borderTop: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', flexShrink: 0 }}
       >
         <div
           className="flex gap-3 items-end rounded-xl border p-3"

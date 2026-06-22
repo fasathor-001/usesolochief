@@ -3,7 +3,6 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -44,18 +43,41 @@ function LoginContent() {
 
   if (sent) {
     return (
-      <div className="text-center">
-        <div className="text-4xl mb-4">✉️</div>
-        <h2 className="text-xl font-semibold mb-2" style={{ color: 'var(--sc-primary)' }}>
+      <div style={{ textAlign: 'center' }}>
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            backgroundColor: 'var(--sc-teal-10)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 16px',
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sc-teal)" strokeWidth="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <h2 style={{ fontSize: 17, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 8 }}>
           Check your email
         </h2>
-        <p style={{ color: 'var(--sc-muted)' }}>
-          We&apos;ve sent a magic link to <strong>{email}</strong>. Click the link to sign in.
+        <p style={{ fontSize: 13, color: 'var(--sc-muted)', lineHeight: 1.55 }}>
+          A magic link was sent to <strong style={{ color: 'var(--sc-text)' }}>{email}</strong>. Click the link to sign in.
         </p>
         <button
-          className="mt-4 text-sm underline"
-          style={{ color: 'var(--sc-accent)' }}
+          type="button"
           onClick={() => setSent(false)}
+          style={{
+            marginTop: 16,
+            fontSize: 13,
+            color: 'var(--sc-teal)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+          }}
         >
           Use a different email
         </button>
@@ -65,43 +87,36 @@ function LoginContent() {
 
   return (
     <>
-      <h2 className="text-xl font-semibold mb-6" style={{ color: 'var(--sc-primary)' }}>
+      <h2 style={{ fontSize: 17, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 20 }}>
         Sign in
       </h2>
-      <form onSubmit={handleMagicLink} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>
-            Email address
-          </label>
+      <form onSubmit={handleMagicLink}>
+        <div className="sc-field">
+          <label className="sc-label">Email address</label>
           <input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com"
             required
-            className="w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2"
-            style={{
-              borderColor: 'var(--sc-border)',
-              color: 'var(--sc-text)',
-              '--tw-ring-color': 'var(--sc-accent)',
-            } as React.CSSProperties}
+            className="sc-input"
           />
         </div>
         {error && (
-          <p className="text-sm" style={{ color: 'var(--sc-error)' }}>{error}</p>
+          <p style={{ fontSize: 12, color: 'var(--sc-error)', marginBottom: 12 }}>{error}</p>
         )}
-        <Button
+        <button
           type="submit"
           disabled={loading || !email}
-          className="w-full text-white font-medium py-2"
-          style={{ backgroundColor: 'var(--sc-accent)', borderColor: 'var(--sc-accent)' }}
+          className="sc-btn sc-btn-primary"
+          style={{ width: '100%', justifyContent: 'center', marginTop: 4 }}
         >
-          {loading ? 'Sending link…' : 'Send magic link'}
-        </Button>
+          {loading ? 'Sending link...' : 'Send magic link'}
+        </button>
       </form>
-      <p className="mt-4 text-center text-sm" style={{ color: 'var(--sc-muted)' }}>
-        Don&apos;t have an account?{' '}
-        <Link href="/auth/signup" style={{ color: 'var(--sc-accent)' }} className="font-medium">
+      <p style={{ marginTop: 16, textAlign: 'center', fontSize: 13, color: 'var(--sc-muted)' }}>
+        No account?{' '}
+        <Link href="/auth/signup" style={{ color: 'var(--sc-teal)', fontWeight: 500 }}>
           Sign up
         </Link>
       </p>
@@ -111,17 +126,33 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--sc-background)' }}>
-      <div className="w-full max-w-md px-6">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--sc-primary)' }}>
-            SoloChief
-          </h1>
-          <p style={{ color: 'var(--sc-muted)' }}>Your command centre for getting things done</p>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'var(--sc-midnight)',
+        padding: '24px 16px',
+      }}
+    >
+      <div style={{ width: '100%', maxWidth: 400 }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <p style={{ fontSize: 16, fontWeight: 500, color: '#fff', letterSpacing: '-0.2px' }}>
+            SoloChief <span style={{ color: 'var(--sc-teal)' }}>AI</span>
+          </p>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 4 }}>
+            Your command centre for getting things done
+          </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border p-8" style={{ borderColor: 'var(--sc-border)' }}>
-          <Suspense fallback={<div className="h-40" />}>
+        {/* Card */}
+        <div
+          className="sc-card"
+          style={{ borderRadius: 'var(--sc-radius-lg)', padding: '28px 24px' }}
+        >
+          <Suspense fallback={<div style={{ height: 160 }} />}>
             <LoginContent />
           </Suspense>
         </div>

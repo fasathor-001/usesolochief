@@ -81,34 +81,42 @@ export function ReviewClient({
 
   if (alreadyComplete) {
     return (
-      <div className="p-6 max-w-2xl">
-        <div className="flex items-center gap-3 mb-4">
-          <CheckCircle size={20} style={{ color: 'var(--sc-accent)' }} />
-          <h1 className="text-xl font-bold" style={{ color: 'var(--sc-text)' }}>Friday Review</h1>
+      <>
+        <div className="sc-topbar">
+          <div className="sc-topbar-left">
+            <span className="sc-topbar-title">Friday Review</span>
+            <span className="sc-topbar-sub">Week of {weekRange}</span>
+          </div>
         </div>
-        <div
-          className="p-6 rounded-xl border"
-          style={{ borderColor: 'rgba(0,194,168,0.3)', backgroundColor: 'var(--sc-surface)' }}
-        >
-          <p className="text-sm font-medium mb-1" style={{ color: 'var(--sc-accent)' }}>Week reviewed ✓</p>
-          <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
-            You have completed the review for {weekRange}. Monday plan is ready.
-          </p>
+        <div className="sc-content sc-content-narrow">
+          <div
+            className="sc-card"
+            style={{ borderColor: 'rgba(0,194,168,0.25)' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <CheckCircle size={16} style={{ color: 'var(--sc-teal)' }} />
+              <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Week reviewed</p>
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--sc-muted)' }}>
+              Review complete for {weekRange}. Monday plan is ready.
+            </p>
+          </div>
         </div>
-      </div>
+      </>
     )
   }
 
   return (
-    <div className="p-6 max-w-2xl">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-xl font-bold mb-0.5" style={{ color: 'var(--sc-text)' }}>Friday Review</h1>
-        <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>Week of {weekRange}</p>
-        <p className="text-xs mt-1" style={{ color: 'var(--sc-muted)' }}>
-          Close the loop. What moved? What slipped? What needs next week?
-        </p>
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Friday Review</span>
+          <span className="sc-topbar-sub">Week of {weekRange} · Close the loop.</span>
+        </div>
       </div>
+
+    <div className="sc-content sc-content-narrow">
 
       <div className="space-y-8">
         {/* Weekly outcomes summary */}
@@ -337,6 +345,7 @@ export function ReviewClient({
         </div>
       </div>
     </div>
+    </>
   )
 }
 

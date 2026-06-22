@@ -173,46 +173,39 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
   }
 
   return (
-    <div className="p-6 max-w-2xl">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--sc-text)' }}>
-            Follow-ups
-          </h1>
-          <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
-            Things waiting on someone or something. None of these should slip.
-          </p>
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Follow-ups</span>
+          <span className="sc-topbar-sub">Things waiting on someone or something.</span>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium shrink-0"
-          style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-        >
-          <Plus size={14} />
-          Add Follow-up
-        </button>
+        <div className="sc-topbar-actions">
+          <button
+            type="button"
+            onClick={() => setShowAdd(true)}
+            className="sc-btn sc-btn-primary sc-btn-sm"
+          >
+            <Plus size={14} />
+            Add follow-up
+          </button>
+        </div>
       </div>
 
-      {/* Stats bar */}
-      <div
-        className="flex gap-6 p-4 rounded-xl mb-8"
-        style={{ backgroundColor: 'var(--sc-surface)', border: '1px solid var(--sc-border)' }}
-      >
-        <div>
-          <span className="text-xl font-bold" style={{ color: overdueCount > 0 ? '#EF4444' : 'var(--sc-text)' }}>
-            {overdueCount}
-          </span>
-          <span className="text-xs ml-1.5" style={{ color: 'var(--sc-muted)' }}>overdue</span>
+    <div className="sc-content sc-content-narrow">
+      {/* Stats */}
+      <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
+        <div className="sc-stat">
+          <p className={`sc-stat-value${overdueCount > 0 ? ' danger' : ''}`}>{overdueCount}</p>
+          <p className="sc-stat-label">overdue</p>
         </div>
-        <div>
-          <span className="text-xl font-bold" style={{ color: 'var(--sc-text)' }}>{dueThisWeekCount}</span>
-          <span className="text-xs ml-1.5" style={{ color: 'var(--sc-muted)' }}>due this week</span>
+        <div className="sc-stat">
+          <p className="sc-stat-value">{dueThisWeekCount}</p>
+          <p className="sc-stat-label">due this week</p>
         </div>
-        <div>
-          <span className="text-xl font-bold" style={{ color: 'var(--sc-text)' }}>{completedThisMonth}</span>
-          <span className="text-xs ml-1.5" style={{ color: 'var(--sc-muted)' }}>completed this month</span>
+        <div className="sc-stat">
+          <p className="sc-stat-value">{completedThisMonth}</p>
+          <p className="sc-stat-label">completed this month</p>
         </div>
       </div>
 
@@ -422,6 +415,8 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
         </DialogContent>
       </Dialog>
 
+    </div>
+
       {/* Snooze Modal */}
       <Dialog open={!!showSnooze} onOpenChange={open => { if (!open) setShowSnooze(null) }}>
         <DialogContent
@@ -450,6 +445,6 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
           </button>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }

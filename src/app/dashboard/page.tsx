@@ -2,16 +2,8 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getWeekStart } from '@/lib/utils/date-utils'
 import { getDataSufficiency } from '@/lib/intelligence/intelligence-service'
-import { AlertCircle, Archive, CheckCircle, Clock } from 'lucide-react'
+import { Archive, CheckCircle, Clock, LayoutDashboard, RotateCcw } from 'lucide-react'
 import type { Commitment, WeeklyPlan, WeeklyOutcome, DailyLog, Followup, ParkingLotItem } from '@/types/database'
-
-type AttentionItem = {
-  type: string
-  title: string
-  detail: string
-  href: string
-  colour: string
-}
 
 function todayString(): string {
   const d = new Date()
@@ -19,15 +11,21 @@ function todayString(): string {
 }
 
 function daysSince(dateStr: string): number {
-  const d = new Date(dateStr + 'T12:00:00Z')
-  return Math.floor((new Date().getTime() - d.getTime()) / 86400000)
+  return Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 86400000)
 }
 
 function greetingLabel(): string {
   const h = new Date().getHours()
-  if (h < 12) return 'Good morning'
-  if (h < 17) return 'Good afternoon'
-  return 'Good evening'
+  if (h < 12) return 'Good morning.'
+  if (h < 17) return 'Good afternoon.'
+  return 'Good evening.'
+}
+
+function weekNumber(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
 }
 
 export default async function CommandCentrePage() {
@@ -37,16 +35,15 @@ export default async function CommandCentrePage() {
 
   const weekStart = getWeekStart()
   const today = todayString()
+  const weekNum = weekNumber(new Date())
 
   const [
-    profileRes,
     planRes,
     commitmentsRes,
     followupsRes,
     parkingRes,
     sufficiency,
   ] = await Promise.all([
-    supabase.from('profiles').select('full_name').eq('user_id', user.id).maybeSingle(),
     supabase.from('weekly_plans').select('*').eq('user_id', user.id).eq('week_start', weekStart).maybeSingle(),
     supabase.from('commitments').select('*').eq('user_id', user.id).is('deleted_at', null).order('priority'),
     supabase.from('followups').select('*').eq('user_id', user.id).is('deleted_at', null).not('status', 'in', '(completed,cancelled)').order('due_date'),
@@ -58,7 +55,6 @@ export default async function CommandCentrePage() {
   const commitments = (commitmentsRes.data ?? []) as Commitment[]
   const followups = (followupsRes.data ?? []) as Followup[]
   const parkingItems = (parkingRes.data ?? []) as ParkingLotItem[]
-  const firstName = profileRes.data?.full_name?.split(' ')[0] ?? ''
 
   let focusCommitment: Commitment | null = null
   let todayLog: DailyLog | null = null
@@ -70,8 +66,7 @@ export default async function CommandCentrePage() {
 
   if (focusCommitment) {
     const { data: log } = await supabase
-      .from('daily_logs')
-      .select('*')
+      .from('daily_logs').select('*')
       .eq('commitment_id', focusCommitment.id)
       .eq('log_date', today)
       .maybeSingle()
@@ -80,240 +75,233 @@ export default async function CommandCentrePage() {
 
   if (plan) {
     const { data: outcomesData } = await supabase
-      .from('weekly_outcomes')
-      .select('*')
-      .eq('weekly_plan_id', plan.id)
+      .from('weekly_outcomes').select('*').eq('weekly_plan_id', plan.id)
     outcomes = (outcomesData ?? []) as WeeklyOutcome[]
   }
 
-  const outcomesComplete = outcomes.filter(o => o.achieved === true).length
   const overdueFollowups = followups.filter(f => f.due_date && f.due_date < today)
-  const weekEndDate = (() => {
-    const d = new Date(weekStart + 'T12:00:00Z')
-    d.setUTCDate(d.getUTCDate() + 6)
-    return d.toISOString().split('T')[0]
-  })()
-  const followupsDueThisWeek = followups.filter(f => f.due_date && f.due_date >= today && f.due_date <= weekEndDate)
+  const dueToday = followups.filter(f => f.due_date === today)
+  const outcomesComplete = outcomes.filter(o => o.achieved === true).length
 
-  // Build attention items
+  // Attention items
+  type AttentionItem = { dot: string; text: string; sub: string; href: string }
   const attentionItems: AttentionItem[] = []
 
   for (const f of overdueFollowups.slice(0, 3)) {
     const days = daysSince(f.due_date!)
-    attentionItems.push({
-      type: 'overdue_followup',
-      title: f.title,
-      detail: `${days}d overdue`,
-      href: '/dashboard/follow-ups',
-      colour: '#EF4444',
-    })
+    attentionItems.push({ dot: '#EF4444', text: f.title, sub: `${days}d overdue`, href: '/dashboard/follow-ups' })
   }
 
-  // Parking lot items older than 14 days
   for (const item of parkingItems.filter(p => daysSince(p.parked_at) > 14).slice(0, 2)) {
-    attentionItems.push({
-      type: 'old_parking',
-      title: item.title,
-      detail: `${daysSince(item.parked_at)}d in parking lot`,
-      href: '/dashboard/parking-lot',
-      colour: '#F59E0B',
-    })
+    attentionItems.push({ dot: '#F59E0B', text: item.title, sub: `${daysSince(item.parked_at)}d in parking lot`, href: '/dashboard/parking-lot' })
   }
 
-  // Launch checklist commitments with no recent activity
   const staleLaunch = commitments
     .filter(c => c.stage === 'launch_checklist' && (!c.last_touched_at || daysSince(c.last_touched_at.split('T')[0]) > 7))
     .slice(0, 2)
   for (const c of staleLaunch) {
-    attentionItems.push({
-      type: 'inactive_checklist',
-      title: c.title,
-      detail: 'No recent activity on launch checklist',
-      href: '/dashboard/launch-checklists',
-      colour: '#8B5CF6',
-    })
+    attentionItems.push({ dot: '#8B5CF6', text: c.title, sub: 'No recent activity on launch checklist', href: '/dashboard/launch-checklists' })
   }
 
-  const noPlan = !plan
-  const noFocus = !focusCommitment
+  const statusLabel: Record<string, string> = {
+    in_progress: 'In progress', done: 'Done', partial: 'Partial', blocked: 'Blocked', slipped: 'Slipped',
+  }
 
   return (
-    <div className="p-6 max-w-2xl">
-      {/* Greeting */}
-      <div className="mb-8">
-        <h1 className="text-xl font-bold mb-0.5" style={{ color: 'var(--sc-text)' }}>
-          {greetingLabel()}{firstName ? `, ${firstName}` : ''}.
-        </h1>
-        <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>Command Centre</p>
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Command Centre</span>
+          <span className="sc-topbar-sub">
+            {plan ? `Week ${weekNum} is active.` : `Week ${weekNum} — no plan set.`}
+          </span>
+        </div>
+        <div className="sc-topbar-actions">
+          <LayoutDashboard size={16} style={{ color: 'var(--sc-muted)' }} />
+        </div>
       </div>
 
-      {/* No plan CTA */}
-      {noPlan && (
-        <Link
-          href="/dashboard/weekly-plan"
-          className="block p-4 rounded-xl mb-6 border transition-all hover:border-[var(--sc-accent)]"
-          style={{ borderColor: 'rgba(0,194,168,0.3)', backgroundColor: 'rgba(0,194,168,0.06)' }}
-        >
-          <p className="text-sm font-medium" style={{ color: 'var(--sc-accent)' }}>
-            Set this week&apos;s plan →
+      {/* Content */}
+      <div className="sc-content sc-content-narrow">
+        {/* Greeting */}
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.3px', lineHeight: 1.2 }}>
+            {greetingLabel()}
+          </h1>
+          <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginTop: 4 }}>
+            {plan
+              ? `Week ${weekNum} is active. Here is what needs attention today.`
+              : 'No weekly plan set. Start by defining your focus for the week.'}
           </p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--sc-muted)' }}>
-            No weekly plan found. Start with your focus and 3 outcomes.
-          </p>
-        </Link>
-      )}
+        </div>
 
-      <div className="space-y-6">
-        {/* Section 1 — Today's snapshot */}
-        <section
-          className="p-5 rounded-xl border"
-          style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--sc-muted)' }}>
-            TODAY
-          </p>
-          {noFocus ? (
-            <Link
-              href="/dashboard/weekly-plan"
-              className="text-sm font-medium"
-              style={{ color: 'var(--sc-accent)' }}
-            >
-              What is today&apos;s focus? →
-            </Link>
-          ) : (
-            <div>
-              <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--sc-text)' }}>
-                {focusCommitment!.title}{' '}is today&apos;s focus
-              </p>
-              {todayLog?.notes ? (
-                <p className="text-xs mb-2" style={{ color: 'var(--sc-muted)' }}>
-                  One outcome: {todayLog.notes}
-                </p>
-              ) : (
-                <Link
-                  href="/dashboard/today"
-                  className="text-xs"
-                  style={{ color: 'var(--sc-accent)' }}
-                >
-                  Set today&apos;s outcome →
-                </Link>
-              )}
-              {todayLog && (
-                <span
-                  className="inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-medium"
-                  style={{
-                    backgroundColor: todayLog.status === 'done' ? 'rgba(0,194,168,0.12)' : 'rgba(59,130,246,0.12)',
-                    color: todayLog.status === 'done' ? 'var(--sc-accent)' : '#3B82F6',
-                  }}
-                >
-                  {todayLog.status.replace('_', ' ')}
-                </span>
-              )}
-            </div>
-          )}
-        </section>
-
-        {/* Section 2 — This week at a glance */}
-        <section
-          className="p-5 rounded-xl border"
-          style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--sc-muted)' }}>
-            THIS WEEK
-          </p>
-          <div className="grid grid-cols-2 gap-y-3 gap-x-6">
-            <Stat label="outcomes complete" value={`${outcomesComplete} / ${outcomes.length || 3}`} />
-            <Stat label="follow-ups due" value={String(followupsDueThisWeek.length)} />
-            <Stat
-              label="overdue"
-              value={String(overdueFollowups.length)}
-              colour={overdueFollowups.length > 0 ? '#EF4444' : undefined}
-            />
-            <Stat label="ideas parked" value={String(parkingItems.length)} />
-          </div>
-        </section>
-
-        {/* Section 3 — Needs attention */}
-        {attentionItems.length > 0 && (
-          <section>
-            <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--sc-muted)' }}>
-              NEEDS ATTENTION
+        {/* No plan CTA */}
+        {!plan && (
+          <Link
+            href="/dashboard/weekly-plan"
+            className="sc-card"
+            style={{
+              display: 'block',
+              borderColor: 'rgba(0,194,168,0.3)',
+              backgroundColor: 'rgba(0,194,168,0.04)',
+              marginBottom: 20,
+              textDecoration: 'none',
+            }}
+          >
+            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Set this week&apos;s plan →</p>
+            <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 3 }}>
+              Define your focus commitment and three outcomes for the week.
             </p>
-            <div className="space-y-2">
-              {attentionItems.map((item, i) => (
-                <Link
-                  key={i}
-                  href={item.href}
-                  className="flex items-center gap-3 p-3 rounded-xl border transition-all hover:border-[var(--sc-accent)]"
-                  style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)', textDecoration: 'none' }}
-                >
-                  <AlertCircle size={14} style={{ color: item.colour, flexShrink: 0 }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm truncate" style={{ color: 'var(--sc-text)' }}>{item.title}</p>
-                    <p className="text-xs" style={{ color: 'var(--sc-muted)' }}>{item.detail}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
+          </Link>
         )}
 
-        {/* Section 4 — Quick actions */}
-        <section>
-          <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--sc-muted)' }}>
-            QUICK ACTIONS
-          </p>
-          <div className="grid grid-cols-2 gap-2">
+        {/* Two-card row: Today's Focus + This Week */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+          {/* Today's Focus */}
+          <div className="sc-card">
+            <p className="sc-card-label">Today&apos;s focus</p>
+            {focusCommitment ? (
+              <>
+                <p style={{ fontSize: 18, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.1px', lineHeight: 1.3, marginBottom: 6 }}>
+                  {focusCommitment.title}
+                </p>
+                {todayLog?.notes ? (
+                  <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 10 }}>
+                    {todayLog.notes}
+                  </p>
+                ) : (
+                  <Link
+                    href="/dashboard/today"
+                    style={{ fontSize: 12, color: 'var(--sc-teal)', display: 'block', marginBottom: 10 }}
+                  >
+                    Set today&apos;s outcome →
+                  </Link>
+                )}
+                {todayLog && (
+                  <span
+                    className="sc-badge"
+                    style={{
+                      backgroundColor: todayLog.status === 'done' ? 'var(--sc-teal-10)' : 'rgba(59,130,246,0.10)',
+                      color: todayLog.status === 'done' ? '#007a6b' : '#185FA5',
+                    }}
+                  >
+                    {statusLabel[todayLog.status] ?? todayLog.status}
+                  </span>
+                )}
+              </>
+            ) : (
+              <Link href="/dashboard/weekly-plan" style={{ fontSize: 13, color: 'var(--sc-teal)' }}>
+                No focus set — set one now →
+              </Link>
+            )}
+          </div>
+
+          {/* This Week */}
+          <div className="sc-card">
+            <p className="sc-card-label">This week</p>
+            {outcomes.length > 0 ? (
+              <>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                  {outcomes.slice(0, 3).map((o, i) => (
+                    <div key={o.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                      <CheckCircle
+                        size={14}
+                        style={{
+                          flexShrink: 0,
+                          marginTop: 1,
+                          color: o.achieved ? 'var(--sc-teal)' : 'var(--sc-border)',
+                        }}
+                      />
+                      <span style={{ fontSize: 12, color: o.achieved ? 'var(--sc-muted)' : 'var(--sc-text)', lineHeight: 1.4 }}>
+                        {o.description}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ fontSize: 11, color: 'var(--sc-muted)', marginTop: 12 }}>
+                  {outcomesComplete} of {outcomes.length} outcomes complete
+                </p>
+              </>
+            ) : (
+              <Link href="/dashboard/weekly-plan" style={{ fontSize: 13, color: 'var(--sc-teal)' }}>
+                No outcomes set →
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Stats strip */}
+        <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 28 }}>
+          <div className="sc-stat">
+            <p className="sc-stat-value">{outcomesComplete}/{outcomes.length || 3}</p>
+            <p className="sc-stat-label">outcomes</p>
+          </div>
+          <div className="sc-stat">
+            <p className={`sc-stat-value${overdueFollowups.length > 0 ? ' danger' : ''}`}>
+              {overdueFollowups.length}
+            </p>
+            <p className="sc-stat-label">overdue</p>
+          </div>
+          <div className="sc-stat">
+            <p className="sc-stat-value">{dueToday.length}</p>
+            <p className="sc-stat-label">due today</p>
+          </div>
+          <div className="sc-stat">
+            <p className="sc-stat-value">{parkingItems.length}</p>
+            <p className="sc-stat-label">parked</p>
+          </div>
+        </div>
+
+        {/* Needs attention */}
+        {attentionItems.length > 0 && (
+          <div style={{ marginBottom: 28 }}>
+            <p className="sc-section-label" style={{ marginTop: 0 }}>Needs attention</p>
+            {attentionItems.map((item, i) => (
+              <Link key={i} href={item.href} className="sc-attention-item">
+                <span className="sc-attention-dot" style={{ backgroundColor: item.dot }} />
+                <span className="sc-attention-text">{item.text}</span>
+                <span style={{ fontSize: 11, color: 'var(--sc-muted)', flexShrink: 0 }}>{item.sub}</span>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Quick actions */}
+        <div>
+          <p className="sc-section-label" style={{ marginTop: 0 }}>Quick actions</p>
+          <div className="sc-quick-grid">
             {[
               { label: 'Park an idea', href: '/dashboard/parking-lot', Icon: Archive },
               { label: 'Add follow-up', href: '/dashboard/follow-ups', Icon: Clock },
               { label: 'Log today', href: '/dashboard/today', Icon: CheckCircle },
-              { label: 'Start review', href: '/dashboard/review', Icon: CheckCircle },
+              { label: 'Start review', href: '/dashboard/review', Icon: RotateCcw },
             ].map(({ label, href, Icon }) => (
-              <Link
-                key={label}
-                href={href}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all hover:border-[var(--sc-accent)]"
-                style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-text)', textDecoration: 'none', backgroundColor: 'var(--sc-surface)' }}
-              >
-                <Icon size={14} style={{ color: 'var(--sc-accent)' }} />
+              <Link key={label} href={href} className="sc-quick-action">
+                <Icon />
                 {label}
               </Link>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* Progressive disclosure: weekly score card */}
+        {/* Progressive disclosure */}
         {sufficiency.weeklyScoreUnlocked && (
-          <section
-            className="p-5 rounded-xl border"
-            style={{ borderColor: 'rgba(0,194,168,0.2)', backgroundColor: 'rgba(0,194,168,0.04)' }}
+          <div
+            className="sc-card"
+            style={{ borderColor: 'rgba(0,194,168,0.2)', backgroundColor: 'rgba(0,194,168,0.03)', marginTop: 20 }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--sc-accent)' }}>
-              WEEKLY SCORE UNLOCKED
-            </p>
-            <p className="text-xs" style={{ color: 'var(--sc-muted)' }}>
+            <p className="sc-card-label" style={{ color: 'var(--sc-teal)' }}>Weekly score unlocked</p>
+            <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 8 }}>
               Complete this week&apos;s Friday Review to see your weekly score.
             </p>
-            <Link
-              href="/dashboard/review"
-              className="text-xs font-medium mt-1 block"
-              style={{ color: 'var(--sc-accent)' }}
-            >
+            <Link href="/dashboard/review" style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>
               Go to Friday Review →
             </Link>
-          </section>
+          </div>
         )}
       </div>
-    </div>
+    </>
   )
 }
 
-function Stat({ label, value, colour }: { label: string; value: string; colour?: string }) {
-  return (
-    <div>
-      <span className="text-lg font-bold" style={{ color: colour ?? 'var(--sc-text)' }}>{value}</span>
-      <span className="text-xs ml-1.5" style={{ color: 'var(--sc-muted)' }}>{label}</span>
-    </div>
-  )
-}

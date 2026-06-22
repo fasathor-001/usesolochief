@@ -4,7 +4,7 @@ export default function OnboardingPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center py-12 px-6"
-      style={{ backgroundColor: 'var(--sc-background)' }}
+      style={{ backgroundColor: 'var(--sc-bg)' }}
     >
       <OnboardingClient />
     </div>

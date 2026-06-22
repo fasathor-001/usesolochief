@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X } from 'lucide-react'
+import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X, Target } from 'lucide-react'
 import { upsertDailyLog, addNotTodayItem, removeNotTodayItem, completeFollowup } from '@/lib/actions/today'
 import { SwitchChallengeModal } from '@/components/today/switch-challenge-modal'
 import type {
@@ -21,10 +21,10 @@ interface TodayClientProps {
 
 const STATUS_OPTIONS: { value: DailyLogStatus; label: string; colour: string }[] = [
   { value: 'in_progress', label: 'In progress', colour: '#3B82F6' },
-  { value: 'done', label: 'Done', colour: '#00C2A8' },
-  { value: 'partial', label: 'Partial', colour: '#F59E0B' },
-  { value: 'blocked', label: 'Blocked', colour: '#EF4444' },
-  { value: 'slipped', label: 'Slipped', colour: '#64748B' },
+  { value: 'done',        label: 'Done',        colour: '#00C2A8' },
+  { value: 'partial',     label: 'Partial',     colour: '#F59E0B' },
+  { value: 'blocked',     label: 'Blocked',     colour: '#EF4444' },
+  { value: 'slipped',     label: 'Slipped',     colour: '#64748B' },
 ]
 
 function todayLabel(): string {
@@ -116,262 +116,288 @@ export function TodayClient({
   )
 
   return (
-    <div className="p-6 max-w-2xl">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-xl font-bold mb-0.5" style={{ color: 'var(--sc-text)' }}>
-          Today Focus
-        </h1>
-        <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
-          {todayLabel()}
-        </p>
+    <>
+      {/* Topbar */}
+      <div className="sc-topbar">
+        <div className="sc-topbar-left">
+          <span className="sc-topbar-title">Today</span>
+          <span className="sc-topbar-sub">{todayLabel()}</span>
+        </div>
+        <div className="sc-topbar-actions">
+          <Target size={16} style={{ color: 'var(--sc-muted)' }} />
+        </div>
       </div>
 
-      <div className="space-y-8">
-        {/* Main Focus Card */}
-        <section>
-          {!focusCommitment ? (
-            <div
-              className="p-6 rounded-xl border text-center"
-              style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-            >
-              <p className="text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>
-                No focus set for this week
-              </p>
-              <p className="text-xs mb-4" style={{ color: 'var(--sc-muted)' }}>
-                Set your main focus on the Weekly Plan page.
-              </p>
-              <a
-                href="/dashboard/weekly-plan"
-                className="inline-block px-4 py-2 rounded-lg text-sm font-medium"
-                style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-              >
-                Go to Weekly Plan
+      {/* Content */}
+      <div className="sc-content sc-content-narrow">
+        {/* No plan */}
+        {!plan && (
+          <div className="sc-card" style={{ marginBottom: 20 }}>
+            <p style={{ fontSize: 13, color: 'var(--sc-muted)' }}>
+              No weekly plan found. Start your week on{' '}
+              <a href="/dashboard/weekly-plan" style={{ color: 'var(--sc-teal)' }}>
+                the weekly plan page
               </a>
-            </div>
-          ) : (
-            <div
-              className="p-5 rounded-xl border"
-              style={{ borderColor: 'rgba(0,194,168,0.3)', backgroundColor: 'var(--sc-surface)' }}
+              .
+            </p>
+          </div>
+        )}
+
+        {/* Main focus card */}
+        {!focusCommitment ? (
+          <div className="sc-card" style={{ marginBottom: 20, textAlign: 'center', padding: '40px 20px' }}>
+            <p className="sc-section-label" style={{ marginTop: 0 }}>No focus set for this week</p>
+            <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 16 }}>
+              Set your main focus on the weekly plan page.
+            </p>
+            <a
+              href="/dashboard/weekly-plan"
+              className="sc-btn sc-btn-primary"
+              style={{ display: 'inline-flex' }}
             >
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <p className="text-xs font-medium uppercase tracking-wide mb-1" style={{ color: 'var(--sc-accent)' }}>
-                    Today&apos;s Focus
+              Go to weekly plan
+            </a>
+          </div>
+        ) : (
+          <div
+            className="sc-card"
+            style={{
+              borderColor: 'rgba(0,194,168,0.25)',
+              marginBottom: 20,
+            }}
+          >
+            {/* Focus header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+              <div>
+                <p
+                  className="sc-card-label"
+                  style={{ color: 'var(--sc-teal)', marginBottom: 6 }}
+                >
+                  TODAY&apos;S FOCUS
+                </p>
+                <h2 style={{ fontSize: 20, fontWeight: 500, color: 'var(--sc-text)', letterSpacing: '-0.2px', lineHeight: 1.3 }}>
+                  {focusCommitment.title}
+                </h2>
+                {focusCommitment.next_action && (
+                  <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginTop: 4 }}>
+                    Next: {focusCommitment.next_action}
                   </p>
-                  <h2 className="text-lg font-semibold" style={{ color: 'var(--sc-text)' }}>
-                    {focusCommitment.title}
-                  </h2>
-                  {focusCommitment.next_action && (
-                    <p className="text-sm mt-1" style={{ color: 'var(--sc-muted)' }}>
-                      Next: {focusCommitment.next_action}
-                    </p>
-                  )}
-                </div>
-                {log && (
-                  <span
-                    className="shrink-0 px-2.5 py-1 rounded-full text-xs font-medium"
+                )}
+              </div>
+              {log && (
+                <span
+                  className="sc-badge"
+                  style={{
+                    flexShrink: 0,
+                    backgroundColor: log.status === 'done' ? 'var(--sc-teal-10)' : 'rgba(59,130,246,0.10)',
+                    color: log.status === 'done' ? '#007a6b' : '#185FA5',
+                  }}
+                >
+                  {log.status.replace('_', ' ')}
+                </span>
+              )}
+            </div>
+
+            {/* Outcome input */}
+            <div className="sc-field">
+              <label className="sc-label">Today&apos;s one outcome</label>
+              <input
+                type="text"
+                value={outcome}
+                onChange={(e) => setOutcome(e.target.value)}
+                placeholder="What will be done by end of day?"
+                className="sc-input"
+                style={{ fontSize: 14 }}
+              />
+            </div>
+
+            {/* Status pills */}
+            <div style={{ marginBottom: 16 }}>
+              <p className="sc-label">Status</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {STATUS_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setStatus(opt.value)}
+                    className="sc-badge"
                     style={{
-                      backgroundColor: log.status === 'done' ? 'rgba(0,194,168,0.12)' : 'rgba(59,130,246,0.12)',
-                      color: log.status === 'done' ? 'var(--sc-accent)' : '#3B82F6',
+                      cursor: 'pointer',
+                      border: `0.5px solid ${status === opt.value ? opt.colour : 'var(--sc-border)'}`,
+                      backgroundColor: status === opt.value ? `${opt.colour}1A` : 'transparent',
+                      color: status === opt.value ? opt.colour : 'var(--sc-muted)',
+                      padding: '5px 12px',
                     }}
                   >
-                    {log.status.replace('_', ' ')}
-                  </span>
-                )}
-              </div>
-
-              {/* Outcome */}
-              <div className="mb-4">
-                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--sc-muted)' }}>
-                  Today&apos;s one outcome
-                </label>
-                <input
-                  type="text"
-                  value={outcome}
-                  onChange={(e) => setOutcome(e.target.value)}
-                  placeholder="What will be done by end of day?"
-                  className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-                  style={{
-                    borderColor: 'var(--sc-border)',
-                    backgroundColor: 'var(--sc-background)',
-                    color: 'var(--sc-text)',
-                  }}
-                />
-              </div>
-
-              {/* Status */}
-              <div className="mb-4">
-                <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--sc-muted)' }}>
-                  Status
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {STATUS_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setStatus(opt.value)}
-                      className="px-3 py-1 rounded-full text-xs font-medium border transition-all"
-                      style={{
-                        borderColor: status === opt.value ? opt.colour : 'var(--sc-border)',
-                        backgroundColor: status === opt.value ? `${opt.colour}20` : 'transparent',
-                        color: status === opt.value ? opt.colour : 'var(--sc-muted)',
-                      }}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleLogEOD}
-                  disabled={isLogging}
-                  className="px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-                  style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-                >
-                  {isLogging ? 'Logging...' : log ? 'Update Log' : 'Log Day'}
-                </button>
-                {otherCommitments.length > 0 && (
-                  <div className="relative group">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm transition-colors"
-                      style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
-                    >
-                      <RefreshCw size={13} />
-                      Request Switch
-                    </button>
-                    <div
-                      className="absolute top-full left-0 mt-1 w-56 rounded-lg border shadow-lg z-20 hidden group-focus-within:block group-hover:block"
-                      style={{ backgroundColor: 'var(--sc-surface)', borderColor: 'var(--sc-border)' }}
-                    >
-                      {otherCommitments.slice(0, 6).map((c) => (
-                        <button
-                          key={c.id}
-                          type="button"
-                          onClick={() => openSwitchChallenge(c)}
-                          className="w-full text-left px-3 py-2 text-sm hover:bg-[var(--sc-border)] first:rounded-t-lg last:rounded-b-lg transition-colors"
-                          style={{ color: 'var(--sc-text)' }}
-                        >
-                          {c.title}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             </div>
-          )}
-        </section>
 
-        {/* Not Today */}
-        <section>
-          <h2 className="text-sm font-semibold mb-1 uppercase tracking-wide" style={{ color: 'var(--sc-muted)' }}>
-            Not today
-          </h2>
-          <p className="text-xs mb-3" style={{ color: 'var(--sc-muted)' }}>
-            Stop list and commitments blocked for today.
-          </p>
+            {/* Actions */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <button
+                type="button"
+                onClick={handleLogEOD}
+                disabled={isLogging}
+                className="sc-btn sc-btn-primary"
+              >
+                {isLogging ? 'Logging...' : log ? 'Update log' : 'Log day'}
+              </button>
+              {otherCommitments.length > 0 && (
+                <div style={{ position: 'relative' }} className="group">
+                  <button
+                    type="button"
+                    className="sc-btn sc-btn-ghost"
+                  >
+                    <RefreshCw size={13} />
+                    Request switch
+                  </button>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      marginTop: 4,
+                      width: 220,
+                      borderRadius: 'var(--sc-radius)',
+                      border: '0.5px solid var(--sc-border)',
+                      backgroundColor: 'var(--sc-surface)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                      zIndex: 20,
+                    }}
+                    className="hidden group-focus-within:block group-hover:block"
+                  >
+                    {otherCommitments.slice(0, 6).map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => openSwitchChallenge(c)}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '8px 12px',
+                          fontSize: 13,
+                          color: 'var(--sc-text)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                        }}
+                        className="hover:bg-[var(--sc-bg)]"
+                      >
+                        {c.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
-          <div className="flex flex-wrap gap-2 mb-3">
-            {stopItems.map((item) => (
-              <span
-                key={item.id}
-                className="px-3 py-1.5 rounded-full text-xs"
-                style={{
-                  backgroundColor: 'var(--sc-surface)',
-                  border: '1px solid var(--sc-border)',
-                  color: 'var(--sc-muted)',
-                  textDecoration: 'line-through',
-                }}
-              >
-                {item.description}
-              </span>
-            ))}
-            {notTodayItems.map((item) => (
-              <span
-                key={item.id}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs"
-                style={{
-                  backgroundColor: 'rgba(239,68,68,0.08)',
-                  border: '1px solid rgba(239,68,68,0.2)',
-                  color: '#EF4444',
-                }}
-              >
-                {item.description}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveNotToday(item.id)}
-                  disabled={isRemovingNotToday}
-                  aria-label={`Remove ${item.description} from not today`}
-                  className="hover:opacity-70 transition-opacity disabled:opacity-30"
-                >
-                  <X size={11} />
-                </button>
-              </span>
-            ))}
+        {/* Not today */}
+        <div className="sc-card" style={{ marginBottom: 20 }}>
+          <div style={{ marginBottom: 10 }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
+              Not today{notTodayItems.length > 0 ? ` · ${notTodayItems.length + stopItems.length}` : ''}
+            </p>
+            <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 2 }}>
+              Stop list and commitments blocked for today.
+            </p>
           </div>
 
-          <div className="flex gap-2">
+          {(stopItems.length > 0 || notTodayItems.length > 0) && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+              {stopItems.map((item) => (
+                <span
+                  key={item.id}
+                  className="sc-badge sc-badge-slate"
+                  style={{ textDecoration: 'line-through' }}
+                >
+                  {item.description}
+                </span>
+              ))}
+              {notTodayItems.map((item) => (
+                <span
+                  key={item.id}
+                  className="sc-badge"
+                  style={{
+                    backgroundColor: 'rgba(239,68,68,0.08)',
+                    border: '0.5px solid rgba(239,68,68,0.2)',
+                    color: '#EF4444',
+                  }}
+                >
+                  {item.description}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveNotToday(item.id)}
+                    disabled={isRemovingNotToday}
+                    aria-label={`Remove ${item.description}`}
+                    style={{ marginLeft: 4, cursor: 'pointer', opacity: 0.7, lineHeight: 0 }}
+                  >
+                    <X size={11} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: 6 }}>
             <input
               type="text"
               value={newNotToday}
               onChange={(e) => setNewNotToday(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') handleAddNotToday() }}
               placeholder="Block something for today..."
-              className="flex-1 px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{
-                borderColor: 'var(--sc-border)',
-                backgroundColor: 'var(--sc-surface)',
-                color: 'var(--sc-text)',
-              }}
+              className="sc-input"
+              style={{ flex: 1 }}
             />
             <button
               type="button"
               onClick={handleAddNotToday}
               disabled={isAddingNotToday}
-              className="px-3 py-2 rounded-lg border text-sm transition-colors"
-              style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
+              className="sc-btn sc-btn-ghost sc-btn-icon"
             >
-              <Plus size={16} />
+              <Plus size={15} />
             </button>
           </div>
-        </section>
+        </div>
 
-        {/* Follow-ups Due */}
+        {/* Follow-ups due */}
         {followups.length > 0 && (
-          <section>
-            <h2 className="text-sm font-semibold mb-3 uppercase tracking-wide" style={{ color: 'var(--sc-muted)' }}>
-              Follow-ups due
-            </h2>
-            <div className="space-y-2">
+          <div className="sc-card">
+            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 12 }}>
+              Follow-ups due today
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {followups.map((f) => (
                 <div
                   key={f.id}
-                  className="flex items-center gap-3 p-3 rounded-lg border"
                   style={{
-                    borderColor: isOverdue(f.due_date) ? 'rgba(239,68,68,0.3)' : 'var(--sc-border)',
-                    backgroundColor: 'var(--sc-surface)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '8px 12px',
+                    borderRadius: 'var(--sc-radius)',
+                    border: `0.5px solid ${isOverdue(f.due_date) ? 'rgba(239,68,68,0.25)' : 'var(--sc-border)'}`,
+                    backgroundColor: 'var(--sc-bg)',
                   }}
                 >
                   <button
                     type="button"
                     onClick={() => handleCompleteFollowup(f.id)}
                     disabled={isCompletingFollowup}
-                    className="shrink-0 transition-colors hover:opacity-70"
-                    style={{ color: 'var(--sc-border)' }}
+                    style={{ color: 'var(--sc-border)', flexShrink: 0, cursor: 'pointer', background: 'none', border: 'none', lineHeight: 0 }}
                   >
-                    <Circle size={16} />
+                    <Circle size={15} />
                   </button>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm" style={{ color: 'var(--sc-text)' }}>{f.title}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, color: 'var(--sc-text)' }}>{f.title}</p>
                     {f.due_date && (
-                      <p className="text-xs" style={{ color: isOverdue(f.due_date) ? '#EF4444' : 'var(--sc-muted)' }}>
-                        {isOverdue(f.due_date) ? 'Overdue — ' : 'Due '}
-                        {f.due_date}
+                      <p style={{ fontSize: 11, color: isOverdue(f.due_date) ? '#EF4444' : 'var(--sc-muted)' }}>
+                        {isOverdue(f.due_date) ? 'Overdue — ' : 'Due '}{f.due_date}
                       </p>
                     )}
                   </div>
@@ -381,27 +407,11 @@ export function TodayClient({
                 </div>
               ))}
             </div>
-          </section>
-        )}
-
-        {/* No plan state */}
-        {!plan && (
-          <div
-            className="p-4 rounded-xl border"
-            style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-          >
-            <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
-              No weekly plan found. Start your week on{' '}
-              <a href="/dashboard/weekly-plan" style={{ color: 'var(--sc-accent)' }}>
-                Monday Command Centre
-              </a>
-              .
-            </p>
           </div>
         )}
       </div>
 
-      {/* Switch Challenge Modal */}
+      {/* Switch challenge modal */}
       {focusCommitment && switchTarget && (
         <SwitchChallengeModal
           open={showSwitch}
@@ -414,6 +424,6 @@ export function TodayClient({
           }}
         />
       )}
-    </div>
+    </>
   )
 }

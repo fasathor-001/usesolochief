@@ -1,6 +1,5 @@
 'use client'
 
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
@@ -62,7 +61,7 @@ export function CommitmentCard({ commitment, onEdit, onDelete }: CommitmentCardP
   const stageColour = STAGE_COLOURS[commitment.stage] ?? '#64748B'
 
   return (
-    <Card className="p-4 border border-[var(--sc-border)] bg-white hover:shadow-sm transition-shadow">
+    <div className="sc-card sc-card-sm" style={{ transition: 'box-shadow 0.12s' }}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h3 className="font-medium text-[var(--sc-text)] truncate">{commitment.title}</h3>
@@ -114,6 +113,6 @@ export function CommitmentCard({ commitment, onEdit, onDelete }: CommitmentCardP
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </Card>
+    </div>
   )
 }

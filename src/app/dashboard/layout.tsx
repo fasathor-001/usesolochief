@@ -23,7 +23,6 @@ export default async function DashboardLayout({
   await getOrCreateWorkspace()
 
   // Gate on commitments — zero means the user has not been through onboarding.
-  // Applies to new users and to users who signed up before onboarding was built.
   const { count } = await supabase
     .from('commitments')
     .select('id', { count: 'exact', head: true })
@@ -50,17 +49,15 @@ export default async function DashboardLayout({
   const overdueFollowupsCount = overdueRes.count ?? 0
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="sc-app">
       <SidebarNav
         userEmail={user.email ?? ''}
         userName={profile?.full_name ?? ''}
         avatarUrl={profile?.avatar_url ?? null}
         overdueFollowupsCount={overdueFollowupsCount}
       />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-auto" style={{ backgroundColor: 'var(--sc-background)' }}>
-          {children}
-        </main>
+      <div className="sc-main">
+        {children}
       </div>
     </div>
   )
