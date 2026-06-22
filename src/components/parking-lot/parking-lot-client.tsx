@@ -8,6 +8,7 @@ import {
   killParkingLotItem,
   scheduleParkingLotItem,
   actOnParkingLotItem,
+  deleteParkingLotItem,
   type CreateParkingLotInput,
 } from '@/lib/actions/parking-lot'
 import {
@@ -52,10 +53,12 @@ const STATUS_GROUPS: { status: ParkingLotStatus[]; label: string }[] = [
   { status: ['killed'], label: 'Killed' },
 ]
 
-function daysSince(dateStr: string): number {
-  const now = new Date()
-  const parked = new Date(dateStr + 'T12:00:00Z')
-  return Math.floor((now.getTime() - parked.getTime()) / 86400000)
+function daysParked(dateStr: string): number {
+  // dateStr may be a plain date (YYYY-MM-DD) or a full timestamp — normalise to date only
+  const dateOnly = dateStr.split('T')[0]
+  const parked = new Date(dateOnly + 'T12:00:00Z')
+  const days = Math.floor((new Date().getTime() - parked.getTime()) / 86400000)
+  return Math.max(0, days)
 }
 
 function nextMondayString(): string {
@@ -69,6 +72,7 @@ function nextMondayString(): string {
 export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
   const [items, setItems] = useState<ParkingLotItem[]>(initialItems)
   const [showAdd, setShowAdd] = useState(false)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState<ParkingLotCategory>('other')
   const [notes, setNotes] = useState('')
@@ -130,6 +134,16 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
       if (error) { toast.error(error); return }
       if (data) setItems(prev => prev.map(i => i.id === id ? data : i))
       toast.success('Marked as actioned')
+    })
+  }
+
+  function handleDelete(id: string) {
+    startTransition(async () => {
+      const { error } = await deleteParkingLotItem(id)
+      if (error) { toast.error(error); return }
+      setItems(prev => prev.filter(i => i.id !== id))
+      setConfirmDeleteId(null)
+      toast.success('Idea deleted permanently')
     })
   }
 
@@ -203,8 +217,10 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
               </h2>
               <div className="space-y-2">
                 {groupItems.map((item) => {
-                  const days = daysSince(item.parked_at)
+                  const days = daysParked(item.parked_at || item.created_at)
                   const isOld = days > 30
+                  const isActive = item.status === 'waiting' || item.status === 'scheduled'
+                  const displayDays = days === 0 ? 'Parked today' : `${days}d parked`
 
                   return (
                     <div
@@ -235,7 +251,7 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
                             className="text-xs"
                             style={{ color: isOld ? '#EF4444' : 'var(--sc-muted)' }}
                           >
-                            {days === 0 ? 'Today' : `${days}d parked`}
+                            {displayDays}
                             {isOld && ' — review or kill'}
                           </span>
                           {item.review_date && (
@@ -251,31 +267,40 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
                         )}
                       </div>
 
-                      {(item.status === 'waiting' || item.status === 'scheduled') && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger
-                            className="shrink-0 p-1.5 rounded hover:bg-[var(--sc-border)] transition-colors"
-                            style={{ color: 'var(--sc-muted)' }}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          className="shrink-0 p-1.5 rounded hover:bg-[var(--sc-border)] transition-colors"
+                          style={{ color: 'var(--sc-muted)' }}
+                        >
+                          <MoreHorizontal size={15} />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {isActive && (
+                            <>
+                              <DropdownMenuItem onClick={() => handleSchedule(item.id)}>
+                                Review on Monday
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleActOn(item.id)}>
+                                Act on it
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => handleKill(item.id)}
+                                variant="destructive"
+                              >
+                                Kill idea
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                            </>
+                          )}
+                          <DropdownMenuItem
+                            onClick={() => setConfirmDeleteId(item.id)}
+                            variant="destructive"
                           >
-                            <MoreHorizontal size={15} />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleSchedule(item.id)}>
-                              Review on Monday
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleActOn(item.id)}>
-                              Act on it
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => handleKill(item.id)}
-                              variant="destructive"
-                            >
-                              Kill idea
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
+                            Delete permanently
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   )
                 })}
@@ -284,6 +309,41 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
           )
         })}
       </div>
+
+      {/* Delete confirmation */}
+      <Dialog open={!!confirmDeleteId} onOpenChange={open => { if (!open) setConfirmDeleteId(null) }}>
+        <DialogContent
+          className="max-w-sm"
+          style={{ backgroundColor: 'var(--sc-background)', border: '1px solid var(--sc-border)' }}
+          showCloseButton
+        >
+          <DialogHeader>
+            <DialogTitle style={{ color: 'var(--sc-text)' }}>Delete permanently?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm mt-2" style={{ color: 'var(--sc-muted)' }}>
+            Delete this idea permanently? This cannot be undone.
+          </p>
+          <div className="flex gap-2 mt-4">
+            <button
+              type="button"
+              onClick={() => setConfirmDeleteId(null)}
+              className="flex-1 py-2 rounded-lg border text-sm"
+              style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => confirmDeleteId && handleDelete(confirmDeleteId)}
+              disabled={isPending}
+              className="flex-1 py-2 rounded-lg text-sm font-medium disabled:opacity-50"
+              style={{ backgroundColor: '#EF4444', color: '#fff' }}
+            >
+              {isPending ? 'Deleting...' : 'Delete permanently'}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Idea Modal */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>

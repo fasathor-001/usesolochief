@@ -150,3 +150,20 @@ export async function actOnParkingLotItem(id: string): Promise<ActionResult<Park
   revalidatePath('/dashboard')
   return { data: data as ParkingLotItem, error: null }
 }
+
+export async function deleteParkingLotItem(id: string): Promise<{ error: string | null }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('parking_lot_items')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard/parking-lot')
+  revalidatePath('/dashboard')
+  return { error: null }
+}
