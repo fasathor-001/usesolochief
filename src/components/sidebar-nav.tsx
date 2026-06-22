@@ -145,6 +145,18 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
           ))}
         </nav>
 
+        {/* Settings nav link */}
+        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '0.5px solid rgba(255,255,255,0.07)' }}>
+          <Link
+            href="/dashboard/settings"
+            className={`sc-nav-link${isActive('/dashboard/settings') ? ' active' : ''}`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <Settings size={16} />
+            <span style={{ flex: 1 }}>Settings</span>
+          </Link>
+        </div>
+
         {/* Rescue Me */}
         <button
           type="button"
@@ -168,13 +180,6 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
             <p className="sc-user-email">{userEmail}</p>
           </div>
           <div style={{ display: 'flex', gap: 4 }}>
-            <Link
-              href="/dashboard/settings"
-              style={{ color: 'rgba(255,255,255,0.3)', display: 'flex', padding: 4, borderRadius: 4 }}
-              title="Settings"
-            >
-              <Settings size={13} />
-            </Link>
             <button
               type="button"
               onClick={handleSignOut}

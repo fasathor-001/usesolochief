@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
+import { createClient } from '@/lib/supabase/client'
 import type { UserPreferences } from '@/types/database'
 
 type ThemeValue = 'light' | 'dark' | 'system'
@@ -20,6 +21,7 @@ type Section =
   | 'mobile-app'
   | 'whatsapp'
   | 'account'
+  | 'security'
   | 'data-privacy'
   | 'danger-zone'
 
@@ -50,6 +52,7 @@ const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: 'mobile-app',    label: 'Mobile App',    icon: Monitor },
   { id: 'whatsapp',      label: 'WhatsApp',      icon: MessageCircle },
   { id: 'account',       label: 'Account',       icon: User },
+  { id: 'security',      label: 'Security',      icon: Lock },
   { id: 'data-privacy',  label: 'Data & Privacy', icon: Lock },
   { id: 'danger-zone',   label: 'Danger Zone',   icon: Trash2 },
 ]
@@ -127,6 +130,15 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
     const parts = name.split(' ')
     return parts.length > 1 ? parts.slice(1).join(' ') : ''
   })
+
+  // ── Security ───────────────────────────────────────────────────────
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordLoading, setPasswordLoading] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
+  const [magicLinkSent, setMagicLinkSent] = useState(false)
 
   // ── Danger Zone ────────────────────────────────────────────────────
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
@@ -237,6 +249,71 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
     setSaving(null)
     if (result?.error) toast.error(result.error)
     else toast.success('Account saved.')
+  }
+
+  async function handleUpdatePassword() {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError('All fields are required.')
+      return
+    }
+    if (newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters.')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New passwords do not match.')
+      return
+    }
+
+    setPasswordLoading(true)
+    setPasswordError('')
+    setPasswordSuccess(false)
+
+    const supabase = createClient()
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user?.email) {
+      setPasswordError('Unable to verify your account.')
+      setPasswordLoading(false)
+      return
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    })
+
+    if (signInError) {
+      setPasswordError('Current password is incorrect.')
+      setPasswordLoading(false)
+      return
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    setPasswordLoading(false)
+
+    if (error) {
+      setPasswordError(error.message)
+    } else {
+      setPasswordSuccess(true)
+      setCurrentPassword('')
+      setNewPassword('')
+      setConfirmPassword('')
+    }
+  }
+
+  async function handleSendMagicLink() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user?.email) return
+
+    await supabase.auth.signInWithOtp({
+      email: user.email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      },
+    })
+    setMagicLinkSent(true)
   }
 
   const activeNavItem = NAV_ITEMS.find(n => n.id === activeSection)
@@ -933,6 +1010,91 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
                 >
                   Send feedback →
                 </a>
+              </div>
+            </div>
+          )}
+
+          {/* ── Security ─────────────────────────────────────────── */}
+          {activeSection === 'security' && (
+            <div>
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Change password</p>
+                </div>
+
+                <div className="sc-field" style={{ marginBottom: 12 }}>
+                  <label className="sc-label">Current password</label>
+                  <input
+                    type="password"
+                    className="sc-input"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={e => setCurrentPassword(e.target.value)}
+                    style={{ marginTop: 6 }}
+                  />
+                </div>
+
+                <div className="sc-field" style={{ marginBottom: 12 }}>
+                  <label className="sc-label">New password</label>
+                  <input
+                    type="password"
+                    className="sc-input"
+                    placeholder="At least 8 characters"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    style={{ marginTop: 6 }}
+                  />
+                </div>
+
+                <div className="sc-field" style={{ marginBottom: 16 }}>
+                  <label className="sc-label">Confirm new password</label>
+                  <input
+                    type="password"
+                    className="sc-input"
+                    placeholder="Repeat new password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    style={{ marginTop: 6 }}
+                  />
+                </div>
+
+                {passwordError && (
+                  <p style={{ fontSize: '13px', color: 'var(--sc-error)', marginBottom: '12px' }}>
+                    {passwordError}
+                  </p>
+                )}
+
+                {passwordSuccess && (
+                  <p style={{ fontSize: '13px', color: 'var(--sc-success, #16a34a)', marginBottom: '12px' }}>
+                    Password updated successfully.
+                  </p>
+                )}
+
+                <button
+                  type="button"
+                  className="sc-btn sc-btn-primary sc-btn-sm"
+                  onClick={handleUpdatePassword}
+                  disabled={passwordLoading}
+                >
+                  {passwordLoading ? 'Updating...' : 'Update password'}
+                </button>
+              </div>
+
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Sign-in options</p>
+                </div>
+                <p style={{ fontSize: '13px', color: 'var(--sc-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
+                  You can also sign in with a secure email link instead of a password.
+                </p>
+                <button
+                  type="button"
+                  className="sc-btn sc-btn-secondary sc-btn-sm"
+                  onClick={handleSendMagicLink}
+                  disabled={magicLinkSent}
+                >
+                  {magicLinkSent ? 'Check your email' : 'Send secure sign-in link'}
+                </button>
               </div>
             </div>
           )}
