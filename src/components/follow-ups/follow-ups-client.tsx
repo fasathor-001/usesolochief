@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dialog'
 import type { Followup, Commitment, FollowupUrgency } from '@/types/database'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
+import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
 
 interface FollowUpsClientProps {
   initialFollowups: Followup[]
@@ -68,6 +69,11 @@ function daysOverdue(dueDate: string): number {
   return Math.floor((new Date(todayString()).getTime() - new Date(dueDate).getTime()) / 86400000)
 }
 
+function formatDue(dateStr: string): string {
+  const d = new Date(dateStr + 'T12:00:00Z')
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+}
+
 function groupFollowups(followups: Followup[]): FollowupGroup[] {
   const today = todayString()
   const weekEnd = weekEndString()
@@ -86,10 +92,10 @@ function groupFollowups(followups: Followup[]): FollowupGroup[] {
   }
 
   const groups: FollowupGroup[] = []
-  if (overdue.length > 0) groups.push({ label: 'OVERDUE', headerColour: '#EF4444', items: overdue })
-  if (dueToday.length > 0) groups.push({ label: 'DUE TODAY', headerColour: '#F59E0B', items: dueToday })
-  if (dueThisWeek.length > 0) groups.push({ label: 'DUE THIS WEEK', headerColour: 'var(--sc-text)', items: dueThisWeek })
-  if (upcoming.length > 0) groups.push({ label: 'UPCOMING', headerColour: 'var(--sc-muted)', items: upcoming })
+  if (overdue.length > 0)     groups.push({ label: 'Overdue',       headerColour: '#EF4444',          items: overdue })
+  if (dueToday.length > 0)    groups.push({ label: 'Due today',     headerColour: '#F59E0B',          items: dueToday })
+  if (dueThisWeek.length > 0) groups.push({ label: 'Due this week', headerColour: 'var(--sc-text)',   items: dueThisWeek })
+  if (upcoming.length > 0)    groups.push({ label: 'Upcoming',      headerColour: 'var(--sc-muted)',  items: upcoming })
   return groups
 }
 
@@ -109,10 +115,11 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
   const [nextAction, setNextAction] = useState('')
   const [formNotes, setFormNotes] = useState('')
 
+  const commitmentMap = new Map(commitments.map(c => [c.id, c.title]))
+
   const today = todayString()
   const overdueCount = followups.filter(f => f.due_date && f.due_date < today).length
   const dueThisWeekCount = followups.filter(f => f.due_date && f.due_date >= today && f.due_date <= weekEndString()).length
-
   const totalOpen = followups.length
 
   const groups = groupFollowups(followups)
@@ -176,10 +183,10 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
   return (
     <>
 
-    <div className="sc-content sc-content-narrow">
+    <div className="sc-content" style={{ maxWidth: 1280 }}>
       <PageHeader
         title="Follow-ups"
-        subtitle="Things waiting on someone or something."
+        subtitle="Commitments waiting on someone or something."
         action={
           <button
             type="button"
@@ -191,115 +198,157 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
           </button>
         }
       />
-      {/* Stats */}
-      <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
-        <div className="sc-stat">
-          <p className={`sc-stat-value${overdueCount > 0 ? ' danger' : ''}`}>{overdueCount}</p>
-          <p className="sc-stat-label">overdue</p>
-        </div>
-        <div className="sc-stat">
-          <p className="sc-stat-value">{dueThisWeekCount}</p>
-          <p className="sc-stat-label">due this week</p>
-        </div>
-        <div className="sc-stat">
-          <p className="sc-stat-value">{totalOpen}</p>
-          <p className="sc-stat-label">total open</p>
-        </div>
-      </div>
 
-      {/* Empty state */}
-      {followups.length === 0 && (
-        <div
-          className="p-8 rounded-xl border text-center"
-          style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-        >
-          <Bell size={32} className="mx-auto mb-3" style={{ color: 'var(--sc-muted)' }} />
-          <p className="text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>No open follow-ups.</p>
-          <p className="text-xs" style={{ color: 'var(--sc-muted)' }}>Good. Keep it that way.</p>
-        </div>
-      )}
+      <div className="sc-grid-main">
 
-      {/* Grouped sections */}
-      <div className="space-y-8">
-        {groups.map(({ label, headerColour, items }) => (
-          <section key={label}>
-            <h2
-              className="text-xs font-semibold uppercase tracking-wide mb-3"
-              style={{ color: headerColour }}
+        {/* Left column */}
+        <div className="sc-grid-col">
+
+          {/* Empty state */}
+          {followups.length === 0 && (
+            <div
+              className="sc-card"
+              style={{ textAlign: 'center', padding: '48px 24px' }}
             >
-              {label}
-            </h2>
-            <div className="space-y-2">
-              {items.map((f) => {
-                const isOverdue = f.due_date ? f.due_date < today : false
-                const overdueDays = f.due_date && isOverdue ? daysOverdue(f.due_date) : 0
-
-                return (
-                  <div
-                    key={f.id}
-                    className={`sc-followup-card${isOverdue ? ' overdue' : ''}`}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className="text-sm font-medium" style={{ color: 'var(--sc-text)' }}>
-                          {f.title}
-                        </span>
-                        <span
-                          className="px-2 py-0.5 rounded text-xs font-medium"
-                          style={{
-                            backgroundColor: `${URGENCY_COLOURS[f.urgency ?? 'normal']}20`,
-                            color: URGENCY_COLOURS[f.urgency ?? 'normal'],
-                          }}
-                        >
-                          {URGENCY_LABELS[f.urgency ?? 'normal']}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 flex-wrap">
-                        {f.contact_name && (
-                          <span className="text-xs" style={{ color: 'var(--sc-muted)' }}>
-                            {f.contact_name}
-                          </span>
-                        )}
-                        {f.due_date && (
-                          <span className="text-xs flex items-center gap-1" style={{ color: isOverdue ? '#EF4444' : 'var(--sc-muted)' }}>
-                            {isOverdue && <AlertCircle size={11} />}
-                            {isOverdue ? `${overdueDays}d overdue` : `Due ${f.due_date}`}
-                          </span>
-                        )}
-                      </div>
-                      {f.next_action && (
-                        <p className="text-xs mt-1" style={{ color: 'var(--sc-muted)' }}>
-                          Next: {f.next_action}
-                        </p>
-                      )}
-                    </div>
-
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        className="shrink-0 p-1.5 rounded hover:bg-[var(--sc-border)] transition-colors"
-                        style={{ color: 'var(--sc-muted)' }}
-                      >
-                        <MoreHorizontal size={15} />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleComplete(f.id)}>
-                          Mark complete
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => { setShowSnooze(f.id); setSnoozeDate('') }}>
-                          Snooze
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem variant="destructive" onClick={() => handleDelete(f.id)}>
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                )
-              })}
+              <Bell size={28} className="mx-auto mb-3" style={{ color: 'var(--sc-muted)' }} />
+              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>No open follow-ups.</p>
+              <p style={{ fontSize: 13, color: 'var(--sc-muted)', lineHeight: 1.6 }}>Good. Keep it that way.</p>
             </div>
-          </section>
-        ))}
+          )}
+
+          {/* Grouped sections */}
+          <div className="space-y-8">
+            {groups.map(({ label, headerColour, items }) => (
+              <section key={label}>
+                <h2
+                  className="sc-section-heading"
+                  style={{ color: headerColour, marginBottom: 12 }}
+                >
+                  {label}
+                </h2>
+                <div className="space-y-2">
+                  {items.map((f) => {
+                    const isOverdue = f.due_date ? f.due_date < today : false
+                    const overdueDays = f.due_date && isOverdue ? daysOverdue(f.due_date) : 0
+                    const relatedTitle = f.commitment_id ? (commitmentMap.get(f.commitment_id) ?? null) : null
+
+                    return (
+                      <div
+                        key={f.id}
+                        className={`sc-followup-card${isOverdue ? ' overdue' : ''}`}
+                      >
+                        <div className="flex-1 min-w-0">
+                          {/* Title + urgency */}
+                          <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <span className="text-sm font-medium" style={{ color: 'var(--sc-text)' }}>
+                              {f.title}
+                            </span>
+                            <span
+                              className="px-2 py-0.5 rounded text-xs font-medium"
+                              style={{
+                                backgroundColor: `${URGENCY_COLOURS[f.urgency ?? 'normal']}20`,
+                                color: URGENCY_COLOURS[f.urgency ?? 'normal'],
+                              }}
+                            >
+                              {URGENCY_LABELS[f.urgency ?? 'normal']}
+                            </span>
+                          </div>
+
+                          {/* Metadata row */}
+                          <div className="flex items-center gap-3 flex-wrap">
+                            {f.contact_name && (
+                              <span className="text-xs" style={{ color: 'var(--sc-muted)' }}>
+                                {f.contact_name}
+                              </span>
+                            )}
+                            {f.due_date && (
+                              <span className="text-xs flex items-center gap-1" style={{ color: isOverdue ? '#EF4444' : 'var(--sc-muted)' }}>
+                                {isOverdue && <AlertCircle size={11} />}
+                                {isOverdue ? `${overdueDays}d overdue` : `Due ${formatDue(f.due_date)}`}
+                              </span>
+                            )}
+                            {relatedTitle && (
+                              <span className="text-xs" style={{ color: 'var(--sc-hint)' }}>
+                                {relatedTitle}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Next action */}
+                          {f.next_action && (
+                            <p style={{ fontSize: 11, color: 'var(--sc-muted)', marginTop: 5, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <span style={{ color: 'var(--sc-teal)', fontWeight: 600, flexShrink: 0 }}>→</span>
+                              {f.next_action}
+                            </p>
+                          )}
+                        </div>
+
+                        <DropdownMenu>
+                          <DropdownMenuTrigger
+                            className="shrink-0 p-1.5 rounded hover:bg-[var(--sc-border)] transition-colors"
+                            style={{ color: 'var(--sc-muted)' }}
+                          >
+                            <MoreHorizontal size={15} />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleComplete(f.id)}>
+                              Mark complete
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setShowSnooze(f.id); setSnoozeDate('') }}>
+                              Snooze
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem variant="destructive" onClick={() => handleDelete(f.id)}>
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    )
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
+
+        </div>
+
+        {/* Right column */}
+        <div>
+          <ContextPanel>
+            <ContextBlock title="Follow-up health">
+              <div className="sc-metric-row">
+                <span
+                  className="sc-metric-label"
+                  style={{ color: overdueCount > 0 ? '#EF4444' : undefined }}
+                >
+                  Overdue
+                </span>
+                <span
+                  className="sc-metric-value"
+                  style={{ color: overdueCount > 0 ? '#EF4444' : undefined }}
+                >
+                  {overdueCount}
+                </span>
+              </div>
+              <div className="sc-metric-row">
+                <span className="sc-metric-label">Due this week</span>
+                <span className="sc-metric-value">{dueThisWeekCount}</span>
+              </div>
+              <div className="sc-metric-row">
+                <span className="sc-metric-label" style={{ fontWeight: 500, color: 'var(--sc-text-2)' }}>Total open</span>
+                <span className="sc-metric-value">{totalOpen}</span>
+              </div>
+            </ContextBlock>
+
+            <ContextBlock>
+              <p style={{ fontSize: 12, lineHeight: 1.6, color: 'var(--sc-muted)' }}>
+                Follow-ups are commitments waiting on someone or something. Keep them visible until the loop is closed.
+              </p>
+            </ContextBlock>
+          </ContextPanel>
+        </div>
+
       </div>
 
       {/* Add Follow-up Modal */}

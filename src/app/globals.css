@@ -890,6 +890,21 @@
   .sc-settings-nav-item { flex-shrink: 0; white-space: nowrap; }
 }
 
+/* ── Chat sidebar ───────────────────────────────────────────────────── */
+
+.sc-chat-sidebar {
+  width: 268px;
+  flex-shrink: 0;
+  border-left: 0.5px solid var(--sc-border);
+  overflow-y: auto;
+  padding: 22px 18px;
+  background: var(--sc-surface);
+}
+
+@media (max-width: 1024px) {
+  .sc-chat-sidebar { display: none; }
+}
+
 /* ── PWA install prompt ─────────────────────────────────────────────── */
 
 .sc-install-prompt {

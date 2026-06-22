@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useTransition } from 'react'
 import { toast } from 'sonner'
-import { Send, MessageCircle } from 'lucide-react'
+import { Send, MessageCircle, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 interface Message {
   id: string
@@ -12,13 +12,25 @@ interface Message {
 
 interface ChatClientProps {
   initialMessages: Message[]
+  mainFocus?: string | null
+  overdueCount?: number
+  dueTodayCount?: number
 }
+
+const SUGGESTED_PROMPTS = [
+  'What should I focus on today?',
+  'What can wait?',
+  'Park an idea',
+  'Add a follow-up',
+  'I am overwhelmed',
+  'Review my week',
+]
 
 function randomId(): string {
   return Math.random().toString(36).slice(2)
 }
 
-export function ChatClient({ initialMessages }: ChatClientProps) {
+export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTodayCount = 0 }: ChatClientProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -109,136 +121,188 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - var(--sc-topbar-h))' }}>
-      {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {messages.length === 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: '48px 24px', gap: 16 }}>
-            <div style={{
-              width: 48,
-              height: 48,
-              borderRadius: '50%',
-              backgroundColor: 'var(--sc-teal-10)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <MessageCircle size={22} style={{ color: 'var(--sc-teal)' }} />
-            </div>
-            <div>
-              <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>
-                Your Chief of Staff is ready.
-              </p>
-              <p style={{ fontSize: 13, color: 'var(--sc-muted)', maxWidth: 320 }}>
-                Ask about your focus, park an idea, check what is overdue, or talk through what is blocking you.
-              </p>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', maxWidth: 440, marginTop: 8 }}>
-              {[
-                'What should I focus on today?',
-                'What is overdue right now?',
-                'How was my week?',
-                'Help me think through a decision.',
-                'What is in my parking lot?',
-                'I need to log today\'s outcome.',
-              ].map(prompt => (
-                <button
-                  key={prompt}
-                  type="button"
-                  onClick={() => handleSuggestedPrompt(prompt)}
-                  style={{
-                    padding: '10px 14px',
-                    borderRadius: 'var(--sc-radius)',
-                    border: '0.5px solid var(--sc-border)',
-                    backgroundColor: 'var(--sc-surface)',
-                    color: 'var(--sc-muted)',
-                    fontSize: 12,
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    lineHeight: 1.4,
-                    transition: 'border-color 0.12s, color 0.12s',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'var(--sc-border-strong)'
-                    e.currentTarget.style.color = 'var(--sc-text)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'var(--sc-border)'
-                    e.currentTarget.style.color = 'var(--sc-muted)'
-                  }}
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+    <div style={{ display: 'flex', height: 'calc(100vh - var(--sc-topbar-h))', overflow: 'hidden' }}>
 
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className="max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap"
-              style={
-                msg.role === 'user'
-                  ? { backgroundColor: 'var(--sc-accent)', color: '#fff', borderRadius: '18px 18px 4px 18px' }
-                  : {
+      {/* Main chat column */}
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+        {/* Messages */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {messages.length === 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', padding: '48px 24px', gap: 16 }}>
+              <div style={{
+                width: 48,
+                height: 48,
+                borderRadius: '50%',
+                backgroundColor: 'var(--sc-teal-10)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <MessageCircle size={22} style={{ color: 'var(--sc-teal)' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>
+                  Your Chief of Staff is ready.
+                </p>
+                <p style={{ fontSize: 13, color: 'var(--sc-muted)', maxWidth: 320 }}>
+                  Ask about your focus, park an idea, check what is overdue, or talk through what is blocking you.
+                </p>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', maxWidth: 440, marginTop: 8 }}>
+                {SUGGESTED_PROMPTS.map(prompt => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    onClick={() => handleSuggestedPrompt(prompt)}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: 'var(--sc-radius)',
+                      border: '0.5px solid var(--sc-border)',
                       backgroundColor: 'var(--sc-surface)',
-                      border: '1px solid var(--sc-border)',
-                      color: 'var(--sc-text)',
-                      borderRadius: '18px 18px 18px 4px',
-                    }
-              }
-            >
-              {msg.content || (
-                <span className="flex gap-1 items-center" style={{ color: 'var(--sc-muted)' }}>
-                  <span className="animate-pulse">●</span>
-                  <span className="animate-pulse" style={{ animationDelay: '0.15s' }}>●</span>
-                  <span className="animate-pulse" style={{ animationDelay: '0.3s' }}>●</span>
-                </span>
-              )}
+                      color: 'var(--sc-muted)',
+                      fontSize: 12,
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      lineHeight: 1.4,
+                      transition: 'border-color 0.12s, color 0.12s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = 'var(--sc-border-strong)'
+                      e.currentTarget.style.color = 'var(--sc-text)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = 'var(--sc-border)'
+                      e.currentTarget.style.color = 'var(--sc-muted)'
+                    }}
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )}
 
-        <div ref={bottomRef} />
-      </div>
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className="max-w-[78%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap"
+                style={
+                  msg.role === 'user'
+                    ? { backgroundColor: 'var(--sc-accent)', color: '#fff', borderRadius: '18px 18px 4px 18px' }
+                    : {
+                        backgroundColor: 'var(--sc-surface)',
+                        border: '1px solid var(--sc-border)',
+                        color: 'var(--sc-text)',
+                        borderRadius: '18px 18px 18px 4px',
+                      }
+                }
+              >
+                {msg.content || (
+                  <span className="flex gap-1 items-center" style={{ color: 'var(--sc-muted)' }}>
+                    <span className="animate-pulse">●</span>
+                    <span className="animate-pulse" style={{ animationDelay: '0.15s' }}>●</span>
+                    <span className="animate-pulse" style={{ animationDelay: '0.3s' }}>●</span>
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
 
-      {/* Input */}
-      <div
-        style={{ padding: '12px 28px 20px', borderTop: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', flexShrink: 0 }}
-      >
-        <div
-          className="flex gap-3 items-end rounded-xl border p-3"
-          style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-        >
-          <textarea
-            ref={inputRef}
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"
-            rows={1}
-            disabled={isStreaming}
-            className="flex-1 resize-none text-sm outline-none bg-transparent leading-relaxed disabled:opacity-50"
-            style={{ color: 'var(--sc-text)', maxHeight: '120px' }}
-          />
-          <button
-            type="button"
-            onClick={sendMessage}
-            disabled={isStreaming || !input.trim()}
-            className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-40"
-            style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-          >
-            <Send size={14} />
-          </button>
+          <div ref={bottomRef} />
         </div>
-        <p className="text-xs text-center mt-2" style={{ color: 'var(--sc-muted)' }}>
-          All context loaded before every message.
-        </p>
+
+        {/* Input */}
+        <div style={{ padding: '12px 28px 20px', borderTop: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', flexShrink: 0 }}>
+          <div
+            className="flex gap-3 items-end rounded-xl border p-3"
+            style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
+          >
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"
+              rows={1}
+              disabled={isStreaming}
+              className="flex-1 resize-none text-sm outline-none bg-transparent leading-relaxed disabled:opacity-50"
+              style={{ color: 'var(--sc-text)', maxHeight: '120px' }}
+            />
+            <button
+              type="button"
+              onClick={sendMessage}
+              disabled={isStreaming || !input.trim()}
+              className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-40"
+              style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+            >
+              <Send size={14} />
+            </button>
+          </div>
+          <p className="text-xs text-center mt-2" style={{ color: 'var(--sc-muted)' }}>
+            All context loaded before every message.
+          </p>
+        </div>
       </div>
+
+      {/* Right context panel — desktop only */}
+      <aside className="sc-chat-sidebar">
+        <p className="sc-context-title" style={{ marginBottom: 16 }}>Context loaded</p>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Today's focus */}
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Today&apos;s focus</p>
+            {mainFocus ? (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                <CheckCircle2 size={13} style={{ color: 'var(--sc-teal)', marginTop: 1, flexShrink: 0 }} />
+                <p style={{ fontSize: 12, color: 'var(--sc-text)', lineHeight: 1.5 }}>{mainFocus}</p>
+              </div>
+            ) : (
+              <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>No active plan</p>
+            )}
+          </div>
+
+          {/* Follow-ups */}
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Follow-ups due</p>
+            {overdueCount > 0 ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <AlertCircle size={13} style={{ color: '#EF4444', flexShrink: 0 }} />
+                <p style={{ fontSize: 12, color: '#EF4444' }}>{overdueCount} overdue</p>
+              </div>
+            ) : dueTodayCount > 0 ? (
+              <p style={{ fontSize: 12, color: 'var(--sc-text)' }}>{dueTodayCount} due today</p>
+            ) : (
+              <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>None due today</p>
+            )}
+          </div>
+
+          {/* Weekly progress */}
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Weekly progress</p>
+            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Loaded from plan</p>
+          </div>
+
+          {/* Stop list */}
+          <div>
+            <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Stop list</p>
+            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Loaded from settings</p>
+          </div>
+
+        </div>
+
+        <div style={{ borderTop: '0.5px solid var(--sc-border)', marginTop: 20, paddingTop: 16 }}>
+          <p style={{ fontSize: 11, color: 'var(--sc-hint)', lineHeight: 1.6 }}>
+            Full context is rebuilt before every message — commitments, plan, follow-ups, parking lot, and review history.
+          </p>
+        </div>
+      </aside>
+
     </div>
   )
 }

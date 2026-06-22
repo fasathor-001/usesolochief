@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { CheckCircle, Circle, AlertCircle } from 'lucide-react'
+import { CheckCircle, Circle, AlertCircle, ArrowRight } from 'lucide-react'
 import { completeReview, redirectAfterReview } from '@/lib/actions/reviews'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
+import Link from 'next/link'
 import type {
   WeeklyPlan, WeeklyOutcome, Followup, ParkingLotItem, Commitment, Review,
 } from '@/types/database'
@@ -81,21 +82,165 @@ export function ReviewClient({
   }
 
   if (alreadyComplete) {
+    const achievedOutcomes = outcomes.filter(o => o.achieved)
+    const slippedOutcomes  = outcomes.filter(o => !o.achieved)
+    const r = existingReview
+
     return (
       <>
         <div className="sc-content sc-content-narrow">
           <PageHeader title="Friday Review" subtitle={`Week of ${weekRange}`} />
+
+          {/* Complete banner */}
           <div
             className="sc-card"
-            style={{ borderColor: 'rgba(0,194,168,0.25)' }}
+            style={{ borderLeft: '3px solid var(--sc-teal)', marginBottom: 24 }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <CheckCircle size={16} style={{ color: 'var(--sc-teal)' }} />
-              <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Week reviewed</p>
+              <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-teal)' }}>Review complete</p>
             </div>
-            <p style={{ fontSize: 13, color: 'var(--sc-muted)' }}>
-              Review complete for {weekRange}. Monday plan is ready.
+            <p style={{ fontSize: 13, color: 'var(--sc-muted)', lineHeight: 1.6 }}>
+              Review complete. Use what happened this week to shape the next plan.
             </p>
+          </div>
+
+          {/* Weekly summary */}
+          <div className="space-y-5">
+
+            {/* Outcomes */}
+            {outcomes.length > 0 && (
+              <div className="sc-card">
+                <p className="sc-section-heading" style={{ marginBottom: 12 }}>Outcomes</p>
+                <div className="space-y-2">
+                  {achievedOutcomes.map(o => (
+                    <div key={o.id} className="flex items-center gap-2">
+                      <CheckCircle size={13} style={{ color: 'var(--sc-teal)', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)' }}>{o.description}</span>
+                    </div>
+                  ))}
+                  {slippedOutcomes.map(o => (
+                    <div key={o.id} className="flex items-center gap-2">
+                      <Circle size={13} style={{ color: 'var(--sc-muted)', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: 'var(--sc-muted)' }}>{o.description}</span>
+                      <span className="sc-badge" style={{ marginLeft: 'auto', backgroundColor: 'rgba(239,68,68,0.08)', color: '#EF4444' }}>Slipped</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* What shipped */}
+            {r?.shipped_text && (
+              <div className="sc-card">
+                <p className="sc-section-heading" style={{ marginBottom: 8 }}>What got done</p>
+                <p style={{ fontSize: 13, color: 'var(--sc-text)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{r.shipped_text}</p>
+              </div>
+            )}
+
+            {/* What slipped */}
+            {r?.slipped_text && (
+              <div className="sc-card">
+                <p className="sc-section-heading" style={{ marginBottom: 8 }}>What slipped</p>
+                <p style={{ fontSize: 13, color: 'var(--sc-text)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{r.slipped_text}</p>
+              </div>
+            )}
+
+            {/* Missed follow-ups */}
+            {overdueFollowups.length > 0 && (
+              <div className="sc-card">
+                <p className="sc-section-heading" style={{ marginBottom: 12 }}>Follow-ups missed</p>
+                <div className="space-y-1.5">
+                  {overdueFollowups.map(f => (
+                    <div key={f.id} className="flex items-center gap-2">
+                      <AlertCircle size={12} style={{ color: '#EF4444', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)', flex: 1 }}>{f.title}</span>
+                      {f.due_date && (
+                        <span className="sc-meta">{formatDate(f.due_date)}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Parked this week */}
+            {parkingItemsThisWeek.length > 0 && (
+              <div className="sc-card">
+                <p className="sc-section-heading" style={{ marginBottom: 12 }}>
+                  Parked this week — {parkingItemsThisWeek.length} idea{parkingItemsThisWeek.length !== 1 ? 's' : ''}
+                </p>
+                <div className="space-y-1.5">
+                  {parkingItemsThisWeek.map(item => (
+                    <div key={item.id} className="flex items-center gap-2">
+                      <div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: 'var(--sc-teal)', flexShrink: 0 }} />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)', flex: 1 }}>{item.title}</span>
+                      <span className="sc-meta">{item.category.replace('_', ' ')}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Ratings */}
+            {(r?.energy_rating || r?.focus_rating) && (
+              <div className="sc-card">
+                <p className="sc-section-heading" style={{ marginBottom: 12 }}>Week rating</p>
+                <div style={{ display: 'flex', gap: 24 }}>
+                  {r?.energy_rating && (
+                    <div>
+                      <p className="sc-meta" style={{ marginBottom: 4 }}>Energy</p>
+                      <p style={{ fontSize: 22, fontWeight: 500, color: 'var(--sc-text)' }}>{r.energy_rating}<span style={{ fontSize: 13, color: 'var(--sc-muted)' }}>/5</span></p>
+                    </div>
+                  )}
+                  {r?.focus_rating && (
+                    <div>
+                      <p className="sc-meta" style={{ marginBottom: 4 }}>Focus</p>
+                      <p style={{ fontSize: 22, fontWeight: 500, color: 'var(--sc-text)' }}>{r.focus_rating}<span style={{ fontSize: 13, color: 'var(--sc-muted)' }}>/5</span></p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* If no data at all */}
+            {outcomes.length === 0 && !r?.shipped_text && !r?.slipped_text && (
+              <div className="sc-card" style={{ textAlign: 'center', padding: '32px 24px' }}>
+                <p style={{ fontSize: 13, color: 'var(--sc-muted)' }}>Not enough data yet.</p>
+              </div>
+            )}
+
+            {/* Next actions */}
+            <div className="sc-card">
+              <p className="sc-section-heading" style={{ marginBottom: 12 }}>Next steps</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 text-sm transition-colors"
+                  style={{ color: 'var(--sc-text)' }}
+                >
+                  <ArrowRight size={14} style={{ color: 'var(--sc-teal)' }} />
+                  View this week's plan
+                </Link>
+                <Link
+                  href="/dashboard/plan"
+                  className="flex items-center gap-2 text-sm transition-colors"
+                  style={{ color: 'var(--sc-text)' }}
+                >
+                  <ArrowRight size={14} style={{ color: 'var(--sc-teal)' }} />
+                  Start next week
+                </Link>
+                <Link
+                  href="/dashboard/chat"
+                  className="flex items-center gap-2 text-sm transition-colors"
+                  style={{ color: 'var(--sc-text)' }}
+                >
+                  <ArrowRight size={14} style={{ color: 'var(--sc-teal)' }} />
+                  Ask SoloChief
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </>

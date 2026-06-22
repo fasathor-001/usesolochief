@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog'
 import type { ParkingLotItem, ParkingLotCategory, ParkingLotStatus } from '@/types/database'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
+import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
 
 interface ParkingLotClientProps {
   initialItems: ParkingLotItem[]
@@ -48,10 +49,17 @@ const CATEGORY_COLOURS: Record<ParkingLotCategory, string> = {
 }
 
 const STATUS_GROUPS: { status: ParkingLotStatus[]; label: string }[] = [
-  { status: ['waiting'], label: 'Waiting for review' },
-  { status: ['scheduled'], label: 'Scheduled for Monday review' },
-  { status: ['cleared', 'actioned'], label: 'Cleared / actioned' },
-  { status: ['killed'], label: 'Archived' },
+  { status: ['waiting'],             label: 'Parked' },
+  { status: ['scheduled'],           label: 'Reviewing soon' },
+  { status: ['cleared', 'actioned'], label: 'Cleared' },
+  { status: ['killed'],              label: 'Archived' },
+]
+
+const PARKING_RULES = [
+  "Park useful ideas that are not today's focus",
+  'Review parked ideas weekly',
+  'Promote an idea only if something else moves out',
+  'The goal is clarity, not storage',
 ]
 
 function daysParked(dateStr: string): number {
@@ -79,7 +87,7 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
   const [isPending, startTransition] = useTransition()
 
   const totalParked = items.filter(i => i.status === 'waiting' || i.status === 'scheduled').length
-  const reviewedThisWeek = items.filter(i => i.status === 'scheduled').length
+  const reviewingSoon = items.filter(i => i.status === 'scheduled').length
   const clearedThisMonth = items.filter(i => {
     if (i.status !== 'cleared' && i.status !== 'actioned' && i.status !== 'killed') return false
     const d = new Date(i.updated_at)
@@ -113,7 +121,7 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
       const { data, error } = await killParkingLotItem(id)
       if (error) { toast.error(error); return }
       if (data) setItems(prev => prev.map(i => i.id === id ? data : i))
-      toast.success('Idea killed')
+      toast.success('Idea archived')
     })
   }
 
@@ -149,7 +157,8 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
   return (
     <>
 
-    <div className="sc-content sc-content-narrow">
+    <div className="sc-content" style={{ maxWidth: 1280 }}>
+
       <PageHeader
         title="Parking Lot"
         subtitle="Ideas captured safely. Not lost — waiting."
@@ -164,141 +173,188 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
           </button>
         }
       />
-      {/* Stats */}
-      <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
-        {[
-          { label: 'ideas parked', value: totalParked },
-          { label: 'reviewed this week', value: reviewedThisWeek },
-          { label: 'cleared this month', value: clearedThisMonth },
-        ].map(({ label, value }) => (
-          <div key={label} className="sc-stat">
-            <p className="sc-stat-value">{value}</p>
-            <p className="sc-stat-label">{label}</p>
-          </div>
-        ))}
-      </div>
 
-      {/* Empty state */}
-      {items.length === 0 && (
-        <div
-          className="p-8 rounded-xl border text-center"
-          style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-        >
-          <Archive size={32} className="mx-auto mb-3" style={{ color: 'var(--sc-muted)' }} />
-          <p className="text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>No ideas parked yet.</p>
-          <p className="text-xs max-w-sm mx-auto" style={{ color: 'var(--sc-muted)' }}>
-            When a new idea hits during the week, park it here instead of letting it hijack your focus.
+      <div className="sc-grid-main">
+
+        {/* Left column */}
+        <div className="sc-grid-col">
+
+          <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 20, lineHeight: 1.6 }}>
+            This is where ideas go so they do not hijack the week.
           </p>
-        </div>
-      )}
 
-      {/* Grouped sections */}
-      <div className="space-y-8">
-        {STATUS_GROUPS.map(({ status: statuses, label }) => {
-          const groupItems = items.filter(i => statuses.includes(i.status))
-          if (groupItems.length === 0) return null
+          {/* Stats */}
+          <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
+            {[
+              { label: 'ideas parked',       value: totalParked },
+              { label: 'reviewing soon',     value: reviewingSoon },
+              { label: 'cleared this month', value: clearedThisMonth },
+            ].map(({ label, value }) => (
+              <div key={label} className="sc-stat">
+                <p className="sc-stat-value">{value}</p>
+                <p className="sc-stat-label">{label}</p>
+              </div>
+            ))}
+          </div>
 
-          return (
-            <section key={label}>
-              <h2
-                className="text-xs font-semibold uppercase tracking-wide mb-3"
-                style={{ color: 'var(--sc-muted)' }}
-              >
-                {label}
-              </h2>
-              <div className="space-y-2">
-                {groupItems.map((item) => {
-                  const days = daysParked(item.parked_at || item.created_at)
-                  const isOld = days > 30
-                  const isActive = item.status === 'waiting' || item.status === 'scheduled'
-                  const displayDays = days <= 0 ? 'Parked today' : `${days}d parked`
+          {/* Empty state */}
+          {items.length === 0 && (
+            <div
+              className="sc-card"
+              style={{ textAlign: 'center', padding: '48px 24px' }}
+            >
+              <Archive size={28} className="mx-auto mb-3" style={{ color: 'var(--sc-muted)' }} />
+              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>No ideas parked yet.</p>
+              <p style={{ fontSize: 13, color: 'var(--sc-muted)', maxWidth: 300, margin: '0 auto', lineHeight: 1.6 }}>
+                When a new idea arrives during the week, park it here instead of letting it hijack your focus.
+              </p>
+            </div>
+          )}
 
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-start gap-3 p-4 rounded-xl border"
-                      style={{
-                        borderColor: isOld ? 'rgba(239,68,68,0.3)' : 'var(--sc-border)',
-                        backgroundColor: 'var(--sc-surface)',
-                      }}
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className="text-sm font-medium" style={{ color: 'var(--sc-text)' }}>
-                            {item.title}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span
-                            className="px-2 py-0.5 rounded text-xs font-medium"
-                            style={{
-                              backgroundColor: `${CATEGORY_COLOURS[item.category]}20`,
-                              color: CATEGORY_COLOURS[item.category],
-                            }}
-                          >
-                            {CATEGORY_LABELS[item.category]}
-                          </span>
-                          <span
-                            className="text-xs"
-                            style={{ color: isOld ? '#EF4444' : 'var(--sc-muted)' }}
-                          >
-                            {displayDays}
-                            {isOld && ' — review or kill'}
-                          </span>
-                          {item.review_date && (
-                            <span className="text-xs" style={{ color: 'var(--sc-muted)' }}>
-                              Review: {item.review_date}
-                            </span>
-                          )}
-                        </div>
-                        {item.notes && (
-                          <p className="text-xs mt-1.5 line-clamp-2" style={{ color: 'var(--sc-muted)' }}>
-                            {item.notes}
-                          </p>
-                        )}
-                      </div>
+          {/* Grouped sections */}
+          <div className="space-y-8">
+            {STATUS_GROUPS.map(({ status: statuses, label }) => {
+              const groupItems = items.filter(i => statuses.includes(i.status))
+              if (groupItems.length === 0) return null
 
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          className="shrink-0 p-1.5 rounded hover:bg-[var(--sc-border)] transition-colors"
-                          style={{ color: 'var(--sc-muted)' }}
+              return (
+                <section key={label}>
+                  <h2 className="sc-section-heading" style={{ marginBottom: 12 }}>{label}</h2>
+                  <div className="space-y-2">
+                    {groupItems.map((item) => {
+                      const days = daysParked(item.parked_at || item.created_at)
+                      const isOld = days > 30
+                      const isActive = item.status === 'waiting' || item.status === 'scheduled'
+                      const displayDays = days <= 0 ? 'Parked today' : `${days}d parked`
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="flex items-start gap-3 p-4 rounded-xl border"
+                          style={{
+                            borderColor: isOld ? 'rgba(239,68,68,0.3)' : 'var(--sc-border)',
+                            backgroundColor: 'var(--sc-surface)',
+                          }}
                         >
-                          <MoreHorizontal size={15} />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          {isActive && (
-                            <>
-                              <DropdownMenuItem onClick={() => handleSchedule(item.id)}>
-                                Review on Monday
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleActOn(item.id)}>
-                                Act on it
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <span className="text-sm font-medium" style={{ color: 'var(--sc-text)' }}>
+                                {item.title}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span
+                                className="px-2 py-0.5 rounded text-xs font-medium"
+                                style={{
+                                  backgroundColor: `${CATEGORY_COLOURS[item.category]}20`,
+                                  color: CATEGORY_COLOURS[item.category],
+                                }}
+                              >
+                                {CATEGORY_LABELS[item.category]}
+                              </span>
+                              <span
+                                className="text-xs"
+                                style={{ color: isOld ? '#EF4444' : 'var(--sc-muted)' }}
+                              >
+                                {displayDays}
+                                {isOld && ' — review or archive'}
+                              </span>
+                              {item.review_date && (
+                                <span className="text-xs" style={{ color: 'var(--sc-muted)' }}>
+                                  Review: {item.review_date}
+                                </span>
+                              )}
+                            </div>
+                            {item.notes && (
+                              <p className="text-xs mt-1.5 line-clamp-2" style={{ color: 'var(--sc-muted)' }}>
+                                {item.notes}
+                              </p>
+                            )}
+                          </div>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              className="shrink-0 p-1.5 rounded hover:bg-[var(--sc-border)] transition-colors"
+                              style={{ color: 'var(--sc-muted)' }}
+                            >
+                              <MoreHorizontal size={15} />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {isActive && (
+                                <>
+                                  <DropdownMenuItem onClick={() => handleSchedule(item.id)}>
+                                    Review on Monday
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleActOn(item.id)}>
+                                    Act on it
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    onClick={() => handleKill(item.id)}
+                                    variant="destructive"
+                                  >
+                                    Archive idea
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                </>
+                              )}
                               <DropdownMenuItem
-                                onClick={() => handleKill(item.id)}
+                                onClick={() => setConfirmDeleteId(item.id)}
                                 variant="destructive"
                               >
-                                Kill idea
+                                Delete permanently
                               </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                            </>
-                          )}
-                          <DropdownMenuItem
-                            onClick={() => setConfirmDeleteId(item.id)}
-                            variant="destructive"
-                          >
-                            Delete permanently
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  )
-                })}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+            })}
+          </div>
+
+        </div>
+
+        {/* Right column */}
+        <div>
+          <ContextPanel>
+            <ContextBlock title="Parking rule">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {PARKING_RULES.map((rule, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <div style={{
+                      width: 5,
+                      height: 5,
+                      borderRadius: '50%',
+                      backgroundColor: 'var(--sc-teal)',
+                      marginTop: 6,
+                      flexShrink: 0,
+                    }} />
+                    <p style={{ fontSize: 12, color: 'var(--sc-muted)', lineHeight: 1.6 }}>{rule}</p>
+                  </div>
+                ))}
               </div>
-            </section>
-          )
-        })}
+            </ContextBlock>
+
+            <ContextBlock>
+              <div className="sc-metric-row">
+                <span className="sc-metric-label">Parked</span>
+                <span className="sc-metric-value">{totalParked}</span>
+              </div>
+              <div className="sc-metric-row">
+                <span className="sc-metric-label">Reviewing soon</span>
+                <span className="sc-metric-value">{reviewingSoon}</span>
+              </div>
+              <div className="sc-metric-row">
+                <span className="sc-metric-label">Cleared this month</span>
+                <span className="sc-metric-value">{clearedThisMonth}</span>
+              </div>
+            </ContextBlock>
+          </ContextPanel>
+        </div>
+
       </div>
 
       {/* Delete confirmation */}
