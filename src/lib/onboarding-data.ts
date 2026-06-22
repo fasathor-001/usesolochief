@@ -50,7 +50,7 @@ export const TEMPLATE_DEFAULTS: Record<OnboardingTemplate, CommitmentDraft[]> = 
 export const TEMPLATE_LABELS: Record<OnboardingTemplate, string> = {
   solo_founder: 'Solo Founder / Builder',
   freelancer: 'Freelancer',
-  student_builder: 'Student Builder',
+  student_builder: 'Student',
   creator: 'Creator',
   professional: 'Professional',
   scratch: 'Start from Scratch',
@@ -59,7 +59,7 @@ export const TEMPLATE_LABELS: Record<OnboardingTemplate, string> = {
 export const TEMPLATE_DESCRIPTIONS: Record<OnboardingTemplate, string> = {
   solo_founder: 'Building a product, managing a side project, and staying on top of admin.',
   freelancer: 'Juggling clients, business development, and invoicing.',
-  student_builder: 'Studying, building projects, and managing applications.',
+  student_builder: 'Assignments, exams, work, personal admin, and anything else you are managing.',
   creator: 'Producing content, managing brand deals, and growing an audience.',
   professional: 'Leading work projects while building a side income.',
   scratch: 'Set up your commitments from scratch — no suggestions.',
