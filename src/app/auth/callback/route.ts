@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
+  const type = searchParams.get('type')
   const appUrl = process.env.NEXT_PUBLIC_APP_URL!
 
   if (code) {
@@ -11,7 +12,9 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // Workspace auto-creation and onboarding happen inside the dashboard layout
+      if (type === 'recovery') {
+        return NextResponse.redirect(`${appUrl}/auth/reset-password`)
+      }
       return NextResponse.redirect(`${appUrl}/dashboard`)
     }
   }
