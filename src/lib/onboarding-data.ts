@@ -65,7 +65,7 @@ export const TEMPLATE_LABELS: Record<OnboardingTemplate, string> = {
 }
 
 export const TEMPLATE_DESCRIPTIONS: Record<OnboardingTemplate, string> = {
-  solo_founder:    'Managing a business, project, product, or venture — and everything around it.',
+  solo_founder:    'Managing a business, product, technical project, venture, or side project — and everything around it.',
   freelancer:      'Managing clients, deadlines, proposals, invoices, and follow-ups.',
   student_builder: 'Managing assignments, exams, work, personal admin, and everything else you are carrying.',
   creator:         'Managing content, social media, ideas, publishing, brand deals, and audience commitments.',
