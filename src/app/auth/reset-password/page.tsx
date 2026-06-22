@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, ArrowRight } from 'lucide-react'
@@ -47,6 +47,17 @@ export default function ResetPasswordPage() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    const supabase = createClient()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setReady(true)
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -72,7 +83,7 @@ export default function ResetPasswordPage() {
     if (updateError) {
       setError(updateError.message)
     } else {
-      router.push('/dashboard')
+      router.replace('/dashboard')
     }
   }
 
@@ -109,94 +120,102 @@ export default function ResetPasswordPage() {
             SoloChief <span style={{ color: '#00C2A8' }}>AI</span>
           </p>
 
-          <h2 style={{
-            margin: '0 0 8px',
-            fontSize: '22px',
-            fontWeight: 500,
-            color: '#0D0D0D',
-            letterSpacing: '-0.3px',
-          }}>
-            Set a new password
-          </h2>
-          <p style={{ margin: '0 0 28px', fontSize: '14px', color: '#64748B', lineHeight: 1.5 }}>
-            Choose a new password for your account.
-          </p>
-
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: '12px' }}>
-              <label style={labelStyle}>New password</label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  autoFocus
-                  required
-                  style={{ ...inputStyle, paddingRight: '40px' }}
-                  onFocus={e => (e.target.style.borderColor = '#00C2A8')}
-                  onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
-                />
-                <button type="button" onClick={() => setShowPassword(v => !v)} style={eyeBtnStyle}>
-                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
+          {!ready ? (
+            <div style={{ textAlign: 'center', padding: '40px 0' }}>
+              <p style={{ fontSize: '14px', color: '#64748B' }}>Verifying your reset link…</p>
             </div>
-
-            <div style={{ marginBottom: '12px' }}>
-              <label style={labelStyle}>Confirm new password</label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type={showConfirm ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)}
-                  placeholder="Repeat your new password"
-                  required
-                  style={{ ...inputStyle, paddingRight: '40px' }}
-                  onFocus={e => (e.target.style.borderColor = '#00C2A8')}
-                  onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
-                />
-                <button type="button" onClick={() => setShowConfirm(v => !v)} style={eyeBtnStyle}>
-                  {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
-                {error}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={isDisabled}
-              style={{
-                width: '100%',
-                padding: '11px 16px',
-                background: isDisabled ? '#94A3B8' : '#00C2A8',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
+          ) : (
+            <>
+              <h2 style={{
+                margin: '0 0 8px',
+                fontSize: '22px',
                 fontWeight: 500,
-                color: '#fff',
-                cursor: isDisabled ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                transition: 'background 0.12s',
-                fontFamily: 'inherit',
-              }}
-            >
-              {loading ? 'Updating...' : (
-                <>
-                  Set new password
-                  <ArrowRight size={15} />
-                </>
-              )}
-            </button>
-          </form>
+                color: '#0D0D0D',
+                letterSpacing: '-0.3px',
+              }}>
+                Set a new password
+              </h2>
+              <p style={{ margin: '0 0 28px', fontSize: '14px', color: '#64748B', lineHeight: 1.5 }}>
+                Choose a new password for your account.
+              </p>
+
+              <form onSubmit={handleSubmit}>
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={labelStyle}>New password</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder="At least 8 characters"
+                      autoFocus
+                      required
+                      style={{ ...inputStyle, paddingRight: '40px' }}
+                      onFocus={e => (e.target.style.borderColor = '#00C2A8')}
+                      onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
+                    />
+                    <button type="button" onClick={() => setShowPassword(v => !v)} style={eyeBtnStyle}>
+                      {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={labelStyle}>Confirm new password</label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showConfirm ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="Repeat your new password"
+                      required
+                      style={{ ...inputStyle, paddingRight: '40px' }}
+                      onFocus={e => (e.target.style.borderColor = '#00C2A8')}
+                      onBlur={e => (e.target.style.borderColor = '#E2E8F0')}
+                    />
+                    <button type="button" onClick={() => setShowConfirm(v => !v)} style={eyeBtnStyle}>
+                      {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+                </div>
+
+                {error && (
+                  <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isDisabled}
+                  style={{
+                    width: '100%',
+                    padding: '11px 16px',
+                    background: isDisabled ? '#94A3B8' : '#00C2A8',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: '#fff',
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'background 0.12s',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {loading ? 'Updating...' : (
+                    <>
+                      Set new password
+                      <ArrowRight size={15} />
+                    </>
+                  )}
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </div>
