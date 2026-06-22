@@ -226,7 +226,7 @@ export function ReviewClient({
                   className="flex items-center gap-3 p-3 rounded-lg border"
                   style={{ borderColor: 'rgba(239,68,68,0.2)', backgroundColor: 'var(--sc-surface)' }}
                 >
-                  <AlertCircle size={14} style={{ color: '#EF4444', shrink: 0 }} />
+                  <AlertCircle size={14} style={{ color: '#EF4444', flexShrink: 0 }} />
                   <p className="flex-1 text-sm" style={{ color: 'var(--sc-text)' }}>{f.title}</p>
                   {f.due_date && (
                     <span className="text-xs" style={{ color: '#EF4444' }}>Due {formatDate(f.due_date)}</span>
