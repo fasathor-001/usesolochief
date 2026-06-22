@@ -10,7 +10,7 @@ const SECTION_LABELS: Record<string, string> = {
   '/dashboard/today': 'Today Focus',
   '/dashboard/commitments': 'Commitments',
   '/dashboard/weekly-plan': 'Weekly Plan',
-  '/dashboard/launch-checklists': 'Launch Checklists',
+  '/dashboard/launch-checklists': 'Checklists',
   '/dashboard/parking-lot': 'Parking Lot',
   '/dashboard/follow-ups': 'Follow-ups',
   '/dashboard/review': 'Friday Review',
@@ -42,20 +42,7 @@ export function DashboardTopbar() {
     <div className="sc-topbar">
       <span className="sc-topbar-workspace">{section}</span>
       <div className="sc-topbar-actions">
-        <span style={{
-          fontSize: 10,
-          fontWeight: 600,
-          textTransform: 'uppercase',
-          letterSpacing: '0.06em',
-          color: 'var(--sc-muted)',
-          border: '0.5px solid var(--sc-border)',
-          borderRadius: 4,
-          padding: '2px 8px',
-          flexShrink: 0,
-          whiteSpace: 'nowrap',
-        }}>
-          Private beta
-        </span>
+        <span className="sc-topbar-beta">Private beta</span>
         {pathname !== '/dashboard/chat' && (
           <Link
             href="/dashboard/chat"

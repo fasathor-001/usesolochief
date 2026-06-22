@@ -40,7 +40,7 @@ const NAV_GROUPS: { label: string | null; items: NavItem[] }[] = [
     label: 'Planning',
     items: [
       { href: '/dashboard/weekly-plan',      label: 'Weekly Plan',       icon: CalendarDays },
-      { href: '/dashboard/launch-checklists',label: 'Launch Checklists', icon: CheckSquare },
+      { href: '/dashboard/launch-checklists', label: 'Checklists', icon: CheckSquare },
     ],
   },
   {

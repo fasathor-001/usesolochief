@@ -235,7 +235,7 @@
 .sc-topbar-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
 .sc-topbar-workspace {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--sc-text);
   letter-spacing: -0.2px;
@@ -930,6 +930,25 @@
   border-radius: var(--sc-r-lg);
   padding: 14px 16px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ── Topbar beta badge ──────────────────────────────────────────────── */
+
+.sc-topbar-beta {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sc-muted);
+  border: 0.5px solid var(--sc-border);
+  border-radius: 4px;
+  padding: 2px 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .sc-topbar-beta { display: none; }
 }
 
 @media (max-width: 768px) {

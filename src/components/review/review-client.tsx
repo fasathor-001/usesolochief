@@ -213,31 +213,28 @@ export function ReviewClient({
             {/* Next actions */}
             <div className="sc-card">
               <p className="sc-section-heading" style={{ marginBottom: 12 }}>Next steps</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 text-sm transition-colors"
-                  style={{ color: 'var(--sc-text)' }}
-                >
-                  <ArrowRight size={14} style={{ color: 'var(--sc-teal)' }} />
-                  View this week's plan
-                </Link>
-                <Link
-                  href="/dashboard/weekly-plan"
-                  className="flex items-center gap-2 text-sm transition-colors"
-                  style={{ color: 'var(--sc-text)' }}
-                >
-                  <ArrowRight size={14} style={{ color: 'var(--sc-teal)' }} />
-                  Start next week
-                </Link>
-                <Link
-                  href="/dashboard/chat"
-                  className="flex items-center gap-2 text-sm transition-colors"
-                  style={{ color: 'var(--sc-text)' }}
-                >
-                  <ArrowRight size={14} style={{ color: 'var(--sc-teal)' }} />
-                  Ask SoloChief
-                </Link>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {([
+                  { href: '/dashboard',            label: "View this week’s plan" },
+                  { href: '/dashboard/weekly-plan', label: 'Start next week' },
+                  { href: '/dashboard/chat',        label: 'Ask SoloChief' },
+                ] as { href: string; label: string }[]).map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex items-center gap-2 text-sm"
+                    style={{
+                      padding: '9px 10px',
+                      borderRadius: 6,
+                      backgroundColor: 'var(--sc-bg)',
+                      color: 'var(--sc-text)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <ArrowRight size={13} style={{ color: 'var(--sc-teal)', flexShrink: 0 }} />
+                    {label}
+                  </Link>
+                ))}
               </div>
             </div>
 
