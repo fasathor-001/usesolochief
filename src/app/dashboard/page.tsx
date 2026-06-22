@@ -113,11 +113,6 @@ export default async function CommandCentrePage() {
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
       {/* Main content */}
       <div className="sc-content">

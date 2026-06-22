@@ -14,11 +14,6 @@ const HOW_IT_WORKS = [
 export default function LaunchChecklistsPage() {
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
       <div className="sc-content sc-content-narrow">
         <PageHeader

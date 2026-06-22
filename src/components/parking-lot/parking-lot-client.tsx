@@ -148,11 +148,6 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
     <div className="sc-content sc-content-narrow">
       <PageHeader

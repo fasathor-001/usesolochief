@@ -175,11 +175,6 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
     <div className="sc-content sc-content-narrow">
       <PageHeader

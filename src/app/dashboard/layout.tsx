@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getOrCreateWorkspace } from '@/lib/actions/workspace'
 import { SidebarNav } from '@/components/sidebar-nav'
+import { DashboardTopbar } from '@/components/dashboard/DashboardTopbar'
 
 export default async function DashboardLayout({
   children,
@@ -57,6 +58,7 @@ export default async function DashboardLayout({
         overdueFollowupsCount={overdueFollowupsCount}
       />
       <div className="sc-main">
+        <DashboardTopbar />
         {children}
       </div>
     </div>

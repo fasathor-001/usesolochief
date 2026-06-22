@@ -83,10 +83,6 @@ export function ReviewClient({
   if (alreadyComplete) {
     return (
       <>
-        <div className="sc-topbar">
-          <div />
-          <div className="sc-topbar-actions" />
-        </div>
         <div className="sc-content sc-content-narrow">
           <PageHeader title="Friday Review" subtitle={`Week of ${weekRange}`} />
           <div
@@ -108,11 +104,6 @@ export function ReviewClient({
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
     <div className="sc-content sc-content-narrow">
       <PageHeader title="Friday Review" subtitle={`Week of ${weekRange} · Close the loop.`} />

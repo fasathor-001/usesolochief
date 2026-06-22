@@ -120,11 +120,6 @@ export function TodayClient({
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
       {/* Two-column layout */}
       <div className="sc-content">

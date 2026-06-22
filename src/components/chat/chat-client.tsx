@@ -109,13 +109,7 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: 0, minHeight: '100vh' }}>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
-
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - var(--sc-topbar-h))' }}>
       {/* Messages */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {messages.length === 0 && (

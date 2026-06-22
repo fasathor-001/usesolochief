@@ -75,11 +75,6 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
     <div className="sc-content" style={{ maxWidth: 1100 }}>
       <PageHeader

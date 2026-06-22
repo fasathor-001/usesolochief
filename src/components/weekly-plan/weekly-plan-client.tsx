@@ -140,11 +140,6 @@ export function WeeklyPlanClient({
 
   return (
     <>
-      {/* Topbar */}
-      <div className="sc-topbar">
-        <div />
-        <div className="sc-topbar-actions" />
-      </div>
 
     <div className="sc-content">
       <PageHeader
