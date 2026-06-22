@@ -54,11 +54,9 @@ const STATUS_GROUPS: { status: ParkingLotStatus[]; label: string }[] = [
 ]
 
 function daysParked(dateStr: string): number {
-  // dateStr may be a plain date (YYYY-MM-DD) or a full timestamp — normalise to date only
-  const dateOnly = dateStr.split('T')[0]
-  const parked = new Date(dateOnly + 'T12:00:00Z')
-  const days = Math.floor((new Date().getTime() - parked.getTime()) / 86400000)
-  return Math.max(0, days)
+  return Math.floor(
+    (new Date().getTime() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)
+  )
 }
 
 function nextMondayString(): string {
@@ -220,7 +218,7 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
                   const days = daysParked(item.parked_at || item.created_at)
                   const isOld = days > 30
                   const isActive = item.status === 'waiting' || item.status === 'scheduled'
-                  const displayDays = days === 0 ? 'Parked today' : `${days}d parked`
+                  const displayDays = days <= 0 ? 'Parked today' : `${days}d parked`
 
                   return (
                     <div

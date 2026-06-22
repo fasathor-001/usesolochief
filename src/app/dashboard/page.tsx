@@ -183,7 +183,7 @@ export default async function CommandCentrePage() {
           ) : (
             <div>
               <p className="text-sm font-semibold mb-0.5" style={{ color: 'var(--sc-text)' }}>
-                {focusCommitment!.title} is today&apos;s focus
+                {focusCommitment!.title}{' '}is today&apos;s focus
               </p>
               {todayLog?.notes ? (
                 <p className="text-xs mb-2" style={{ color: 'var(--sc-muted)' }}>
