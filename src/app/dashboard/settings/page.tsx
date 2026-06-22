@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import {
   MessageSquare, Clock, Sun, Smartphone, User, Trash2, Download,
-  Shield, Bot, Lock, MessageCircle, Monitor,
+  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
@@ -66,6 +66,7 @@ function applyTheme(value: ThemeValue) {
 
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<Section>('communication')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // ── Communication ──────────────────────────────────────────────────
   const [checkInIntensity, setCheckInIntensity] = useState('moderate')
@@ -153,9 +154,53 @@ export default function SettingsPage() {
     toast.success(`${section} saved.`)
   }
 
+  const activeNavItem = NAV_ITEMS.find(n => n.id === activeSection)
+
   return (
     <div className="sc-content sc-page-container">
       <PageHeader title="Settings" subtitle="Manage how SoloChief works with you." />
+
+      {/* Mobile section switcher — hidden on desktop via CSS */}
+      <div className="sc-settings-mobile-nav">
+        <button
+          type="button"
+          className="sc-settings-mobile-toggle"
+          onClick={() => setMobileMenuOpen(v => !v)}
+          aria-expanded={mobileMenuOpen}
+          aria-haspopup="listbox"
+          aria-label="Settings menu"
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {activeNavItem && <activeNavItem.icon size={14} />}
+            {activeNavItem?.label ?? 'Settings'}
+          </span>
+          <ChevronDown
+            size={14}
+            style={{
+              transition: 'transform 0.15s',
+              transform: mobileMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              flexShrink: 0,
+            }}
+          />
+        </button>
+        {mobileMenuOpen && (
+          <div className="sc-settings-mobile-menu" role="listbox" aria-label="Settings sections">
+            {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                type="button"
+                role="option"
+                aria-selected={activeSection === id}
+                className={`sc-settings-mobile-menu-item${activeSection === id ? ' active' : ''}`}
+                onClick={() => { setActiveSection(id); setMobileMenuOpen(false) }}
+              >
+                <Icon size={14} />
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="sc-settings-layout">
         {/* Left nav */}

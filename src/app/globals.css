@@ -800,6 +800,68 @@
 .sc-settings-card-title { font-size: 14px; font-weight: 500; color: var(--sc-text); }
 .sc-settings-card-subtitle { font-size: 12px; color: var(--sc-muted); margin-top: 3px; }
 
+/* ── Settings mobile navigation ─────────────────────────────────── */
+
+.sc-settings-mobile-nav {
+  display: none;
+  margin-bottom: 16px;
+}
+
+.sc-settings-mobile-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: var(--sc-r);
+  border: 0.5px solid var(--sc-border);
+  background: var(--sc-surface);
+  color: var(--sc-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.1s;
+}
+
+.sc-settings-mobile-toggle:hover { border-color: var(--sc-border-strong); }
+
+.sc-settings-mobile-toggle:focus-visible {
+  outline: 2px solid var(--sc-teal);
+  outline-offset: 2px;
+}
+
+.sc-settings-mobile-menu {
+  margin-top: 4px;
+  border: 0.5px solid var(--sc-border);
+  border-radius: var(--sc-r-lg);
+  background: var(--sc-surface);
+  overflow: hidden;
+}
+
+.sc-settings-mobile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--sc-muted);
+  background: none;
+  border: none;
+  border-bottom: 0.5px solid var(--sc-border);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.1s, color 0.1s;
+}
+
+.sc-settings-mobile-menu-item:last-child { border-bottom: none; }
+.sc-settings-mobile-menu-item:hover { background: var(--sc-bg); color: var(--sc-text); }
+.sc-settings-mobile-menu-item:focus-visible { outline: 2px solid var(--sc-teal); outline-offset: -2px; }
+.sc-settings-mobile-menu-item.active { color: var(--sc-teal); background: var(--sc-teal-10); }
+.sc-settings-mobile-menu-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+
 /* Radio card — used for settings choices */
 .sc-radio-card {
   display: flex;
@@ -884,15 +946,8 @@
   .sc-stats-row { grid-template-columns: 1fr 1fr !important; }
   .sc-quick-grid { grid-template-columns: 1fr; }
   .sc-settings-layout { grid-template-columns: 1fr; }
-  .sc-settings-nav {
-    position: static;
-    display: flex;
-    overflow-x: auto;
-    padding: 4px;
-    gap: 2px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .sc-settings-nav-item { flex-shrink: 0; white-space: nowrap; }
+  .sc-settings-nav { display: none; }
+  .sc-settings-mobile-nav { display: block; }
 }
 
 /* ── Chat sidebar ───────────────────────────────────────────────────── */
