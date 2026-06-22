@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X } from 'lucide-react'
-import { upsertDailyLog, addNotTodayItem, completeFollowup } from '@/lib/actions/today'
+import { upsertDailyLog, addNotTodayItem, removeNotTodayItem, completeFollowup } from '@/lib/actions/today'
 import { SwitchChallengeModal } from '@/components/today/switch-challenge-modal'
 import type {
   Commitment, DailyLog, DailyLogStatus, NotTodayItem, Followup, StopListItem, WeeklyPlan,
@@ -61,6 +61,7 @@ export function TodayClient({
 
   const [isLogging, startLog] = useTransition()
   const [isAddingNotToday, startAddNotToday] = useTransition()
+  const [isRemovingNotToday, startRemoveNotToday] = useTransition()
   const [isCompletingFollowup, startCompleteFollowup] = useTransition()
 
   function handleLogEOD() {
@@ -85,6 +86,14 @@ export function TodayClient({
       if (error) { toast.error(error); return }
       if (data) setNotTodayItems((prev) => [...prev, data])
       setNewNotToday('')
+    })
+  }
+
+  function handleRemoveNotToday(id: string) {
+    startRemoveNotToday(async () => {
+      const { error } = await removeNotTodayItem(id)
+      if (error) { toast.error(error); return }
+      setNotTodayItems((prev) => prev.filter((item) => item.id !== id))
     })
   }
 
@@ -285,7 +294,7 @@ export function TodayClient({
             {notTodayItems.map((item) => (
               <span
                 key={item.id}
-                className="px-3 py-1.5 rounded-full text-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs"
                 style={{
                   backgroundColor: 'rgba(239,68,68,0.08)',
                   border: '1px solid rgba(239,68,68,0.2)',
@@ -293,6 +302,15 @@ export function TodayClient({
                 }}
               >
                 {item.description}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveNotToday(item.id)}
+                  disabled={isRemovingNotToday}
+                  aria-label={`Remove ${item.description} from not today`}
+                  className="hover:opacity-70 transition-opacity disabled:opacity-30"
+                >
+                  <X size={11} />
+                </button>
               </span>
             ))}
           </div>
