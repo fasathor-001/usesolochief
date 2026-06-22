@@ -208,7 +208,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
             Your commitments
           </h2>
           <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
-            Edit the names to match your actual work. Delete anything that doesn&apos;t apply.
+            Edit these to match what you are actually carrying. Delete anything that doesn&apos;t apply.
           </p>
           {commitments.length === 0 && (
             <p className="text-sm mb-4" style={{ color: 'var(--sc-muted)' }}>

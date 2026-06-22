@@ -10,11 +10,11 @@ export interface CommitmentDraft {
 
 export const TEMPLATE_DEFAULTS: Record<OnboardingTemplate, CommitmentDraft[]> = {
   solo_founder: [
-    { title: 'Main product', category: 'product', stage: 'main_focus', permission_level: 'can_interrupt', priority: 1 },
-    { title: 'Side project', category: 'product', stage: 'active', permission_level: 'protected_block', priority: 2 },
-    { title: 'Content / Marketing', category: 'content', stage: 'active', permission_level: 'protected_block', priority: 3 },
-    { title: 'Admin follow-ups', category: 'admin', stage: 'follow_up', permission_level: 'follow_up_only', priority: 4 },
-    { title: 'New ideas', category: 'idea', stage: 'parked', permission_level: 'parked', priority: 5 },
+    { title: 'Main business / project', category: 'product', stage: 'main_focus', permission_level: 'protected_block', priority: 1 },
+    { title: 'Client or customer work', category: 'customer', stage: 'active', permission_level: 'can_interrupt', priority: 2 },
+    { title: 'Sales / marketing', category: 'content', stage: 'active', permission_level: 'protected_block', priority: 3 },
+    { title: 'Admin / finance follow-ups', category: 'finance', stage: 'follow_up', permission_level: 'follow_up_only', priority: 4 },
+    { title: 'New ideas', category: 'idea', stage: 'parked', permission_level: 'maintenance_only', priority: 5 },
   ],
   freelancer: [
     { title: 'Primary client', category: 'customer', stage: 'main_focus', permission_level: 'can_interrupt', priority: 1 },
