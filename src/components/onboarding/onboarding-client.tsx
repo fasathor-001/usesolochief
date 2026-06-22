@@ -386,14 +386,15 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>
+              <label className="block mb-1" style={{ fontSize: '13px', fontWeight: 500, color: '#0D0D0D' }}>
                 One thing that must not be touched this week
+                <span style={{ fontWeight: 400, color: '#94A3B8', marginLeft: '6px' }}>(optional)</span>
               </label>
               <input
                 type="text"
                 value={stopItem}
                 onChange={(e) => setStopItem(e.target.value)}
-                placeholder="e.g. No new product ideas, No onboarding rebuild"
+                placeholder="e.g. No new commitments, no social media"
                 className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
                 style={{
                   borderColor: 'var(--sc-border)',
@@ -404,14 +405,15 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--sc-text)' }}>
+              <label className="block mb-1" style={{ fontSize: '13px', fontWeight: 500, color: '#0D0D0D' }}>
                 One follow-up that cannot slip this week
+                <span style={{ fontWeight: 400, color: '#94A3B8', marginLeft: '6px' }}>(optional)</span>
               </label>
               <input
                 type="text"
                 value={followupTitle}
                 onChange={(e) => setFollowupTitle(e.target.value)}
-                placeholder="e.g. Chase invoice from Acme Corp"
+                placeholder="e.g. Chase payment from a client, confirm appointment"
                 className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
                 style={{
                   borderColor: 'var(--sc-border)',
