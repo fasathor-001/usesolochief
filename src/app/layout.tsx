@@ -24,9 +24,12 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
+const DESCRIPTION = 'Your personal Chief of Staff for commitments, focus, and follow-ups.'
+
 export const metadata: Metadata = {
-  title: 'SoloChief — Your AI-powered command centre',
-  description: 'The command centre for solo founders and professionals who need to stay on top of their commitments.',
+  metadataBase: new URL('https://solochief.app'),
+  title: 'SoloChief AI',
+  description: DESCRIPTION,
   applicationName: 'SoloChief AI',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
@@ -37,15 +40,30 @@ export const metadata: Metadata = {
   formatDetection: { telephone: false },
   icons: {
     icon: [
+      { url: '/favicon.ico', sizes: 'any' },
       { url: '/icons/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-      { url: '/icons/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icons/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png' },
       { url: '/icons/favicon.svg', type: 'image/svg+xml' },
     ],
     apple: [
-      { url: '/icons/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
     ],
-    shortcut: [{ url: '/icons/favicon.ico' }],
+  },
+  openGraph: {
+    title: 'SoloChief AI',
+    description: DESCRIPTION,
+    url: 'https://solochief.app',
+    siteName: 'SoloChief AI',
+    images: [
+      { url: '/og/solochief-og.png', width: 1200, height: 630, alt: 'SoloChief AI' },
+    ],
+    type: 'website',
+    locale: 'en_GB',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SoloChief AI',
+    description: DESCRIPTION,
+    images: ['/og/solochief-twitter.png'],
   },
 }
 
