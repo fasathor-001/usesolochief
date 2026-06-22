@@ -112,7 +112,7 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
   const overdueCount = followups.filter(f => f.due_date && f.due_date < today).length
   const dueThisWeekCount = followups.filter(f => f.due_date && f.due_date >= today && f.due_date <= weekEndString()).length
 
-  const completedThisMonth = 0 // not tracked client-side; would need separate query
+  const totalOpen = followups.length
 
   const groups = groupFollowups(followups)
 
@@ -204,8 +204,8 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
           <p className="sc-stat-label">due this week</p>
         </div>
         <div className="sc-stat">
-          <p className="sc-stat-value">{completedThisMonth}</p>
-          <p className="sc-stat-label">completed this month</p>
+          <p className="sc-stat-value">{totalOpen}</p>
+          <p className="sc-stat-label">total open</p>
         </div>
       </div>
 

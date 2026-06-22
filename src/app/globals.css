@@ -717,7 +717,36 @@
   }
 }
 
+/* ── Mobile sidebar controls ────────────────────────────────────── */
+
+.sc-mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  z-index: 45;
+  background: var(--sc-midnight);
+  color: rgba(255,255,255,0.75);
+  border: none;
+  border-radius: var(--sc-r);
+  padding: 6px 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.sc-mobile-menu-btn:hover { color: #fff; }
+
+.sc-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  background: rgba(0, 0, 0, 0.45);
+}
+
 @media (max-width: 768px) {
+  .sc-mobile-menu-btn { display: flex; }
   .sc-sidebar {
     transform: translateX(-100%);
     transition: transform 0.2s;
@@ -725,6 +754,7 @@
   .sc-sidebar.open { transform: translateX(0); }
   .sc-main { margin-left: 0; }
   .sc-content { padding: 16px; }
+  .sc-topbar { padding-left: 52px; }
   .sc-page-header { flex-direction: column; gap: 12px; }
   .sc-stats-row { grid-template-columns: 1fr 1fr !important; }
   .sc-quick-grid { grid-template-columns: 1fr; }

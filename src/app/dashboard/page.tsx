@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getWeekStart } from '@/lib/utils/date-utils'
 import { getDataSufficiency } from '@/lib/intelligence/intelligence-service'
-import { Archive, CheckCircle, Clock, LayoutDashboard, RotateCcw } from 'lucide-react'
+import { Archive, CheckCircle, Clock, RotateCcw } from 'lucide-react'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
 import { MetricRow } from '@/components/ui/solochief/MetricRow'
 import type { Commitment, WeeklyPlan, WeeklyOutcome, DailyLog, Followup, ParkingLotItem } from '@/types/database'
@@ -120,9 +120,7 @@ export default async function CommandCentrePage() {
             {plan ? `Week ${weekNum} is active.` : `Week ${weekNum} — no plan set.`}
           </span>
         </div>
-        <div className="sc-topbar-actions">
-          <LayoutDashboard size={16} style={{ color: 'var(--sc-muted)' }} />
-        </div>
+        <div className="sc-topbar-actions" />
       </div>
 
       {/* Two-column layout */}

@@ -16,6 +16,7 @@ import {
   Settings,
   LogOut,
   LifeBuoy,
+  Menu,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { RescueMeModal } from '@/components/rescue-me/rescue-me-modal'
@@ -69,6 +70,7 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
   const pathname = usePathname()
   const router = useRouter()
   const [rescueOpen, setRescueOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -86,7 +88,25 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
 
   return (
     <>
-      <aside className="sc-sidebar">
+      {/* Mobile hamburger button — hidden on desktop via CSS */}
+      <button
+        type="button"
+        className="sc-mobile-menu-btn"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open navigation"
+      >
+        <Menu size={18} />
+      </button>
+
+      {/* Mobile backdrop overlay */}
+      {mobileOpen && (
+        <div
+          className="sc-sidebar-overlay"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <aside className={`sc-sidebar${mobileOpen ? ' open' : ''}`}>
         {/* Logo */}
         <div className="sc-logo">
           <span className="sc-logo-mark">
@@ -109,6 +129,7 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
                     key={href}
                     href={href}
                     className={`sc-nav-link${active ? ' active' : ''}`}
+                    onClick={() => setMobileOpen(false)}
                   >
                     <Icon />
                     <span style={{ flex: 1 }}>{label}</span>

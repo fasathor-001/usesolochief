@@ -61,7 +61,7 @@ function LoginContent() {
             <polyline points="22,6 12,13 2,6"/>
           </svg>
         </div>
-        <h2 style={{ fontSize: 17, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 8 }}>
+        <h2 style={{ fontSize: 22, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 8 }}>
           Check your email
         </h2>
         <p style={{ fontSize: 13, color: 'var(--sc-muted)', lineHeight: 1.55 }}>
@@ -87,7 +87,7 @@ function LoginContent() {
 
   return (
     <>
-      <h2 style={{ fontSize: 17, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 20 }}>
+      <h2 style={{ fontSize: 22, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 20 }}>
         Sign in
       </h2>
       <form onSubmit={handleMagicLink}>

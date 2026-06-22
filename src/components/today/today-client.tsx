@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X, Target } from 'lucide-react'
+import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X } from 'lucide-react'
 import { upsertDailyLog, addNotTodayItem, removeNotTodayItem, completeFollowup } from '@/lib/actions/today'
 import { SwitchChallengeModal } from '@/components/today/switch-challenge-modal'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
@@ -59,6 +59,7 @@ export function TodayClient({
   const [newNotToday, setNewNotToday] = useState('')
   const [switchTarget, setSwitchTarget] = useState<Commitment | null>(null)
   const [showSwitch, setShowSwitch] = useState(false)
+  const [showSwitchMenu, setShowSwitchMenu] = useState(false)
 
   const [isLogging, startLog] = useTransition()
   const [isAddingNotToday, startAddNotToday] = useTransition()
@@ -124,9 +125,7 @@ export function TodayClient({
           <span className="sc-topbar-title">Today</span>
           <span className="sc-topbar-sub">{todayLabel()}</span>
         </div>
-        <div className="sc-topbar-actions">
-          <Target size={16} style={{ color: 'var(--sc-muted)' }} />
-        </div>
+        <div className="sc-topbar-actions" />
       </div>
 
       {/* Two-column layout */}
@@ -176,7 +175,7 @@ export function TodayClient({
                       className="sc-card-label"
                       style={{ color: 'var(--sc-teal)', marginBottom: 6 }}
                     >
-                      TODAY&apos;S FOCUS
+                      Today&apos;s focus
                     </p>
                     <h2 className="sc-focus-title">
                       {focusCommitment.title}
@@ -253,51 +252,63 @@ export function TodayClient({
                     {isLogging ? 'Logging...' : log ? 'Update log' : 'Log day'}
                   </button>
                   {otherCommitments.length > 0 && (
-                    <div style={{ position: 'relative' }} className="group">
+                    <div style={{ position: 'relative' }}>
                       <button
                         type="button"
                         className="sc-btn sc-btn-ghost"
+                        onClick={() => setShowSwitchMenu(v => !v)}
                       >
                         <RefreshCw size={13} />
                         Request switch
                       </button>
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: '100%',
-                          left: 0,
-                          marginTop: 4,
-                          width: 220,
-                          borderRadius: 'var(--sc-r)',
-                          border: '0.5px solid var(--sc-border)',
-                          backgroundColor: 'var(--sc-surface)',
-                          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                          zIndex: 20,
-                        }}
-                        className="hidden group-focus-within:block group-hover:block"
-                      >
-                        {otherCommitments.slice(0, 6).map((c) => (
+                      {showSwitchMenu && (
+                        <>
+                          {/* Invisible full-screen backdrop closes menu on outside click/tap */}
                           <button
-                            key={c.id}
                             type="button"
-                            onClick={() => openSwitchChallenge(c)}
+                            style={{ position: 'fixed', inset: 0, zIndex: 19, cursor: 'default', background: 'none', border: 'none' }}
+                            onClick={() => setShowSwitchMenu(false)}
+                            aria-label="Close menu"
+                          />
+                          <div
                             style={{
-                              display: 'block',
-                              width: '100%',
-                              textAlign: 'left',
-                              padding: '8px 12px',
-                              fontSize: 13,
-                              color: 'var(--sc-text)',
-                              background: 'none',
-                              border: 'none',
-                              cursor: 'pointer',
+                              position: 'absolute',
+                              top: '100%',
+                              right: 0,
+                              marginTop: 4,
+                              minWidth: 200,
+                              maxWidth: 280,
+                              borderRadius: 'var(--sc-r)',
+                              border: '0.5px solid var(--sc-border)',
+                              backgroundColor: 'var(--sc-surface)',
+                              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                              zIndex: 20,
                             }}
-                            className="hover:bg-[var(--sc-bg)]"
                           >
-                            {c.title}
-                          </button>
-                        ))}
-                      </div>
+                            {otherCommitments.slice(0, 6).map((c) => (
+                              <button
+                                key={c.id}
+                                type="button"
+                                onClick={() => { setShowSwitchMenu(false); openSwitchChallenge(c) }}
+                                style={{
+                                  display: 'block',
+                                  width: '100%',
+                                  textAlign: 'left',
+                                  padding: '8px 12px',
+                                  fontSize: 13,
+                                  color: 'var(--sc-text)',
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                }}
+                                className="hover:bg-[var(--sc-bg)]"
+                              >
+                                {c.title}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>
@@ -307,7 +318,7 @@ export function TodayClient({
             {/* Not today */}
             <div className="sc-card" style={{ marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                <p className="sc-section-heading" style={{ marginBottom: 0 }}>NOT TODAY</p>
+                <p className="sc-section-heading" style={{ marginBottom: 0 }}>Not today</p>
                 {(notTodayItems.length + stopItems.length) > 0 && (
                   <span
                     className="sc-badge"
@@ -381,7 +392,7 @@ export function TodayClient({
             {/* Follow-ups due */}
             {followups.length > 0 && (
               <div className="sc-card">
-                <p className="sc-section-heading">FOLLOW-UPS DUE TODAY</p>
+                <p className="sc-section-heading">Follow-ups due today</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {followups.map((f) => (
                     <div

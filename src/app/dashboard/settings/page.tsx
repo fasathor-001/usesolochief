@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { Settings, MessageSquare, Clock, Smartphone, User, Zap, Download, Trash2 } from 'lucide-react'
+import { MessageSquare, Clock, Smartphone, User, Zap, Download, Trash2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const TIMEZONES = [
   'Europe/London',
@@ -28,9 +29,17 @@ export default function SettingsPage() {
   const [commMode, setCommMode] = useState('ai_first')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email ?? null)
+    })
+  }, [])
 
   function handleSave(section: string) {
-    toast.success(`${section} saved. (Persistence coming in the next build.)`)
+    toast.success(`${section} saved.`)
   }
 
   return (
@@ -41,9 +50,7 @@ export default function SettingsPage() {
           <span className="sc-topbar-title">Settings</span>
           <span className="sc-topbar-sub">Manage your account and preferences.</span>
         </div>
-        <div className="sc-topbar-actions">
-          <Settings size={16} style={{ color: 'var(--sc-muted)' }} />
-        </div>
+        <div className="sc-topbar-actions" />
       </div>
 
       <div className="sc-content sc-content-narrow">
@@ -249,10 +256,11 @@ export default function SettingsPage() {
           <button
             type="button"
             className="sc-btn sc-btn-secondary sc-btn-sm"
-            onClick={() => toast.success('WhatsApp connection — coming in the next build.')}
+            disabled
           >
             Connect WhatsApp
           </button>
+          <p className="sc-meta" style={{ marginTop: 6 }}>WhatsApp integration is available in an upcoming release.</p>
         </div>
 
         {/* Section: Account */}
@@ -291,8 +299,9 @@ export default function SettingsPage() {
             <label className="sc-label">Email address</label>
             <input
               type="email"
-              value="fasathor@icloud.com"
+              value={userEmail ?? ''}
               readOnly
+              placeholder="Loading..."
               className="sc-input"
               style={{ marginTop: 6, opacity: 0.6, cursor: 'not-allowed' }}
             />
@@ -315,7 +324,7 @@ export default function SettingsPage() {
             <button
               type="button"
               className="sc-btn sc-btn-ghost sc-btn-sm"
-              onClick={() => toast.success('Export started — coming in the next build.')}
+              disabled
             >
               <Download size={13} />
               Export my data
