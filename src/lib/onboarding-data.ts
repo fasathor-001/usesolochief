@@ -68,7 +68,7 @@ export const TEMPLATE_DESCRIPTIONS: Record<OnboardingTemplate, string> = {
   solo_founder:    'Managing a business, project, product, or venture — and everything around it.',
   freelancer:      'Managing clients, deadlines, proposals, invoices, and follow-ups.',
   student_builder: 'Managing assignments, exams, work, personal admin, and everything else you are carrying.',
-  creator:         'Managing content, ideas, publishing, brand deals, and audience commitments.',
+  creator:         'Managing content, social media, ideas, publishing, brand deals, and audience commitments.',
   professional:    'Managing work projects, deadlines, meetings, and personal responsibilities.',
   personal_family: 'Managing home, family, health, finance, errands, and personal responsibilities.',
   scratch:         'Build your own setup without suggestions.',
