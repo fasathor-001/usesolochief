@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { MessageSquare, Clock, Smartphone, User, Zap, Download, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 
 const TIMEZONES = [
   'Europe/London',
@@ -46,14 +47,12 @@ export default function SettingsPage() {
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Settings</span>
-          <span className="sc-topbar-sub">Manage your account and preferences.</span>
-        </div>
+        <div />
         <div className="sc-topbar-actions" />
       </div>
 
       <div className="sc-content sc-content-narrow">
+        <PageHeader title="Settings" subtitle="Manage your account and preferences." />
 
         {/* Section: Communication */}
         <div className="sc-card" style={{ marginBottom: 16 }}>

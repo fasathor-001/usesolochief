@@ -19,6 +19,7 @@ import {
 import type { WeeklyPlan, WeeklyOutcome, Commitment, StopListItem, Followup } from '@/types/database'
 import { Lock, X, Plus, CheckCircle } from 'lucide-react'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 
 interface WeeklyPlanClientProps {
   plan: WeeklyPlan
@@ -141,11 +142,15 @@ export function WeeklyPlanClient({
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Weekly Plan</span>
-          <span className="sc-topbar-sub">{formatWeekRange(plan.week_start)}</span>
-        </div>
-        <div className="sc-topbar-actions">
+        <div />
+        <div className="sc-topbar-actions" />
+      </div>
+
+    <div className="sc-content">
+      <PageHeader
+        title="Weekly Plan"
+        subtitle={formatWeekRange(plan.week_start)}
+        secondaryAction={
           <span
             className="sc-badge"
             style={{
@@ -155,21 +160,19 @@ export function WeeklyPlanClient({
           >
             {locked ? 'Active' : 'Draft'}
           </span>
-          {!locked && (
-            <button
-              type="button"
-              onClick={handleLock}
-              disabled={isLocking || isSaving}
-              className="sc-btn sc-btn-primary sc-btn-sm"
-            >
-              <Lock size={13} />
-              {isLocking ? 'Locking...' : 'Lock plan'}
-            </button>
-          )}
-        </div>
-      </div>
-
-    <div className="sc-content">
+        }
+        action={!locked ? (
+          <button
+            type="button"
+            onClick={handleLock}
+            disabled={isLocking || isSaving}
+            className="sc-btn sc-btn-primary sc-btn-sm"
+          >
+            <Lock size={13} />
+            {isLocking ? 'Locking...' : 'Lock plan'}
+          </button>
+        ) : undefined}
+      />
       <div className="sc-grid-main">
       <div className="sc-grid-col">
       <div className="space-y-8">

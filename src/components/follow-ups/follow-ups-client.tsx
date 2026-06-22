@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import type { Followup, Commitment, FollowupUrgency } from '@/types/database'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 
 interface FollowUpsClientProps {
   initialFollowups: Followup[]
@@ -176,11 +177,15 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Follow-ups</span>
-          <span className="sc-topbar-sub">Things waiting on someone or something.</span>
-        </div>
-        <div className="sc-topbar-actions">
+        <div />
+        <div className="sc-topbar-actions" />
+      </div>
+
+    <div className="sc-content sc-content-narrow">
+      <PageHeader
+        title="Follow-ups"
+        subtitle="Things waiting on someone or something."
+        action={
           <button
             type="button"
             onClick={() => setShowAdd(true)}
@@ -189,10 +194,8 @@ export function FollowUpsClient({ initialFollowups, commitments }: FollowUpsClie
             <Plus size={14} />
             Add follow-up
           </button>
-        </div>
-      </div>
-
-    <div className="sc-content sc-content-narrow">
+        }
+      />
       {/* Stats */}
       <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
         <div className="sc-stat">

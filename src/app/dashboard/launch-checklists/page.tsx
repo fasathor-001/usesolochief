@@ -2,6 +2,7 @@
 
 import { CheckSquare, CheckCircle2, List, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 
 const HOW_IT_WORKS = [
   { icon: CheckSquare, text: 'Create a checklist for each launch — product, feature, or campaign.' },
@@ -15,23 +16,25 @@ export default function LaunchChecklistsPage() {
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Launch Checklists</span>
-          <span className="sc-topbar-sub">Structured launch sequences — nothing left to chance.</span>
-        </div>
-        <div className="sc-topbar-actions">
-          <button
-            type="button"
-            className="sc-btn sc-btn-primary sc-btn-sm"
-            onClick={() => toast.success('Create checklist — coming in the next build.')}
-          >
-            <CheckSquare size={14} />
-            New checklist
-          </button>
-        </div>
+        <div />
+        <div className="sc-topbar-actions" />
       </div>
 
       <div className="sc-content sc-content-narrow">
+        <PageHeader
+          title="Launch Checklists"
+          subtitle="Structured launch sequences — nothing left to chance."
+          action={
+            <button
+              type="button"
+              className="sc-btn sc-btn-primary sc-btn-sm"
+              onClick={() => toast.success('Create checklist — coming in the next build.')}
+            >
+              <CheckSquare size={14} />
+              New checklist
+            </button>
+          }
+        />
         {/* How it works card */}
         <div
           className="sc-card"

@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { CommitmentCard, STAGE_LABELS, STAGE_COLOURS, CATEGORY_LABELS } from './commitment-card'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { AddCommitmentModal } from './add-commitment-modal'
 import { EditCommitmentModal } from './edit-commitment-modal'
 import { deleteCommitment } from '@/lib/actions/commitments'
@@ -76,13 +77,15 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Commitments</span>
-          <span className="sc-topbar-sub">
-            {commitments.length} {commitments.length === 1 ? 'commitment' : 'commitments'} across all stages
-          </span>
-        </div>
-        <div className="sc-topbar-actions">
+        <div />
+        <div className="sc-topbar-actions" />
+      </div>
+
+    <div className="sc-content" style={{ maxWidth: 1100 }}>
+      <PageHeader
+        title="Commitments"
+        subtitle={`${commitments.length} ${commitments.length === 1 ? 'commitment' : 'commitments'} across all stages`}
+        action={
           <button
             type="button"
             onClick={() => setAddOpen(true)}
@@ -91,10 +94,8 @@ export function CommitmentsClient({ commitments }: CommitmentsClientProps) {
             <Plus size={14} />
             Add commitment
           </button>
-        </div>
-      </div>
-
-    <div className="sc-content" style={{ maxWidth: 1100 }}>
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">

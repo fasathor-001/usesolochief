@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import type { ParkingLotItem, ParkingLotCategory, ParkingLotStatus } from '@/types/database'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 
 interface ParkingLotClientProps {
   initialItems: ParkingLotItem[]
@@ -149,11 +150,15 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Parking Lot</span>
-          <span className="sc-topbar-sub">Ideas captured safely. Not lost — waiting.</span>
-        </div>
-        <div className="sc-topbar-actions">
+        <div />
+        <div className="sc-topbar-actions" />
+      </div>
+
+    <div className="sc-content sc-content-narrow">
+      <PageHeader
+        title="Parking Lot"
+        subtitle="Ideas captured safely. Not lost — waiting."
+        action={
           <button
             type="button"
             onClick={() => setShowAdd(true)}
@@ -162,10 +167,8 @@ export function ParkingLotClient({ initialItems }: ParkingLotClientProps) {
             <Plus size={14} />
             Park idea
           </button>
-        </div>
-      </div>
-
-    <div className="sc-content sc-content-narrow">
+        }
+      />
       {/* Stats */}
       <div className="sc-stats-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 24 }}>
         {[

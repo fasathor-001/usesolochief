@@ -112,13 +112,8 @@ export function ChatClient({ initialMessages }: ChatClientProps) {
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, height: 0, minHeight: '100vh' }}>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">AI Chat</span>
-          <span className="sc-topbar-sub">Your Chief of Staff is listening.</span>
-        </div>
-        <div className="sc-topbar-actions">
-          <MessageCircle size={16} style={{ color: 'var(--sc-muted)' }} />
-        </div>
+        <div />
+        <div className="sc-topbar-actions" />
       </div>
 
       {/* Messages */}

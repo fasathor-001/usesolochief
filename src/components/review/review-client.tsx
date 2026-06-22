@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { CheckCircle, Circle, AlertCircle } from 'lucide-react'
 import { completeReview, redirectAfterReview } from '@/lib/actions/reviews'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import type {
   WeeklyPlan, WeeklyOutcome, Followup, ParkingLotItem, Commitment, Review,
 } from '@/types/database'
@@ -83,12 +84,11 @@ export function ReviewClient({
     return (
       <>
         <div className="sc-topbar">
-          <div className="sc-topbar-left">
-            <span className="sc-topbar-title">Friday Review</span>
-            <span className="sc-topbar-sub">Week of {weekRange}</span>
-          </div>
+          <div />
+          <div className="sc-topbar-actions" />
         </div>
         <div className="sc-content sc-content-narrow">
+          <PageHeader title="Friday Review" subtitle={`Week of ${weekRange}`} />
           <div
             className="sc-card"
             style={{ borderColor: 'rgba(0,194,168,0.25)' }}
@@ -110,13 +110,12 @@ export function ReviewClient({
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Friday Review</span>
-          <span className="sc-topbar-sub">Week of {weekRange} · Close the loop.</span>
-        </div>
+        <div />
+        <div className="sc-topbar-actions" />
       </div>
 
     <div className="sc-content sc-content-narrow">
+      <PageHeader title="Friday Review" subtitle={`Week of ${weekRange} · Close the loop.`} />
 
       <div className="space-y-8">
         {/* Weekly outcomes summary */}

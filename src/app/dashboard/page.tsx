@@ -4,6 +4,7 @@ import { getWeekStart } from '@/lib/utils/date-utils'
 import { getDataSufficiency } from '@/lib/intelligence/intelligence-service'
 import { Archive, CheckCircle, Clock, RotateCcw } from 'lucide-react'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { MetricRow } from '@/components/ui/solochief/MetricRow'
 import type { Commitment, WeeklyPlan, WeeklyOutcome, DailyLog, Followup, ParkingLotItem } from '@/types/database'
 
@@ -114,31 +115,25 @@ export default async function CommandCentrePage() {
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Command Centre</span>
-          <span className="sc-topbar-sub">
-            {plan ? `Week ${weekNum} is active.` : `Week ${weekNum} — no plan set.`}
-          </span>
-        </div>
+        <div />
         <div className="sc-topbar-actions" />
       </div>
 
-      {/* Two-column layout */}
+      {/* Main content */}
       <div className="sc-content">
+
+        <PageHeader
+          title={greetingLabel(firstName)}
+          subtitle={plan
+            ? `Week ${weekNum} is active. Here is what needs attention today.`
+            : 'No weekly plan set. Start by defining your focus for the week.'}
+        />
+
+        {/* Two-column layout */}
         <div className="sc-grid-main">
 
           {/* ── Left column ─────────────────────────────────── */}
           <div className="sc-grid-col">
-
-            {/* Greeting */}
-            <div style={{ marginBottom: 24 }}>
-              <h1 className="sc-page-title">{greetingLabel(firstName)}</h1>
-              <p className="sc-page-subtitle">
-                {plan
-                  ? `Week ${weekNum} is active. Here is what needs attention today.`
-                  : 'No weekly plan set. Start by defining your focus for the week.'}
-              </p>
-            </div>
 
             {/* No plan CTA */}
             {!plan && (

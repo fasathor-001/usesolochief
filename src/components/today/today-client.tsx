@@ -6,6 +6,7 @@ import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X } from 'lucide-rea
 import { upsertDailyLog, addNotTodayItem, removeNotTodayItem, completeFollowup } from '@/lib/actions/today'
 import { SwitchChallengeModal } from '@/components/today/switch-challenge-modal'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
+import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import type {
   Commitment, DailyLog, DailyLogStatus, NotTodayItem, Followup, StopListItem, WeeklyPlan,
 } from '@/types/database'
@@ -121,15 +122,13 @@ export function TodayClient({
     <>
       {/* Topbar */}
       <div className="sc-topbar">
-        <div className="sc-topbar-left">
-          <span className="sc-topbar-title">Today</span>
-          <span className="sc-topbar-sub">{todayLabel()}</span>
-        </div>
+        <div />
         <div className="sc-topbar-actions" />
       </div>
 
       {/* Two-column layout */}
       <div className="sc-content">
+        <PageHeader title="Today" subtitle={todayLabel()} />
         <div className="sc-grid-main">
 
           {/* ── Left column ─────────────────────────────────── */}
