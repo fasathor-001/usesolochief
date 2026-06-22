@@ -1009,3 +1009,8 @@
 @media (max-width: 768px) {
   .sc-install-prompt { bottom: 16px; right: 16px; }
 }
+
+@media (max-width: 768px) {
+  .sc-auth-brand { display: none !important; }
+  .sc-auth-form { flex: 1 !important; padding: 40px 24px !important; }
+}
