@@ -2,12 +2,30 @@
 
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { MessageSquare, Clock, Sun, Smartphone, User, Trash2, Download, Zap } from 'lucide-react'
+import {
+  MessageSquare, Clock, Sun, Smartphone, User, Trash2, Download,
+  Shield, Bot, Lock, MessageCircle, Monitor,
+} from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 
 type ThemeValue = 'light' | 'dark' | 'system'
-type Section = 'communication' | 'schedule' | 'appearance' | 'whatsapp' | 'account' | 'data'
+type Section =
+  | 'communication'
+  | 'focus-rules'
+  | 'ai-behaviour'
+  | 'schedule'
+  | 'appearance'
+  | 'mobile-app'
+  | 'whatsapp'
+  | 'account'
+  | 'data-privacy'
+  | 'danger-zone'
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
 
 const TIMEZONES = [
   'Europe/London',
@@ -24,11 +42,15 @@ const TIMEZONES = [
 
 const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
   { id: 'communication', label: 'Communication', icon: MessageSquare },
-  { id: 'schedule',      label: 'Schedule',       icon: Clock },
-  { id: 'appearance',   label: 'Appearance',      icon: Sun },
-  { id: 'whatsapp',     label: 'WhatsApp',         icon: Smartphone },
-  { id: 'account',      label: 'Account',          icon: User },
-  { id: 'data',         label: 'Data & Danger Zone', icon: Trash2 },
+  { id: 'focus-rules',   label: 'Focus Rules',   icon: Shield },
+  { id: 'ai-behaviour',  label: 'AI Behaviour',  icon: Bot },
+  { id: 'schedule',      label: 'Schedule',      icon: Clock },
+  { id: 'appearance',    label: 'Appearance',    icon: Sun },
+  { id: 'mobile-app',    label: 'Mobile App',    icon: Monitor },
+  { id: 'whatsapp',      label: 'WhatsApp',      icon: MessageCircle },
+  { id: 'account',       label: 'Account',       icon: User },
+  { id: 'data-privacy',  label: 'Data & Privacy', icon: Lock },
+  { id: 'danger-zone',   label: 'Danger Zone',   icon: Trash2 },
 ]
 
 function applyTheme(value: ThemeValue) {
@@ -45,22 +67,40 @@ function applyTheme(value: ThemeValue) {
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<Section>('communication')
 
-  // Communication
+  // ── Communication ──────────────────────────────────────────────────
   const [checkInIntensity, setCheckInIntensity] = useState('moderate')
   const [preferredChannel, setPreferredChannel] = useState('email')
   const [commMode, setCommMode] = useState('ai_first')
 
-  // Schedule
+  // ── Focus Rules ────────────────────────────────────────────────────
+  const [switchProtection, setSwitchProtection] = useState('balanced')
+  const [dailyFocusLimit, setDailyFocusLimit] = useState('one-plus-override')
+  const [requireReasonOnSwitch, setRequireReasonOnSwitch] = useState(true)
+  const [showStopListInToday, setShowStopListInToday] = useState(true)
+  const [askBeforeRemovingNotToday, setAskBeforeRemovingNotToday] = useState(false)
+
+  // ── AI Behaviour ───────────────────────────────────────────────────
+  const [aiInterpretation, setAiInterpretation] = useState('confirm-when-unsure')
+  const [adviceStyle, setAdviceStyle] = useState('direct')
+  const [showWhySuggested, setShowWhySuggested] = useState(true)
+  const [showWhenUnsure, setShowWhenUnsure] = useState(true)
+  const [askBeforeAssumptions, setAskBeforeAssumptions] = useState(true)
+
+  // ── Schedule ───────────────────────────────────────────────────────
   const [timezone, setTimezone] = useState('Europe/London')
   const [startTime, setStartTime] = useState('09:00')
   const [endTime, setEndTime] = useState('18:00')
   const [quietStart, setQuietStart] = useState('21:00')
   const [quietEnd, setQuietEnd] = useState('08:00')
 
-  // Appearance
+  // ── Appearance ─────────────────────────────────────────────────────
   const [theme, setTheme] = useState<ThemeValue>('system')
 
-  // Account
+  // ── Mobile App install ─────────────────────────────────────────────
+  const [isStandalone, setIsStandalone] = useState(false)
+  const [canInstall, setCanInstall] = useState(false)
+
+  // ── Account ────────────────────────────────────────────────────────
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [userEmail, setUserEmail] = useState<string | null>(null)
@@ -70,20 +110,43 @@ export default function SettingsPage() {
     supabase.auth.getUser().then(({ data }) => {
       setUserEmail(data.user?.email ?? null)
     })
+
     const stored = (localStorage.getItem('sc-theme') ?? 'system') as ThemeValue
     setTheme(stored)
-    // Honour ?section=... from topbar Appearance shortcut
+
+    // Honour ?section=... deep-link from topbar shortcuts
     const params = new URLSearchParams(window.location.search)
     const sec = params.get('section') as Section | null
     if (sec && NAV_ITEMS.some(n => n.id === sec)) {
       setActiveSection(sec)
     }
+
+    // PWA install state
+    setIsStandalone(
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (navigator as unknown as { standalone?: boolean }).standalone === true,
+    )
+    setCanInstall(!!(window as unknown as { _scInstallPrompt?: unknown })._scInstallPrompt)
+
+    const onPrompt = () => setCanInstall(true)
+    window.addEventListener('beforeinstallprompt', onPrompt)
+    return () => window.removeEventListener('beforeinstallprompt', onPrompt)
   }, [])
 
   function handleThemeChange(value: ThemeValue) {
     setTheme(value)
     localStorage.setItem('sc-theme', value)
     applyTheme(value)
+  }
+
+  function handleInstall() {
+    const prompt = (window as unknown as { _scInstallPrompt?: BeforeInstallPromptEvent })._scInstallPrompt
+    if (!prompt) return
+    prompt.prompt()
+    prompt.userChoice.then(({ outcome }) => {
+      if (outcome === 'accepted') setIsStandalone(true)
+      setCanInstall(false)
+    })
   }
 
   function handleSave(section: string) {
@@ -113,7 +176,7 @@ export default function SettingsPage() {
         {/* Right content */}
         <main className="sc-settings-content">
 
-          {/* ── Communication ─────────────────────────────────────────── */}
+          {/* ── Communication ─────────────────────────────────────── */}
           {activeSection === 'communication' && (
             <>
               <div className="sc-settings-card">
@@ -219,7 +282,213 @@ export default function SettingsPage() {
             </>
           )}
 
-          {/* ── Schedule ──────────────────────────────────────────────── */}
+          {/* ── Focus Rules ────────────────────────────────────────── */}
+          {activeSection === 'focus-rules' && (
+            <>
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Switch protection</p>
+                  <p className="sc-settings-card-subtitle">How firmly SoloChief resists focus switches mid-week.</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {[
+                    { value: 'strict',   label: 'Strict',   desc: 'Any switch request must provide a reason. SoloChief will challenge you.' },
+                    { value: 'balanced', label: 'Balanced', desc: 'Urgent switches are allowed with a reason. Non-urgent requests are blocked.' },
+                    { value: 'light',    label: 'Light',    desc: 'Switches are logged but never blocked. All decisions are yours.' },
+                  ].map(opt => (
+                    <label
+                      key={opt.value}
+                      className={`sc-radio-card${switchProtection === opt.value ? ' selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="switchProtection"
+                        value={opt.value}
+                        checked={switchProtection === opt.value}
+                        onChange={() => setSwitchProtection(opt.value)}
+                        style={{ marginTop: 2, accentColor: 'var(--sc-teal)' }}
+                      />
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>{opt.label}</p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>{opt.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Daily focus limit</p>
+                  <p className="sc-settings-card-subtitle">How many active focus commitments are allowed on any given day.</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {[
+                    { value: 'one',               label: 'One only',       desc: 'One commitment per day. No override permitted.' },
+                    { value: 'one-plus-override',  label: 'One + override', desc: 'One commitment per day, with a conscious override available.' },
+                    { value: 'flexible',           label: 'Flexible',       desc: 'No hard limit. SoloChief will flag overload but will not block.' },
+                  ].map(opt => (
+                    <label
+                      key={opt.value}
+                      className={`sc-radio-card${dailyFocusLimit === opt.value ? ' selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="dailyFocusLimit"
+                        value={opt.value}
+                        checked={dailyFocusLimit === opt.value}
+                        onChange={() => setDailyFocusLimit(opt.value)}
+                        style={{ marginTop: 2, accentColor: 'var(--sc-teal)' }}
+                      />
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>{opt.label}</p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>{opt.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Not Today behaviour</p>
+                  <p className="sc-settings-card-subtitle">What happens when you defer a task using Not Today.</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+                  {[
+                    { key: 'requireReasonOnSwitch',     label: 'Require a reason when switching focus', value: requireReasonOnSwitch,     set: setRequireReasonOnSwitch },
+                    { key: 'showStopListInToday',       label: 'Show stop list reminder in Today view',  value: showStopListInToday,       set: setShowStopListInToday },
+                    { key: 'askBeforeRemovingNotToday', label: 'Ask before removing a Not Today item',  value: askBeforeRemovingNotToday, set: setAskBeforeRemovingNotToday },
+                  ].map(({ key, label, value, set }) => (
+                    <label
+                      key={key}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={value}
+                        onChange={e => set(e.target.checked)}
+                        style={{ width: 15, height: 15, accentColor: 'var(--sc-teal)', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)' }}>{label}</span>
+                    </label>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="sc-btn sc-btn-primary sc-btn-sm"
+                  onClick={() => handleSave('Focus rules')}
+                >
+                  Save focus rules
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ── AI Behaviour ──────────────────────────────────────── */}
+          {activeSection === 'ai-behaviour' && (
+            <>
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">AI interpretation</p>
+                  <p className="sc-settings-card-subtitle">When SoloChief is unsure what you mean, how should it handle the ambiguity.</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {[
+                    { value: 'always-confirm',      label: 'Always confirm',      desc: 'SoloChief asks before acting on any interpretation.' },
+                    { value: 'confirm-when-unsure', label: 'Confirm when unsure', desc: 'Proceed confidently, but ask when the intent is ambiguous.' },
+                    { value: 'auto-when-clear',     label: 'Auto when clear',     desc: 'Act automatically unless truly uncertain. Fastest flow.' },
+                  ].map(opt => (
+                    <label
+                      key={opt.value}
+                      className={`sc-radio-card${aiInterpretation === opt.value ? ' selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="aiInterpretation"
+                        value={opt.value}
+                        checked={aiInterpretation === opt.value}
+                        onChange={() => setAiInterpretation(opt.value)}
+                        style={{ marginTop: 2, accentColor: 'var(--sc-teal)' }}
+                      />
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>{opt.label}</p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>{opt.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Advice style</p>
+                  <p className="sc-settings-card-subtitle">The tone SoloChief uses when surfacing recommendations.</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {[
+                    { value: 'direct',  label: 'Direct',  desc: 'Short, confident, action-first. No hedging.' },
+                    { value: 'gentle',  label: 'Gentle',  desc: 'Supportive and reflective. Surfaces options rather than directives.' },
+                    { value: 'minimal', label: 'Minimal', desc: 'Data only. No interpretation or recommendations unless asked.' },
+                  ].map(opt => (
+                    <label
+                      key={opt.value}
+                      className={`sc-radio-card${adviceStyle === opt.value ? ' selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="adviceStyle"
+                        value={opt.value}
+                        checked={adviceStyle === opt.value}
+                        onChange={() => setAdviceStyle(opt.value)}
+                        style={{ marginTop: 2, accentColor: 'var(--sc-teal)' }}
+                      />
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>{opt.label}</p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>{opt.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">Recommendation confidence</p>
+                  <p className="sc-settings-card-subtitle">Control how SoloChief communicates the basis for its suggestions.</p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+                  {[
+                    { key: 'showWhySuggested',    label: 'Show why something was suggested',              value: showWhySuggested,    set: setShowWhySuggested },
+                    { key: 'showWhenUnsure',       label: 'Flag when SoloChief is uncertain',              value: showWhenUnsure,       set: setShowWhenUnsure },
+                    { key: 'askBeforeAssumptions', label: 'Ask before making assumptions about my intent', value: askBeforeAssumptions, set: setAskBeforeAssumptions },
+                  ].map(({ key, label, value, set }) => (
+                    <label
+                      key={key}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={value}
+                        onChange={e => set(e.target.checked)}
+                        style={{ width: 15, height: 15, accentColor: 'var(--sc-teal)', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)' }}>{label}</span>
+                    </label>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="sc-btn sc-btn-primary sc-btn-sm"
+                  onClick={() => handleSave('AI behaviour')}
+                >
+                  Save AI behaviour
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ── Schedule ──────────────────────────────────────────── */}
           {activeSection === 'schedule' && (
             <div className="sc-settings-card">
               <div className="sc-settings-card-header">
@@ -244,23 +513,11 @@ export default function SettingsPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div className="sc-field">
                   <label className="sc-label">Working day starts</label>
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={e => setStartTime(e.target.value)}
-                    className="sc-input"
-                    style={{ marginTop: 6 }}
-                  />
+                  <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="sc-input" style={{ marginTop: 6 }} />
                 </div>
                 <div className="sc-field">
                   <label className="sc-label">Working day ends</label>
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={e => setEndTime(e.target.value)}
-                    className="sc-input"
-                    style={{ marginTop: 6 }}
-                  />
+                  <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="sc-input" style={{ marginTop: 6 }} />
                 </div>
               </div>
 
@@ -268,37 +525,21 @@ export default function SettingsPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
                 <div className="sc-field">
                   <label className="sc-label">From</label>
-                  <input
-                    type="time"
-                    value={quietStart}
-                    onChange={e => setQuietStart(e.target.value)}
-                    className="sc-input"
-                    style={{ marginTop: 6 }}
-                  />
+                  <input type="time" value={quietStart} onChange={e => setQuietStart(e.target.value)} className="sc-input" style={{ marginTop: 6 }} />
                 </div>
                 <div className="sc-field">
                   <label className="sc-label">Until</label>
-                  <input
-                    type="time"
-                    value={quietEnd}
-                    onChange={e => setQuietEnd(e.target.value)}
-                    className="sc-input"
-                    style={{ marginTop: 6 }}
-                  />
+                  <input type="time" value={quietEnd} onChange={e => setQuietEnd(e.target.value)} className="sc-input" style={{ marginTop: 6 }} />
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="sc-btn sc-btn-primary sc-btn-sm"
-                onClick={() => handleSave('Schedule settings')}
-              >
+              <button type="button" className="sc-btn sc-btn-primary sc-btn-sm" onClick={() => handleSave('Schedule settings')}>
                 Save schedule
               </button>
             </div>
           )}
 
-          {/* ── Appearance ────────────────────────────────────────────── */}
+          {/* ── Appearance ────────────────────────────────────────── */}
           {activeSection === 'appearance' && (
             <div className="sc-settings-card">
               <div className="sc-settings-card-header">
@@ -336,7 +577,102 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* ── WhatsApp ──────────────────────────────────────────────── */}
+          {/* ── Mobile App ────────────────────────────────────────── */}
+          {activeSection === 'mobile-app' && (
+            <div className="sc-settings-card">
+              <div className="sc-settings-card-header">
+                <p className="sc-settings-card-title">Mobile App</p>
+                <p className="sc-settings-card-subtitle">Install SoloChief on your phone for faster daily check-ins.</p>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 14,
+                padding: '14px 16px',
+                borderRadius: 'var(--sc-r)',
+                border: '0.5px solid var(--sc-border)',
+                backgroundColor: 'var(--sc-bg)',
+                marginBottom: 16,
+              }}>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#0F1B2D',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: '#00C2A8',
+                  fontFamily: 'Arial, sans-serif',
+                }}>S</div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>SoloChief AI</p>
+                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 2 }}>
+                    {isStandalone
+                      ? 'Installed — running as a standalone app.'
+                      : 'Not installed — runs in the browser.'}
+                  </p>
+                </div>
+                <div style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: isStandalone ? 'var(--sc-success)' : 'var(--sc-muted)',
+                  flexShrink: 0,
+                }} />
+              </div>
+
+              {!isStandalone && (
+                <>
+                  {canInstall ? (
+                    <>
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-primary sc-btn-sm"
+                        onClick={handleInstall}
+                        style={{ marginBottom: 8 }}
+                      >
+                        <Smartphone size={13} />
+                        Install on this device
+                      </button>
+                      <p className="sc-meta">
+                        Adds SoloChief to your home screen. No app store needed.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <button type="button" className="sc-btn sc-btn-secondary sc-btn-sm" disabled style={{ marginBottom: 8 }}>
+                        <Smartphone size={13} />
+                        Install on this device
+                      </button>
+                      <p className="sc-meta">
+                        To install, open SoloChief in Chrome or Safari on your phone and use the browser&#39;s share or install menu.
+                      </p>
+                    </>
+                  )}
+                </>
+              )}
+
+              {isStandalone && (
+                <p className="sc-meta">
+                  SoloChief is already installed as a standalone app on this device.
+                </p>
+              )}
+
+              <div style={{ borderTop: '0.5px solid var(--sc-border)', marginTop: 20, paddingTop: 18 }}>
+                <p className="sc-section-heading" style={{ marginBottom: 8 }}>PUSH NOTIFICATIONS</p>
+                <p style={{ fontSize: 12, color: 'var(--sc-muted)' }}>
+                  Push notification support is planned for a future release. Daily check-in reminders will be available once enabled.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ── WhatsApp ──────────────────────────────────────────── */}
           {activeSection === 'whatsapp' && (
             <div className="sc-settings-card">
               <div className="sc-settings-card-header">
@@ -370,7 +706,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* ── Account ───────────────────────────────────────────────── */}
+          {/* ── Account ───────────────────────────────────────────── */}
           {activeSection === 'account' && (
             <div className="sc-settings-card">
               <div className="sc-settings-card-header">
@@ -426,15 +762,15 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* ── Data & Danger Zone ────────────────────────────────────── */}
-          {activeSection === 'data' && (
+          {/* ── Data & Privacy ────────────────────────────────────── */}
+          {activeSection === 'data-privacy' && (
             <div className="sc-settings-card">
               <div className="sc-settings-card-header">
-                <p className="sc-settings-card-title">Data</p>
-                <p className="sc-settings-card-subtitle">Export your data or close your account.</p>
+                <p className="sc-settings-card-title">Data & Privacy</p>
+                <p className="sc-settings-card-subtitle">Access, export, or understand the data SoloChief holds for you.</p>
               </div>
 
-              <div style={{ marginBottom: 24 }}>
+              <div style={{ marginBottom: 20 }}>
                 <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 4 }}>Export my data</p>
                 <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 10 }}>
                   Download everything SoloChief has stored for you — commitments, logs, reviews, and notes.
@@ -446,19 +782,59 @@ export default function SettingsPage() {
                 <p className="sc-meta" style={{ marginTop: 6 }}>Data export is available in an upcoming release.</p>
               </div>
 
-              <div style={{ borderTop: '0.5px solid rgba(239,68,68,0.18)', paddingTop: 20 }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-error)', marginBottom: 4 }}>Danger zone</p>
-                <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
-                  Deleting your account is permanent and cannot be undone. All your data will be removed.
+              <div style={{ borderTop: '0.5px solid var(--sc-border)', paddingTop: 18 }}>
+                <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>What data SoloChief stores</p>
+                <ul style={{ fontSize: 12, color: 'var(--sc-muted)', lineHeight: 1.7, paddingLeft: 16 }}>
+                  <li>Your commitments, stages, and history</li>
+                  <li>Daily logs, weekly plans, and Friday reviews</li>
+                  <li>Follow-ups, parking lot ideas, and switch requests</li>
+                  <li>AI chat messages associated with your account</li>
+                  <li>Your profile settings and preferences</li>
+                </ul>
+                <p className="sc-meta" style={{ marginTop: 10 }}>
+                  No data is sold or shared with third parties. SoloChief AI processing uses the Anthropic API with your data processed in transit only.
                 </p>
-                <button
-                  type="button"
-                  className="sc-btn sc-btn-danger sc-btn-sm"
-                  onClick={() => toast.error('Account deletion — contact support to proceed.')}
-                >
-                  <Trash2 size={13} />
-                  Delete account
-                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Danger Zone ───────────────────────────────────────── */}
+          {activeSection === 'danger-zone' && (
+            <div className="sc-settings-card" style={{ borderColor: 'rgba(239,68,68,0.22)' }}>
+              <div className="sc-settings-card-header">
+                <p className="sc-settings-card-title" style={{ color: 'var(--sc-error)' }}>Danger Zone</p>
+                <p className="sc-settings-card-subtitle">Destructive actions. These cannot be undone.</p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 4 }}>Reset all settings</p>
+                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 10 }}>
+                    Restore all settings to their default values. Your data is not affected.
+                  </p>
+                  <button
+                    type="button"
+                    className="sc-btn sc-btn-secondary sc-btn-sm"
+                    onClick={() => toast.error('Settings reset — contact support to proceed.')}
+                  >
+                    Reset settings
+                  </button>
+                </div>
+
+                <div style={{ borderTop: '0.5px solid rgba(239,68,68,0.18)', paddingTop: 18 }}>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-error)', marginBottom: 4 }}>Delete account</p>
+                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                    Permanently delete your account and all associated data. This cannot be undone.
+                  </p>
+                  <button
+                    type="button"
+                    className="sc-btn sc-btn-danger sc-btn-sm"
+                    onClick={() => toast.error('Account deletion — contact support to proceed.')}
+                  >
+                    <Trash2 size={13} />
+                    Delete account
+                  </button>
+                </div>
               </div>
             </div>
           )}
