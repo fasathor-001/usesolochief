@@ -188,6 +188,22 @@ export async function addNotTodayItem(
   return { data: data as NotTodayItem, error: null }
 }
 
+export async function removeNotTodayItem(id: string): Promise<ActionResult<null>> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { data: null, error: 'Not authenticated' }
+
+  const { error } = await supabase
+    .from('not_today_items')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { data: null, error: error.message }
+  revalidatePath('/dashboard/today')
+  return { data: null, error: null }
+}
+
 export async function requestSwitch(
   fromCommitmentId: string,
   toCommitmentId: string,
