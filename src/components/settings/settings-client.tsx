@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import {
   MessageSquare, Clock, Sun, Smartphone, User, Trash2, Download,
-  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown, CreditCard,
+  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown, CreditCard, CheckCircle,
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
@@ -31,6 +31,22 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
+
+const PRO_BILLING_FEATURES = [
+  'Unlimited commitments',
+  'AI Chat with full context',
+  'AI planning assistance',
+  'Weekly review intelligence',
+  'Email reminders',
+]
+
+const OPERATOR_BILLING_FEATURES = [
+  'Everything in Pro',
+  'WhatsApp Chief of Staff',
+  'WhatsApp quick commands',
+  'Daily check-ins',
+  'Follow-up and review prompts through WhatsApp',
+]
 
 const TIMEZONES = [
   'Europe/London',
@@ -88,10 +104,24 @@ function formatMemberSince(dateStr: string): string {
   }
 }
 
+function formatDate(dateStr: string | null): string {
+  if (!dateStr) return '—'
+  try {
+    return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+  } catch {
+    return '—'
+  }
+}
+
 interface SettingsClientProps {
   preferences: UserPreferences | null
   userEmail: string | null
-  profile: { full_name: string | null; created_at: string } | null
+  profile: {
+    full_name: string | null
+    created_at: string
+    plan_expires_at: string | null
+    plan_cancelled_at: string | null
+  } | null
   currentPlan: string
 }
 
@@ -426,149 +456,259 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
           {/* ── Billing ───────────────────────────────────────────── */}
           {activeSection === 'billing' && (
             <div>
-              {/* Current plan */}
-              <div className="sc-settings-section">
-                <p className="sc-settings-section-title">Current plan</p>
+
+              {/* Section intro */}
+              <div style={{ marginBottom: 22 }}>
+                <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--sc-text)', marginBottom: 4 }}>Billing</p>
+                <p style={{ fontSize: 13, color: 'var(--sc-text-2)', lineHeight: 1.5 }}>
+                  Manage your SoloChief plan, subscription, and billing access.
+                </p>
+              </div>
+
+              {/* Current plan card */}
+              <div style={{
+                padding: '16px 18px',
+                borderRadius: 'var(--sc-r)',
+                border: '0.5px solid var(--sc-border)',
+                background: 'var(--sc-surface)',
+                marginBottom: 10,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--sc-text)', marginBottom: 3 }}>
+                      {currentPlan === 'free'     && 'Free'}
+                      {currentPlan === 'pro'      && 'Pro — $15/month'}
+                      {currentPlan === 'operator' && 'Operator — $24/month'}
+                      {currentPlan === 'chief'    && 'Chief — $39/month'}
+                    </p>
+                    <p style={{ fontSize: 12, color: 'var(--sc-text-2)', lineHeight: 1.5 }}>
+                      {currentPlan === 'free'     && 'Up to 3 commitments. No AI features.'}
+                      {currentPlan === 'pro'      && 'Unlimited commitments, AI Chat, AI planning, and email reminders.'}
+                      {currentPlan === 'operator' && 'Everything in Pro, plus WhatsApp Chief of Staff and daily check-ins.'}
+                      {currentPlan === 'chief'    && 'Everything in Operator, plus pattern intelligence and custom agents.'}
+                    </p>
+                    {currentPlan !== 'free' && profile?.plan_cancelled_at && (
+                      <p style={{ fontSize: 12, color: '#F59E0B', marginTop: 6 }}>
+                        Cancellation scheduled. Access until {formatDate(profile.plan_expires_at)}.
+                      </p>
+                    )}
+                    {currentPlan !== 'free' && !profile?.plan_cancelled_at && profile?.plan_expires_at && (
+                      <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 6 }}>
+                        Renews {formatDate(profile.plan_expires_at)}.
+                      </p>
+                    )}
+                  </div>
+                  <span style={{
+                    flexShrink: 0,
+                    padding: '3px 10px',
+                    borderRadius: 20,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: '0.02em',
+                    background: currentPlan === 'free'
+                      ? 'var(--sc-bg)'
+                      : profile?.plan_cancelled_at
+                        ? 'rgba(245,158,11,0.12)'
+                        : 'rgba(0,194,168,0.12)',
+                    color: currentPlan === 'free'
+                      ? 'var(--sc-muted)'
+                      : profile?.plan_cancelled_at
+                        ? '#B45309'
+                        : 'var(--sc-teal)',
+                    border: currentPlan === 'free'
+                      ? '0.5px solid var(--sc-border)'
+                      : profile?.plan_cancelled_at
+                        ? '0.5px solid rgba(245,158,11,0.3)'
+                        : '0.5px solid rgba(0,194,168,0.3)',
+                  }}>
+                    {currentPlan === 'free' ? 'Free' : profile?.plan_cancelled_at ? 'Cancelling' : 'Active'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Included features — paid plans */}
+              {(currentPlan === 'pro' || currentPlan === 'operator') && (
                 <div style={{
-                  padding: '16px',
-                  background: 'var(--sc-bg)',
+                  padding: '14px 18px',
                   borderRadius: 'var(--sc-r)',
                   border: '0.5px solid var(--sc-border)',
-                  marginBottom: '20px',
+                  background: 'var(--sc-surface)',
+                  marginBottom: 10,
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div>
-                      <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 500, color: 'var(--sc-text)' }}>
-                        {currentPlan === 'free' && 'Free'}
-                        {currentPlan === 'pro' && 'Pro — $15/month'}
-                        {currentPlan === 'operator' && 'Operator — $24/month'}
-                        {currentPlan === 'chief' && 'Chief — $39/month'}
-                      </p>
-                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--sc-muted)' }}>
-                        {currentPlan === 'free' && '3 commitments, no AI features'}
-                        {currentPlan === 'pro' && 'Unlimited commitments, AI Chat, email reminders'}
-                        {currentPlan === 'operator' && 'Everything in Pro plus WhatsApp Chief of Staff'}
-                        {currentPlan === 'chief' && 'Everything in Operator plus pattern intelligence'}
-                      </p>
-                    </div>
-                    <span style={{
-                      padding: '4px 10px',
-                      background: currentPlan === 'free' ? 'var(--sc-border)' : 'rgba(0,194,168,0.1)',
-                      color: currentPlan === 'free' ? 'var(--sc-muted)' : 'var(--sc-teal)',
-                      borderRadius: '20px',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                    }}>
-                      {currentPlan === 'free' ? 'Free' : 'Active'}
-                    </span>
+                  <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 10 }}>
+                    Included in {currentPlan === 'pro' ? 'Pro' : 'Operator'}
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+                    {(currentPlan === 'pro' ? PRO_BILLING_FEATURES : OPERATOR_BILLING_FEATURES).map(f => (
+                      <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <CheckCircle size={12} style={{ color: 'var(--sc-teal)', flexShrink: 0 }} />
+                        <span style={{ fontSize: 13, color: 'var(--sc-text-2)' }}>{f}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
+              )}
 
-                {currentPlan !== 'free' && (
+              {/* Subscription actions — paid plans */}
+              {currentPlan !== 'free' && (
+                <div style={{
+                  padding: '14px 18px',
+                  borderRadius: 'var(--sc-r)',
+                  border: '0.5px solid var(--sc-border)',
+                  background: 'var(--sc-surface)',
+                  marginBottom: 10,
+                }}>
+                  <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 8 }}>
+                    Subscription
+                  </p>
+                  <p style={{ fontSize: 12, color: 'var(--sc-text-2)', lineHeight: 1.5, marginBottom: 12 }}>
+                    Update your payment method, view invoices, or cancel your subscription through the secure billing portal.
+                  </p>
                   <button
-                    className="sc-btn sc-btn-secondary"
+                    type="button"
+                    className="sc-btn sc-btn-secondary sc-btn-sm"
                     onClick={handleManageSubscription}
                     disabled={portalLoading}
                   >
-                    {portalLoading ? 'Loading...' : 'Manage subscription'}
+                    {portalLoading ? 'Loading…' : 'Manage subscription'}
                   </button>
-                )}
-              </div>
+                </div>
+              )}
 
-              {/* Upgrade options for free users */}
+              {/* Upgrade: Pro → Operator */}
+              {currentPlan === 'pro' && (
+                <div style={{
+                  padding: '16px 18px',
+                  borderRadius: 'var(--sc-r)',
+                  border: '0.5px solid var(--sc-border)',
+                  background: 'var(--sc-surface)',
+                  marginBottom: 10,
+                }}>
+                  <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 8 }}>
+                    Upgrade to Operator
+                  </p>
+                  <p style={{ fontSize: 13, color: 'var(--sc-text-2)', lineHeight: 1.5, marginBottom: 14 }}>
+                    Add WhatsApp to your SoloChief. Get daily briefings, log progress on the go, and receive follow-up reminders throughout the day.
+                  </p>
+                  <button
+                    type="button"
+                    className="sc-btn sc-btn-primary sc-btn-sm"
+                    onClick={() => handleUpgrade('operator')}
+                    disabled={upgradeLoading === 'operator'}
+                  >
+                    {upgradeLoading === 'operator' ? 'Loading…' : 'Upgrade to Operator — $24/month'}
+                  </button>
+                </div>
+              )}
+
+              {/* Operator — highest plan */}
+              {currentPlan === 'operator' && (
+                <div style={{
+                  padding: '12px 16px',
+                  borderRadius: 'var(--sc-r)',
+                  border: '0.5px solid var(--sc-border)',
+                  background: 'var(--sc-surface)',
+                  marginBottom: 10,
+                }}>
+                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', lineHeight: 1.5 }}>
+                    You are on the highest active plan available during private beta.
+                  </p>
+                </div>
+              )}
+
+              {/* Free — upgrade cards */}
               {currentPlan === 'free' && (
-                <div className="sc-settings-section">
-                  <p className="sc-settings-section-title">Upgrade your plan</p>
+                <div style={{ marginBottom: 10 }}>
+                  <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 10 }}>
+                    Upgrade your plan
+                  </p>
 
-                  {/* Pro card */}
+                  {/* Pro */}
                   <div style={{
-                    padding: '20px',
-                    border: '0.5px solid var(--sc-border)',
+                    padding: '18px',
                     borderRadius: 'var(--sc-r)',
-                    marginBottom: '12px',
+                    border: '0.5px solid var(--sc-border)',
+                    background: 'var(--sc-surface)',
+                    marginBottom: 10,
                   }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                       <div>
-                        <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 500, color: 'var(--sc-text)' }}>Pro</p>
-                        <p style={{ margin: 0, fontSize: '22px', fontWeight: 500, color: 'var(--sc-text)' }}>
-                          $15 <span style={{ fontSize: '13px', color: 'var(--sc-muted)', fontWeight: 400 }}>/month</span>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--sc-text)', marginBottom: 2 }}>Pro</p>
+                        <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--sc-text)' }}>
+                          $15<span style={{ fontSize: 12, fontWeight: 400, color: 'var(--sc-muted)' }}>/month</span>
                         </p>
                       </div>
                     </div>
-                    <ul style={{ margin: '0 0 16px', padding: '0 0 0 16px', fontSize: '13px', color: 'var(--sc-muted)', lineHeight: 1.7 }}>
-                      <li>Unlimited commitments</li>
-                      <li>AI Chat with full context</li>
-                      <li>AI planning assistance</li>
-                      <li>Email reminders</li>
-                    </ul>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+                      {PRO_BILLING_FEATURES.map(f => (
+                        <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <CheckCircle size={12} style={{ color: 'var(--sc-teal)', flexShrink: 0 }} />
+                          <span style={{ fontSize: 12, color: 'var(--sc-text-2)' }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
                     <button
-                      className="sc-btn sc-btn-primary"
+                      type="button"
+                      className="sc-btn sc-btn-secondary sc-btn-sm"
                       style={{ width: '100%' }}
                       onClick={() => handleUpgrade('pro')}
                       disabled={upgradeLoading === 'pro'}
                     >
-                      {upgradeLoading === 'pro' ? 'Loading...' : 'Upgrade to Pro'}
+                      {upgradeLoading === 'pro' ? 'Loading…' : 'Upgrade to Pro'}
                     </button>
                   </div>
 
-                  {/* Operator card */}
+                  {/* Operator */}
                   <div style={{
-                    padding: '20px',
-                    border: '1px solid var(--sc-teal)',
+                    padding: '18px',
                     borderRadius: 'var(--sc-r)',
-                    marginBottom: '12px',
+                    border: '0.5px solid rgba(0,194,168,0.4)',
+                    background: 'rgba(0,194,168,0.03)',
+                    marginBottom: 10,
                     position: 'relative',
                   }}>
                     <div style={{
-                      position: 'absolute', top: '-10px', left: '16px',
+                      position: 'absolute', top: -10, left: 14,
                       background: 'var(--sc-teal)', color: '#fff',
-                      fontSize: '11px', fontWeight: 600, padding: '2px 10px',
-                      borderRadius: '10px', letterSpacing: '0.3px',
+                      fontSize: 10, fontWeight: 700, padding: '2px 9px',
+                      borderRadius: 10, letterSpacing: '0.05em', textTransform: 'uppercase',
                     }}>
-                      MOST POPULAR
+                      Most popular
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                       <div>
-                        <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 500, color: 'var(--sc-text)' }}>Operator</p>
-                        <p style={{ margin: 0, fontSize: '22px', fontWeight: 500, color: 'var(--sc-text)' }}>
-                          $24 <span style={{ fontSize: '13px', color: 'var(--sc-muted)', fontWeight: 400 }}>/month</span>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--sc-text)', marginBottom: 2 }}>Operator</p>
+                        <p style={{ fontSize: 18, fontWeight: 600, color: 'var(--sc-text)' }}>
+                          $24<span style={{ fontSize: 12, fontWeight: 400, color: 'var(--sc-muted)' }}>/month</span>
                         </p>
                       </div>
                     </div>
-                    <ul style={{ margin: '0 0 16px', padding: '0 0 0 16px', fontSize: '13px', color: 'var(--sc-muted)', lineHeight: 1.7 }}>
-                      <li>Everything in Pro</li>
-                      <li>WhatsApp Chief of Staff</li>
-                      <li>Daily morning briefing</li>
-                      <li>Follow-up reminders on WhatsApp</li>
-                    </ul>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 14 }}>
+                      {OPERATOR_BILLING_FEATURES.map(f => (
+                        <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <CheckCircle size={12} style={{ color: 'var(--sc-teal)', flexShrink: 0 }} />
+                          <span style={{ fontSize: 12, color: 'var(--sc-text-2)' }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
                     <button
-                      className="sc-btn sc-btn-primary"
+                      type="button"
+                      className="sc-btn sc-btn-primary sc-btn-sm"
                       style={{ width: '100%' }}
                       onClick={() => handleUpgrade('operator')}
                       disabled={upgradeLoading === 'operator'}
                     >
-                      {upgradeLoading === 'operator' ? 'Loading...' : 'Upgrade to Operator'}
+                      {upgradeLoading === 'operator' ? 'Loading…' : 'Upgrade to Operator'}
                     </button>
                   </div>
                 </div>
               )}
 
-              {/* Pro users — show Operator upgrade */}
-              {currentPlan === 'pro' && (
-                <div className="sc-settings-section">
-                  <p className="sc-settings-section-title">Upgrade to Operator</p>
-                  <p style={{ fontSize: '13px', color: 'var(--sc-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
-                    Add WhatsApp to your SoloChief. Get daily briefings, log progress on the go, and receive follow-up reminders throughout the day.
-                  </p>
-                  <button
-                    className="sc-btn sc-btn-primary"
-                    onClick={() => handleUpgrade('operator')}
-                    disabled={upgradeLoading === 'operator'}
-                  >
-                    {upgradeLoading === 'operator' ? 'Loading...' : 'Upgrade to Operator — $24/month'}
-                  </button>
-                </div>
-              )}
+              {/* Trust note */}
+              <p style={{ fontSize: 12, color: 'var(--sc-muted)', lineHeight: 1.5, marginTop: 4 }}>
+                Payments are processed securely by Polar. SoloChief does not store your card details.
+              </p>
+
             </div>
           )}
 

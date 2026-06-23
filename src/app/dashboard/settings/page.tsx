@@ -11,7 +11,7 @@ export default async function SettingsPage() {
     getPreferences(),
     supabase
       .from('profiles')
-      .select('full_name, created_at')
+      .select('full_name, created_at, plan_expires_at, plan_cancelled_at')
       .eq('user_id', user!.id)
       .single(),
     getCurrentPlan(),
