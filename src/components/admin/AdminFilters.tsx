@@ -23,6 +23,7 @@ export function AdminFilters({ planOptions, defaultSearch, defaultPlan, placehol
       } else {
         params.delete(key)
       }
+      params.delete('page') // reset to page 1 when filter changes
       router.push('?' + params.toString())
     },
     [router, searchParams],

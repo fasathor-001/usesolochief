@@ -1,3 +1,5 @@
+import { SUPPORT_EMAIL } from '../resend'
+
 export function overdueFollowupEmail(
   name: string,
   overdueItems: Array<{ title: string; contact_name?: string | null; days_overdue: number }>,
@@ -6,7 +8,7 @@ export function overdueFollowupEmail(
   const count = overdueItems.length
 
   return {
-    subject: `${count} follow-up${count === 1 ? '' : 's'} overdue &#8212; act before they slip further`,
+    subject: `${count} follow-up${count === 1 ? '' : 's'} overdue - act before they slip further`,
     text: `
 Hi ${displayName},
 
@@ -15,7 +17,7 @@ You have ${count} overdue follow-up${count === 1 ? '' : 's'}:
 ${overdueItems
   .map(
     item =>
-      `- ${item.title}${item.contact_name ? ` (${item.contact_name})` : ''} &#8212; ${item.days_overdue} day${item.days_overdue === 1 ? '' : 's'} overdue`,
+      `- ${item.title}${item.contact_name ? ` (${item.contact_name})` : ''} - ${item.days_overdue} day${item.days_overdue === 1 ? '' : 's'} overdue`,
   )
   .join('\n')}
 
@@ -72,7 +74,7 @@ SoloChief AI
           </tr>
           <tr>
             <td style="padding:16px 32px;border-top:0.5px solid #E2E8F0;">
-              <p style="margin:0;font-size:12px;color:#94A3B8;">SoloChief AI &#183; <a href="mailto:hello@astorstack.com" style="color:#64748B;">hello@astorstack.com</a></p>
+              <p style="margin:0;font-size:12px;color:#94A3B8;">SoloChief AI &#183; <a href="mailto:${SUPPORT_EMAIL}" style="color:#64748B;">${SUPPORT_EMAIL}</a></p>
             </td>
           </tr>
         </table>

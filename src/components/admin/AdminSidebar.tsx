@@ -11,6 +11,7 @@ import {
   MessageSquare,
   Settings2,
   X,
+  ArrowLeft,
 } from 'lucide-react'
 
 const NAV_ITEMS = [
@@ -121,9 +122,33 @@ export function AdminSidebar({ userEmail, mobileOpen, onMobileClose }: Props) {
         })}
       </nav>
 
+      {/* Main dashboard link */}
+      <div style={{ padding: '10px 10px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+        <Link
+          href="/dashboard"
+          onClick={onMobileClose}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '8px 10px',
+            borderRadius: 6,
+            fontSize: 12,
+            color: 'rgba(255,255,255,0.45)',
+            textDecoration: 'none',
+            transition: 'color 0.12s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.75)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
+        >
+          <ArrowLeft size={13} style={{ flexShrink: 0 }} />
+          Main dashboard
+        </Link>
+      </div>
+
       {/* Footer */}
       <div style={{
-        padding: '12px 20px',
+        padding: '10px 20px',
         borderTop: '1px solid rgba(255,255,255,0.07)',
         fontSize: 11,
         color: 'rgba(255,255,255,0.3)',

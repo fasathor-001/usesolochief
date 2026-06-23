@@ -1,8 +1,10 @@
+import { SUPPORT_EMAIL } from '../resend'
+
 export function fridayReminderEmail(name: string) {
   const displayName = name || 'there'
 
   return {
-    subject: 'Friday Review &#8212; close the loop on this week',
+    subject: 'Friday Review — close the loop on this week',
     text: `
 Hi ${displayName},
 
@@ -53,7 +55,7 @@ SoloChief AI
           </tr>
           <tr>
             <td style="padding:16px 32px;border-top:0.5px solid #E2E8F0;">
-              <p style="margin:0;font-size:12px;color:#94A3B8;">SoloChief AI &#183; <a href="mailto:hello@astorstack.com" style="color:#64748B;">hello@astorstack.com</a></p>
+              <p style="margin:0;font-size:12px;color:#94A3B8;">SoloChief AI &#183; <a href="mailto:${SUPPORT_EMAIL}" style="color:#64748B;">${SUPPORT_EMAIL}</a></p>
             </td>
           </tr>
         </table>

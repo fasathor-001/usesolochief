@@ -2,6 +2,7 @@ import { getAdminBilling, AdminUserRow } from '@/lib/actions/admin'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { AdminFilters } from '@/components/admin/AdminFilters'
+import { AdminPagination } from '@/components/admin/AdminPagination'
 
 const PLAN_OPTIONS = [
   { value: 'all',      label: 'All plans' },
@@ -10,6 +11,8 @@ const PLAN_OPTIONS = [
   { value: 'operator', label: 'Operator' },
   { value: 'chief',    label: 'Chief' },
 ]
+
+const PAGE_SIZE = 10
 
 function formatDate(str: string | null): string {
   if (!str) return '—'
@@ -71,13 +74,25 @@ function BillingRow({ user }: { user: AdminUserRow }) {
 export default async function AdminBillingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plan?: string }>
+  searchParams: Promise<{ plan?: string; page?: string }>
 }) {
   const params = await searchParams
+  const page = Math.max(1, parseInt(params.page ?? '1'))
   const users = await getAdminBilling(params.plan)
 
   const paid   = users.filter(u => u.plan !== 'free')
   const active = users.filter(u => u.plan !== 'free' && !u.plan_cancelled_at)
+
+  const totalPages = Math.ceil(users.length / PAGE_SIZE)
+  const paged = users.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  function buildHref(p: number) {
+    const sp = new URLSearchParams()
+    if (params.plan) sp.set('plan', params.plan)
+    if (p > 1) sp.set('page', String(p))
+    const qs = sp.toString()
+    return qs ? '?' + qs : '?'
+  }
 
   return (
     <div>
@@ -120,36 +135,44 @@ export default async function AdminBillingPage({
           <p style={{ fontSize: 13, color: 'var(--sc-muted)' }}>Try adjusting the plan filter.</p>
         </div>
       ) : (
-        <div className="sc-card" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid var(--sc-border)' }}>
-                  {['User', 'Plan', 'Status', 'Renewal / Cancelled', 'Signed up', ''].map(h => (
-                    <th
-                      key={h}
-                      style={{
-                        padding: '10px 12px',
-                        textAlign: 'left',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: 'var(--sc-muted)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        background: 'var(--sc-surface)',
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map(u => <BillingRow key={u.id} user={u} />)}
-              </tbody>
-            </table>
+        <>
+          <div className="sc-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--sc-border)' }}>
+                    {['User', 'Plan', 'Status', 'Renewal / Cancelled', 'Signed up', ''].map(h => (
+                      <th
+                        key={h}
+                        style={{
+                          padding: '10px 12px',
+                          textAlign: 'left',
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: 'var(--sc-muted)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                          background: 'var(--sc-surface)',
+                        }}
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {paged.map(u => <BillingRow key={u.id} user={u} />)}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+          <AdminPagination
+            page={page}
+            totalPages={totalPages}
+            prevHref={page > 1 ? buildHref(page - 1) : null}
+            nextHref={page < totalPages ? buildHref(page + 1) : null}
+          />
+        </>
       )}
     </div>
   )

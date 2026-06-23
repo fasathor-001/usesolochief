@@ -47,6 +47,19 @@ export interface AdminMetrics {
   recentUpgrades: AdminUserRow[]
 }
 
+export interface AdminFeedbackRow {
+  id: string
+  user_id: string | null
+  email: string | null
+  type: string
+  message: string
+  page: string | null
+  status: string
+  created_at: string
+  reviewed_at: string | null
+  reviewed_by: string | null
+}
+
 export interface SystemStatus {
   appUrl: string
   environment: string
@@ -264,6 +277,40 @@ export async function getAdminBilling(plan?: string): Promise<AdminUserRow[]> {
   if (plan && plan !== 'all') merged = merged.filter(u => u.plan === plan)
 
   return merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+}
+
+// ── Feedback ───────────────────────────────────────────────────────────────
+
+export async function getAdminFeedback(status?: string): Promise<AdminFeedbackRow[]> {
+  const db = await requireAdmin()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let query: any = db.from('feedback').select('*').order('created_at', { ascending: false })
+  if (status && status !== 'all') query = query.eq('status', status)
+
+  const { data, error } = await query
+  if (error) {
+    console.error('[admin] getAdminFeedback failed:', error.message)
+    return []
+  }
+  return data ?? []
+}
+
+export async function updateFeedbackStatus(id: string, newStatus: string): Promise<void> {
+  const db = await requireAdmin()
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { error } = await db.from('feedback').update({
+    status: newStatus,
+    reviewed_at: new Date().toISOString(),
+    reviewed_by: user?.email ?? 'admin',
+  }).eq('id', id)
+
+  if (error) {
+    console.error('[admin] updateFeedbackStatus failed:', error.message)
+    throw new Error('Failed to update feedback status')
+  }
 }
 
 // ── System status ──────────────────────────────────────────────────────────

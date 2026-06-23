@@ -1,3 +1,5 @@
+import { SUPPORT_EMAIL } from '../resend'
+
 export function welcomeEmail(name: string) {
   const displayName = name || 'there'
 
@@ -25,7 +27,7 @@ Get started: https://solochief.app/dashboard
 If you have questions or feedback, reply to this email.
 
 SoloChief AI
-hello@astorstack.com
+${SUPPORT_EMAIL}
     `.trim(),
     html: `
 <!DOCTYPE html>
@@ -60,7 +62,7 @@ hello@astorstack.com
               </p>
 
               <p style="margin:0 0 20px;font-size:14px;color:#0D0D0D;line-height:1.6;">
-                SoloChief helps you decide what deserves your attention, what can wait, and what must not slip — whatever you are managing in work or life.
+                SoloChief helps you decide what deserves your attention, what can wait, and what must not slip &#8212; whatever you are managing in work or life.
               </p>
 
               <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;width:100%;">
@@ -158,7 +160,7 @@ hello@astorstack.com
             <td style="padding:20px 32px;border-top:0.5px solid #E2E8F0;">
               <p style="margin:0;font-size:12px;color:#64748B;line-height:1.6;">
                 SoloChief AI &#8212; Your personal Chief of Staff for commitments, focus, and follow-ups.<br>
-                Questions? Reply to this email or contact <a href="mailto:hello@astorstack.com" style="color:#00C2A8;">hello@astorstack.com</a>
+                Questions? Reply to this email or contact <a href="mailto:${SUPPORT_EMAIL}" style="color:#00C2A8;">${SUPPORT_EMAIL}</a>
               </p>
             </td>
           </tr>

@@ -147,8 +147,16 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
           ))}
         </nav>
 
-        {/* Settings + Admin nav links */}
+        {/* Feedback + Settings + Admin nav links */}
         <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '0.5px solid rgba(255,255,255,0.07)' }}>
+          <Link
+            href="/dashboard/feedback"
+            className={`sc-nav-link${isActive('/dashboard/feedback') ? ' active' : ''}`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <MessageCircle size={16} />
+            <span style={{ flex: 1 }}>Feedback</span>
+          </Link>
           <Link
             href="/dashboard/settings"
             className={`sc-nav-link${isActive('/dashboard/settings') ? ' active' : ''}`}

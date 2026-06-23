@@ -1,3 +1,5 @@
+import { SUPPORT_EMAIL } from '../resend'
+
 export function passwordResetEmail(name: string) {
   const display = name?.trim() || 'there'
   const subject = 'Reset your SoloChief password'
@@ -12,7 +14,7 @@ Click the link in this email to set a new password. The link expires in 60 minut
 If you did not request a password reset, ignore this email — your account is safe.
 
 SoloChief AI
-hello@astorstack.com
+${SUPPORT_EMAIL}
   `.trim()
 
   const html = `
@@ -30,10 +32,10 @@ hello@astorstack.com
             Hi ${display}, we received a request to reset your SoloChief password. Click the button below to set a new one. The link expires in 60 minutes.
           </p>
           <p style="margin:0 0 24px;font-size:13px;color:#94A3B8;line-height:1.5;">
-            If you did not request a password reset, ignore this email — your account is safe.
+            If you did not request a password reset, ignore this email &#8212; your account is safe.
           </p>
         </td></tr>
-        <tr><td style="padding:16px 32px;border-top:0.5px solid #E2E8F0;"><p style="margin:0;font-size:12px;color:#94A3B8;">SoloChief AI &middot; <a href="mailto:hello@astorstack.com" style="color:#64748B;text-decoration:none;">hello@astorstack.com</a></p></td></tr>
+        <tr><td style="padding:16px 32px;border-top:0.5px solid #E2E8F0;"><p style="margin:0;font-size:12px;color:#94A3B8;">SoloChief AI &middot; <a href="mailto:${SUPPORT_EMAIL}" style="color:#64748B;text-decoration:none;">${SUPPORT_EMAIL}</a></p></td></tr>
       </table>
     </td></tr>
   </table>

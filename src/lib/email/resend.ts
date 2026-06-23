@@ -1,7 +1,9 @@
 import { Resend } from 'resend'
 
 export const FROM_NAME = 'SoloChief AI'
-export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'hello@astorstack.com'
+export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'support@astorstack.com'
+// Central contact address — import this in templates instead of hardcoding
+export const SUPPORT_EMAIL = FROM_EMAIL
 
 export async function sendEmail({
   to,
