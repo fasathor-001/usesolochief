@@ -7,6 +7,9 @@ export async function POST(request: Request) {
   const signature = request.headers.get('webhook-signature') ?? ''
   const secret = process.env.POLAR_WEBHOOK_SECRET ?? ''
 
+  console.log('Webhook secret present:', !!process.env.POLAR_WEBHOOK_SECRET)
+  console.log('Signature header:', request.headers.get('webhook-signature'))
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let event: any
 
