@@ -97,6 +97,12 @@ function SigninFormInner() {
   const [emailLinkLoading, setEmailLinkLoading] = useState(false)
   const [emailLinkSent, setEmailLinkSent] = useState(false)
 
+  const [code, setCode] = useState('')
+  const [codeError, setCodeError] = useState('')
+  const [verifyLoading, setVerifyLoading] = useState(false)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendSent, setResendSent] = useState(false)
+
   const [authError, setAuthError] = useState<string>(
     rawError ? (ERROR_MESSAGES[rawError] ?? 'Something went wrong. Please try again.') : '',
   )
@@ -104,16 +110,20 @@ function SigninFormInner() {
   const [passwordFieldError, setPasswordFieldError] = useState('')
 
   const emailRef = useRef<HTMLInputElement>(null)
+  const codeRef = useRef<HTMLInputElement>(null)
 
   function clearErrors() {
     setAuthError('')
     setEmailFieldError('')
     setPasswordFieldError('')
+    setCodeError('')
   }
 
   function switchMode(next: Mode) {
     setMode(next)
     setEmailLinkSent(false)
+    setCode('')
+    setResendSent(false)
     clearErrors()
     setTimeout(() => emailRef.current?.focus(), 50)
   }
@@ -154,45 +164,139 @@ function SigninFormInner() {
     const supabase = createClient()
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-      },
+      options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback` },
     })
     setEmailLinkLoading(false)
     if (otpError && !otpError.message.toLowerCase().includes('rate limit')) {
       setAuthError(otpError.message)
     } else {
       setEmailLinkSent(true)
+      setCode('')
+      setResendSent(false)
+      setTimeout(() => codeRef.current?.focus(), 50)
     }
   }
 
-  // ── Email-link success ──────────────────────────────────────────────
+  async function handleVerifyCode(e: React.FormEvent) {
+    e.preventDefault()
+    const trimmed = code.trim()
+    if (!trimmed) { setCodeError('Enter the verification code from your email.'); return }
+    if (trimmed.length !== 6) { setCodeError('The code should be 6 digits.'); return }
+    setVerifyLoading(true)
+    setCodeError('')
+    const supabase = createClient()
+    const { error: verifyError } = await supabase.auth.verifyOtp({
+      email: email.trim(),
+      token: trimmed,
+      type: 'email',
+    })
+    setVerifyLoading(false)
+    if (verifyError) {
+      setCodeError('That code did not work. Check the code and try again, or request a new email.')
+    } else {
+      router.push('/dashboard')
+    }
+  }
+
+  async function handleResend() {
+    setResendLoading(true)
+    setResendSent(false)
+    setCodeError('')
+    const supabase = createClient()
+    await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback` },
+    })
+    setResendLoading(false)
+    setResendSent(true)
+    setCode('')
+    setTimeout(() => codeRef.current?.focus(), 50)
+  }
+
+  // ── Email-link: code entry ──────────────────────────────────────────
   if (mode === 'email-link' && emailLinkSent) {
     return (
       <>
-        <h2 style={{ margin: '0 0 20px', fontSize: '22px', fontWeight: 500, color: '#0D0D0D', letterSpacing: '-0.3px' }}>
+        <h2 style={{ margin: '0 0 8px', fontSize: '22px', fontWeight: 500, color: '#0D0D0D', letterSpacing: '-0.3px' }}>
           Check your email
         </h2>
-        <div style={{
-          display: 'flex', alignItems: 'flex-start', gap: '10px',
-          padding: '14px', marginBottom: '20px',
-          background: 'rgba(0,194,168,0.06)', borderRadius: '8px',
-          border: '0.5px solid rgba(0,194,168,0.2)',
-        }}>
-          <CheckCircle2 size={15} color="#00C2A8" style={{ marginTop: '1px', flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: '13px', color: '#64748B', lineHeight: 1.6 }}>
-            We sent a secure sign-in link to{' '}
-            <strong style={{ color: '#0D0D0D' }}>{email}</strong>.
-            Open it to continue to SoloChief.
+        <p style={{ margin: '0 0 24px', fontSize: '14px', color: '#64748B', lineHeight: 1.5 }}>
+          We sent a secure sign-in link and code to{' '}
+          <strong style={{ color: '#0D0D0D' }}>{email}</strong>.
+          Open the link or enter the code below to continue.
+        </p>
+
+        <form onSubmit={handleVerifyCode} noValidate>
+          <div style={{ marginBottom: codeError ? 4 : 20 }}>
+            <label style={labelStyle}>Verification code</label>
+            <input
+              ref={codeRef}
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              value={code}
+              onChange={e => { setCode(e.target.value.replace(/\D/g, '')); setCodeError('') }}
+              placeholder="000000"
+              autoFocus
+              style={{
+                ...inputBase,
+                fontSize: '22px',
+                letterSpacing: '0.25em',
+                textAlign: 'center',
+                borderColor: codeError ? '#EF4444' : '#E2E8F0',
+              }}
+              onFocus={e => { e.target.style.borderColor = codeError ? '#EF4444' : '#00C2A8' }}
+              onBlur={e => { e.target.style.borderColor = codeError ? '#EF4444' : '#E2E8F0' }}
+            />
+            {codeError && <FieldError msg={codeError} />}
+          </div>
+
+          <button
+            type="submit"
+            disabled={verifyLoading}
+            style={{ ...primaryBtn, background: verifyLoading ? '#94A3B8' : '#00C2A8', cursor: verifyLoading ? 'not-allowed' : 'pointer' }}
+          >
+            {verifyLoading ? 'Verifying…' : 'Verify code'}
+          </button>
+        </form>
+
+        <div style={{ margin: '16px 0', borderTop: '0.5px solid #E2E8F0' }} />
+
+        {resendSent && (
+          <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#00C2A8' }}>
+            We sent a new sign-in email to {email}.
           </p>
+        )}
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button
+            type="button"
+            style={{ ...ghostBtn, opacity: resendLoading ? 0.6 : 1, cursor: resendLoading ? 'not-allowed' : 'pointer' }}
+            onClick={handleResend}
+            disabled={resendLoading}
+          >
+            {resendLoading ? 'Sending…' : 'Resend email'}
+          </button>
+          <button
+            type="button"
+            style={ghostBtn}
+            onClick={() => {
+              setEmailLinkSent(false)
+              setEmail('')
+              setCode('')
+              setCodeError('')
+              setResendSent(false)
+              setTimeout(() => emailRef.current?.focus(), 50)
+            }}
+          >
+            Use a different email
+          </button>
+          <button type="button" style={ghostBtn} onClick={() => switchMode('password')}>
+            Use password instead
+          </button>
         </div>
-        <button
-          type="button"
-          style={ghostBtn}
-          onClick={() => { setEmailLinkSent(false); setEmail(''); setTimeout(() => emailRef.current?.focus(), 50) }}
-        >
-          Use a different email
-        </button>
+
         {divider}
         {signupFooter}
       </>
