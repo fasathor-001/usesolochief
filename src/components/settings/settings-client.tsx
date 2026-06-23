@@ -45,20 +45,40 @@ const TIMEZONES = [
   'Australia/Sydney',
 ]
 
-const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
-  { id: 'billing',       label: 'Billing',       icon: CreditCard },
-  { id: 'communication', label: 'Communication', icon: MessageSquare },
-  { id: 'focus-rules',   label: 'Focus Rules',   icon: Shield },
-  { id: 'ai-behaviour',  label: 'AI Behaviour',  icon: Bot },
-  { id: 'schedule',      label: 'Schedule',      icon: Clock },
-  { id: 'appearance',    label: 'Appearance',    icon: Sun },
-  { id: 'mobile-app',    label: 'Mobile App',    icon: Monitor },
-  { id: 'whatsapp',      label: 'WhatsApp',      icon: MessageCircle },
-  { id: 'account',       label: 'Account',       icon: User },
-  { id: 'security',      label: 'Security',      icon: Lock },
-  { id: 'data-privacy',  label: 'Data & Privacy', icon: Lock },
-  { id: 'danger-zone',   label: 'Danger Zone',   icon: Trash2 },
+type NavItem = { id: Section; label: string; icon: React.ElementType }
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
+  {
+    label: 'Product behaviour',
+    items: [
+      { id: 'communication', label: 'Communication', icon: MessageSquare },
+      { id: 'focus-rules',   label: 'Focus Rules',   icon: Shield },
+      { id: 'ai-behaviour',  label: 'AI Behaviour',  icon: Bot },
+      { id: 'schedule',      label: 'Schedule',      icon: Clock },
+    ],
+  },
+  {
+    label: 'Channels & device',
+    items: [
+      { id: 'appearance', label: 'Appearance', icon: Sun },
+      { id: 'mobile-app', label: 'Mobile App', icon: Monitor },
+      { id: 'whatsapp',   label: 'WhatsApp',   icon: MessageCircle },
+    ],
+  },
+  {
+    label: 'Account & trust',
+    items: [
+      { id: 'account',      label: 'Account',       icon: User },
+      { id: 'billing',      label: 'Billing',       icon: CreditCard },
+      { id: 'security',     label: 'Security',      icon: Lock },
+      { id: 'data-privacy', label: 'Data & Privacy', icon: Lock },
+      { id: 'danger-zone',  label: 'Danger Zone',   icon: Trash2 },
+    ],
+  },
 ]
+
+// Flat list for section validation and active-item lookup
+const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap(g => g.items)
 
 function formatMemberSince(dateStr: string): string {
   try {
@@ -359,18 +379,22 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
         </button>
         {mobileMenuOpen && (
           <div className="sc-settings-mobile-menu" role="listbox" aria-label="Settings sections">
-            {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                role="option"
-                aria-selected={activeSection === id}
-                className={`sc-settings-mobile-menu-item${activeSection === id ? ' active' : ''}`}
-                onClick={() => { setActiveSection(id); setMobileMenuOpen(false) }}
-              >
-                <Icon size={14} />
-                {label}
-              </button>
+            {NAV_GROUPS.map((group, gi) => (
+              <div key={group.label} style={gi > 0 ? { marginTop: 4, paddingTop: 4, borderTop: '0.5px solid var(--sc-border)' } : undefined}>
+                {group.items.map(({ id, label, icon: Icon }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="option"
+                    aria-selected={activeSection === id}
+                    className={`sc-settings-mobile-menu-item${activeSection === id ? ' active' : ''}`}
+                    onClick={() => { setActiveSection(id); setMobileMenuOpen(false) }}
+                  >
+                    <Icon size={14} />
+                    {label}
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
         )}
@@ -379,16 +403,20 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
       <div className="sc-settings-layout">
         {/* Left nav */}
         <aside className="sc-settings-nav">
-          {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              type="button"
-              className={`sc-settings-nav-item${activeSection === id ? ' active' : ''}`}
-              onClick={() => setActiveSection(id)}
-            >
-              <Icon size={14} />
-              {label}
-            </button>
+          {NAV_GROUPS.map((group, gi) => (
+            <div key={group.label} style={gi > 0 ? { marginTop: 12, paddingTop: 12, borderTop: '0.5px solid var(--sc-border)' } : undefined}>
+              {group.items.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  type="button"
+                  className={`sc-settings-nav-item${activeSection === id ? ' active' : ''}`}
+                  onClick={() => setActiveSection(id)}
+                >
+                  <Icon size={14} />
+                  {label}
+                </button>
+              ))}
+            </div>
           ))}
         </aside>
 
@@ -549,7 +577,7 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
             <>
               <div className="sc-settings-card">
                 <div className="sc-settings-card-header">
-                  <p className="sc-settings-card-title">Check-in intensity</p>
+                  <p className="sc-settings-card-title">Check-in rhythm</p>
                   <p className="sc-settings-card-subtitle">How often SoloChief checks in with you during the day.</p>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
