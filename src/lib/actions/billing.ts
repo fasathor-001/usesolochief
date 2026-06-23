@@ -35,7 +35,7 @@ export async function createCheckoutSession(plan: 'pro' | 'operator') {
   try {
     const checkout = await polar.checkouts.create({
       products: [productId],
-      successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgraded=true`,
+      successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing/success`,
       customerEmail: user.email,
       customerName: profile?.full_name ?? undefined,
       externalCustomerId: user.id,
