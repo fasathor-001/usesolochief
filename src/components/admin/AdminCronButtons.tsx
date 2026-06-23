@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
 
-type CronType = 'monday-reminder' | 'friday-reminder' | 'overdue-followups'
+type CronType = 'monday-plan-email' | 'friday-review-email' | 'followup-reminders-email'
 
 const CRON_JOBS: { type: CronType; label: string }[] = [
-  { type: 'monday-reminder',   label: 'Monday plan reminder' },
-  { type: 'friday-reminder',   label: 'Friday review reminder' },
-  { type: 'overdue-followups', label: 'Overdue follow-ups' },
+  { type: 'monday-plan-email',       label: 'Monday plan email' },
+  { type: 'friday-review-email',     label: 'Friday review email' },
+  { type: 'followup-reminders-email', label: 'Follow-up reminders' },
 ]
 
 export function AdminCronButtons() {

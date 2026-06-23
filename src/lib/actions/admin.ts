@@ -72,6 +72,20 @@ export interface SystemStatus {
   tableCounts: Record<string, number>
 }
 
+export interface AdminEmailStats {
+  mondayPlanConfigured: boolean
+  fridayReviewConfigured: boolean
+  followupRemindersConfigured: boolean
+  inactivityNudgeConfigured: boolean
+  lastMondayRun: string | null
+  lastFridayRun: string | null
+  lastFollowupRun: string | null
+  lastEmailSent: string | null
+  lastFailedEmail: string | null
+  totalSent: number
+  totalFailed: number
+}
+
 // ── Guard ──────────────────────────────────────────────────────────────────
 
 async function requireAdmin() {
@@ -310,6 +324,41 @@ export async function updateFeedbackStatus(id: string, newStatus: string): Promi
   if (error) {
     console.error('[admin] updateFeedbackStatus failed:', error.message)
     throw new Error('Failed to update feedback status')
+  }
+}
+
+// ── Email stats ────────────────────────────────────────────────────────────
+
+export async function getAdminEmailStats(): Promise<AdminEmailStats> {
+  const db = await requireAdmin()
+
+  // Try to fetch email_logs; gracefully handle if table doesn't exist
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let allLogs: any[] = []
+  const { data: logsData, error: logsError } = await db.from('email_logs').select('*').order('sent_at', { ascending: false })
+  if (!logsError) {
+    allLogs = logsData ?? []
+  }
+
+  // Extract last run times and stats
+  const lastMondayLog = allLogs.find(l => l.type === 'monday_plan' && l.status === 'sent')
+  const lastFridayLog = allLogs.find(l => l.type === 'friday_review' && l.status === 'sent')
+  const lastFollowupLog = allLogs.find(l => l.type === 'followup_due' && l.status === 'sent')
+  const lastFailedLog = allLogs.find(l => l.status === 'failed')
+  const lastLog = allLogs[0]
+
+  return {
+    mondayPlanConfigured: !!(process.env.CRON_SECRET && process.env.RESEND_API_KEY),
+    fridayReviewConfigured: !!(process.env.CRON_SECRET && process.env.RESEND_API_KEY),
+    followupRemindersConfigured: !!(process.env.CRON_SECRET && process.env.RESEND_API_KEY),
+    inactivityNudgeConfigured: !!(process.env.RESEND_API_KEY),
+    lastMondayRun: lastMondayLog?.sent_at ?? null,
+    lastFridayRun: lastFridayLog?.sent_at ?? null,
+    lastFollowupRun: lastFollowupLog?.sent_at ?? null,
+    lastEmailSent: lastLog?.sent_at ?? null,
+    lastFailedEmail: lastFailedLog?.created_at ?? null,
+    totalSent: allLogs.filter(l => l.status === 'sent').length,
+    totalFailed: allLogs.filter(l => l.status === 'failed').length,
   }
 }
 

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { isPlatformAdmin } from '@/lib/admin'
+import { sendMondayPlanEmails, sendFridayReviewEmails, sendFollowupReminderEmails } from '@/lib/email/scheduled-emails'
 
-const ALLOWED_TYPES = ['monday-reminder', 'friday-reminder', 'overdue-followups'] as const
+const ALLOWED_TYPES = ['monday-plan-email', 'friday-review-email', 'followup-reminders-email'] as const
 type CronType = typeof ALLOWED_TYPES[number]
 
 export async function POST(
@@ -22,22 +23,19 @@ export async function POST(
     return NextResponse.json({ error: 'Unknown cron type' }, { status: 400 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL
-  const cronSecret = process.env.CRON_SECRET
+  try {
+    let result
+    if (type === 'monday-plan-email') {
+      result = await sendMondayPlanEmails()
+    } else if (type === 'friday-review-email') {
+      result = await sendFridayReviewEmails()
+    } else if (type === 'followup-reminders-email') {
+      result = await sendFollowupReminderEmails()
+    }
 
-  if (!appUrl || !cronSecret) {
-    return NextResponse.json({ error: 'Cron not configured' }, { status: 503 })
+    return NextResponse.json({ ok: true, ...result })
+  } catch (err) {
+    console.error(`[trigger-cron/${type}] failed:`, err instanceof Error ? err.message : 'unknown')
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 })
   }
-
-  const res = await fetch(`${appUrl}/api/email/${type}`, {
-    method: 'POST',
-    headers: { 'x-cron-secret': cronSecret },
-  })
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => 'unknown error')
-    return NextResponse.json({ error: `Cron returned ${res.status}: ${text}` }, { status: 502 })
-  }
-
-  return NextResponse.json({ ok: true })
 }

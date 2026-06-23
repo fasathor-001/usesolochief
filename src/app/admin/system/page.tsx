@@ -1,4 +1,4 @@
-import { getAdminSystemStatus } from '@/lib/actions/admin'
+import { getAdminSystemStatus, getAdminEmailStats } from '@/lib/actions/admin'
 import { AdminCronButtons } from '@/components/admin/AdminCronButtons'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 
@@ -27,7 +27,10 @@ function StatusRow({ label, ok, note }: { label: string; ok: boolean; note?: str
 }
 
 export default async function AdminSystemPage() {
-  const s = await getAdminSystemStatus()
+  const [s, emailStats] = await Promise.all([
+    getAdminSystemStatus(),
+    getAdminEmailStats(),
+  ])
 
   const envBadgeStyle = {
     display: 'inline-block',
@@ -94,6 +97,70 @@ export default async function AdminSystemPage() {
               <p style={{ fontSize: 11, color: 'var(--sc-muted)', marginTop: 2 }}>{table.replace(/_/g, ' ')}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Email status */}
+      <div className="sc-card" style={{ padding: '18px 20px', marginBottom: 16 }}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+          Email delivery status
+        </p>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+          gap: 10,
+        }}>
+          <div style={{
+            padding: '10px 12px',
+            borderRadius: 6,
+            border: '0.5px solid var(--sc-border)',
+            background: 'var(--sc-bg)',
+          }}>
+            <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--sc-text)' }}>Total sent</p>
+            <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--sc-text)', marginTop: 4 }}>{emailStats.totalSent}</p>
+          </div>
+          <div style={{
+            padding: '10px 12px',
+            borderRadius: 6,
+            border: '0.5px solid var(--sc-border)',
+            background: 'var(--sc-bg)',
+          }}>
+            <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--sc-text)' }}>Failed</p>
+            <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--sc-error, #EF4444)', marginTop: 4 }}>{emailStats.totalFailed}</p>
+          </div>
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>
+            Last runs
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: 'var(--sc-text-2)' }}>Monday email</span>
+              <span style={{ color: 'var(--sc-muted)' }}>
+                {emailStats.lastMondayRun ? new Date(emailStats.lastMondayRun).toLocaleString() : 'Never'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: 'var(--sc-text-2)' }}>Friday email</span>
+              <span style={{ color: 'var(--sc-muted)' }}>
+                {emailStats.lastFridayRun ? new Date(emailStats.lastFridayRun).toLocaleString() : 'Never'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: 'var(--sc-text-2)' }}>Follow-up email</span>
+              <span style={{ color: 'var(--sc-muted)' }}>
+                {emailStats.lastFollowupRun ? new Date(emailStats.lastFollowupRun).toLocaleString() : 'Never'}
+              </span>
+            </div>
+            {emailStats.lastFailedEmail && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                <span style={{ color: 'var(--sc-error, #EF4444)' }}>Last failed</span>
+                <span style={{ color: 'var(--sc-muted)' }}>
+                  {new Date(emailStats.lastFailedEmail).toLocaleString()}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
