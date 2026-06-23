@@ -1033,3 +1033,24 @@
   .sc-auth-brand { display: none !important; }
   .sc-auth-form { flex: 1 !important; padding: 40px 24px !important; }
 }
+
+/* ── Admin panel responsive ─────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+  }
+  .admin-sidebar.is-open {
+    transform: translateX(0) !important;
+  }
+  .admin-mobile-close {
+    display: block !important;
+  }
+  .admin-menu-btn {
+    display: flex !important;
+  }
+  .admin-main {
+    margin-left: 0 !important;
+  }
+}
