@@ -13,6 +13,10 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
+    if (error) {
+      console.error('[auth/callback] code exchange failed:', error.message)
+    }
+
     if (!error && data.session) {
       const { data: { user } } = await supabase.auth.getUser()
 
@@ -27,6 +31,8 @@ export async function GET(request: Request) {
 
       return NextResponse.redirect(`${appUrl}${next}`)
     }
+  } else {
+    console.warn('[auth/callback] no code param — redirecting to sign-in')
   }
 
   return NextResponse.redirect(`${appUrl}/auth/login?error=auth_failed`)

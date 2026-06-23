@@ -1034,7 +1034,15 @@
   .sc-auth-form { flex: 1 !important; padding: 40px 24px !important; }
 }
 
-/* ── Admin panel responsive ─────────────────────────────────────────── */
+/* ── Admin panel layout ─────────────────────────────────────────────── */
+
+.admin-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  box-sizing: border-box;
+}
 
 @media (max-width: 900px) {
   .admin-sidebar {
@@ -1052,5 +1060,8 @@
   }
   .admin-main {
     margin-left: 0 !important;
+  }
+  .admin-content {
+    padding: 20px 16px;
   }
 }

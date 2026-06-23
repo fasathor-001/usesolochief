@@ -46,14 +46,10 @@ export function AdminShell({ children, userEmail }: Props) {
       >
         <AdminTopbar userEmail={userEmail} onMenuToggle={() => setMobileOpen(o => !o)} />
 
-        <main style={{
-          flex: 1,
-          padding: '28px 32px',
-          maxWidth: 1280,
-          width: '100%',
-          boxSizing: 'border-box',
-        }}>
-          {children}
+        <main style={{ flex: 1 }}>
+          <div className="admin-content">
+            {children}
+          </div>
         </main>
       </div>
     </div>

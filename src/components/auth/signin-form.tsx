@@ -167,8 +167,17 @@ function SigninFormInner() {
       options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback` },
     })
     setEmailLinkLoading(false)
-    if (otpError && !otpError.message.toLowerCase().includes('rate limit')) {
-      setAuthError(otpError.message)
+    if (otpError) {
+      if (otpError.message.toLowerCase().includes('rate limit')) {
+        // Still show code entry — a previous email was likely sent
+        setEmailLinkSent(true)
+        setCode('')
+        setResendSent(false)
+        setCodeError('You have requested several sign-in emails recently. Check your inbox for the most recent one.')
+        setTimeout(() => codeRef.current?.focus(), 50)
+      } else {
+        setAuthError('We could not send a sign-in email. Please try again.')
+      }
     } else {
       setEmailLinkSent(true)
       setCode('')
@@ -264,9 +273,14 @@ function SigninFormInner() {
         <div style={{ margin: '16px 0', borderTop: '0.5px solid #E2E8F0' }} />
 
         {resendSent && (
-          <p style={{ margin: '0 0 10px', fontSize: '12px', color: '#00C2A8' }}>
-            We sent a new sign-in email to {email}.
-          </p>
+          <div style={{ marginBottom: 10 }}>
+            <p style={{ margin: '0 0 4px', fontSize: '12px', color: '#00C2A8' }}>
+              We sent a new sign-in email to {email}.
+            </p>
+            <p style={{ margin: 0, fontSize: '12px', color: '#64748B' }}>
+              Use the latest code we sent. Older codes may no longer work.
+            </p>
+          </div>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

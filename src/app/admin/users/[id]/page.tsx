@@ -49,7 +49,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
   const planStyle = planMap[user.plan] ?? planMap.free
 
   return (
-    <div style={{ maxWidth: 680 }}>
+    <div>
       {/* Back */}
       <Link
         href="/admin/users"
@@ -60,7 +60,7 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4, flexWrap: 'wrap' }}>
           <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--sc-text)', letterSpacing: '-0.3px' }}>
             {user.full_name ?? user.email}
           </h1>
@@ -73,57 +73,65 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
         )}
       </div>
 
-      {/* Activity stats */}
+      {/* Activity stats — spans full width */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
         gap: 10,
-        marginBottom: 24,
+        marginBottom: 20,
       }}>
-        <StatCard label="Commitments" value={user.commitment_count} />
-        <StatCard label="Follow-ups"  value={user.followup_count} />
-        <StatCard label="Parked"      value={user.parking_count} />
-        <StatCard label="Reviews"     value={user.review_count} />
+        <StatCard label="Commitments"  value={user.commitment_count} />
+        <StatCard label="Follow-ups"   value={user.followup_count} />
+        <StatCard label="Parked"       value={user.parking_count} />
+        <StatCard label="Reviews"      value={user.review_count} />
         <StatCard label="Weekly plans" value={user.weekly_plan_count} />
       </div>
 
-      {/* Profile card */}
-      <div className="sc-card" style={{ padding: '18px 20px', marginBottom: 14 }}>
-        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
-          Profile
-        </p>
-        <Row label="Email"       value={user.email} />
-        <Row label="Full name"   value={user.full_name ?? <span style={{ color: 'var(--sc-muted)' }}>—</span>} />
-        <Row label="Signed up"   value={formatDate(user.created_at)} />
-        <Row label="Last sign-in" value={formatDate(user.last_sign_in_at)} />
-        <Row label="Onboarded"   value={
-          user.onboarded_at
-            ? <span className="sc-badge sc-badge-green">Completed {formatDate(user.onboarded_at)}</span>
-            : <span className="sc-badge sc-badge-amber">Incomplete</span>
-        } />
-        <Row label="Sign-in methods" value={user.providers.join(', ') || '—'} />
-        <Row label="User ID" value={<code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.id}</code>} />
-      </div>
+      {/* Detail cards — 2-column grid on desktop */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+        gap: 14,
+        alignItems: 'start',
+      }}>
+        {/* Profile card */}
+        <div className="sc-card" style={{ padding: '18px 20px' }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+            Profile
+          </p>
+          <Row label="Email"           value={user.email} />
+          <Row label="Full name"        value={user.full_name ?? <span style={{ color: 'var(--sc-muted)' }}>—</span>} />
+          <Row label="Signed up"        value={formatDate(user.created_at)} />
+          <Row label="Last sign-in"     value={formatDate(user.last_sign_in_at)} />
+          <Row label="Onboarded"        value={
+            user.onboarded_at
+              ? <span className="sc-badge sc-badge-green">Completed {formatDate(user.onboarded_at)}</span>
+              : <span className="sc-badge sc-badge-amber">Incomplete</span>
+          } />
+          <Row label="Sign-in methods"  value={user.providers.join(', ') || '—'} />
+          <Row label="User ID"          value={<code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.id}</code>} />
+        </div>
 
-      {/* Plan card */}
-      <div className="sc-card" style={{ padding: '18px 20px' }}>
-        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
-          Billing
-        </p>
-        <Row label="Plan"        value={<span style={{ textTransform: 'capitalize' }}>{user.plan}</span>} />
-        <Row label="Activated"   value={formatDate(user.plan_activated_at)} />
-        <Row label="Expires"     value={formatDate(user.plan_expires_at)} />
-        <Row label="Cancelled"   value={formatDate(user.plan_cancelled_at)} />
-        <Row label="Polar customer" value={
-          user.polar_customer_id
-            ? <code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.polar_customer_id}</code>
-            : <span style={{ color: 'var(--sc-muted)' }}>—</span>
-        } />
-        <Row label="Polar subscription" value={
-          user.polar_subscription_id
-            ? <code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.polar_subscription_id}</code>
-            : <span style={{ color: 'var(--sc-muted)' }}>—</span>
-        } />
+        {/* Plan card */}
+        <div className="sc-card" style={{ padding: '18px 20px' }}>
+          <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+            Billing
+          </p>
+          <Row label="Plan"               value={<span style={{ textTransform: 'capitalize' }}>{user.plan}</span>} />
+          <Row label="Activated"          value={formatDate(user.plan_activated_at)} />
+          <Row label="Expires"            value={formatDate(user.plan_expires_at)} />
+          <Row label="Cancelled"          value={formatDate(user.plan_cancelled_at)} />
+          <Row label="Polar customer"     value={
+            user.polar_customer_id
+              ? <code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.polar_customer_id}</code>
+              : <span style={{ color: 'var(--sc-muted)' }}>—</span>
+          } />
+          <Row label="Polar subscription" value={
+            user.polar_subscription_id
+              ? <code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.polar_subscription_id}</code>
+              : <span style={{ color: 'var(--sc-muted)' }}>—</span>
+          } />
+        </div>
       </div>
     </div>
   )

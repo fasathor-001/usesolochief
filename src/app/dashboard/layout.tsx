@@ -5,6 +5,7 @@ import { getWeekStart } from '@/lib/utils/date-utils'
 import { SidebarNav } from '@/components/sidebar-nav'
 import { DashboardTopbar } from '@/components/dashboard/DashboardTopbar'
 import { InstallPrompt } from '@/components/pwa/InstallPrompt'
+import { isPlatformAdmin } from '@/lib/admin'
 
 export default async function DashboardLayout({
   children,
@@ -77,6 +78,7 @@ export default async function DashboardLayout({
         userName={profile?.full_name ?? ''}
         avatarUrl={profile?.avatar_url ?? null}
         overdueFollowupsCount={overdueFollowupsCount}
+        isAdmin={isPlatformAdmin(user.email)}
       />
       <div className="sc-main">
         <DashboardTopbar />

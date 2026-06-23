@@ -17,6 +17,7 @@ import {
   LogOut,
   LifeBuoy,
   Menu,
+  ShieldCheck,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { RescueMeModal } from '@/components/rescue-me/rescue-me-modal'
@@ -64,9 +65,10 @@ interface SidebarNavProps {
   userName: string
   avatarUrl: string | null
   overdueFollowupsCount?: number
+  isAdmin?: boolean
 }
 
-export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCount = 0 }: SidebarNavProps) {
+export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCount = 0, isAdmin = false }: SidebarNavProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [rescueOpen, setRescueOpen] = useState(false)
@@ -145,7 +147,7 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
           ))}
         </nav>
 
-        {/* Settings nav link */}
+        {/* Settings + Admin nav links */}
         <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '0.5px solid rgba(255,255,255,0.07)' }}>
           <Link
             href="/dashboard/settings"
@@ -155,6 +157,29 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
             <Settings size={16} />
             <span style={{ flex: 1 }}>Settings</span>
           </Link>
+
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="sc-nav-link"
+              onClick={() => setMobileOpen(false)}
+              style={{ marginTop: 2 }}
+            >
+              <ShieldCheck size={16} style={{ color: '#00C2A8' }} />
+              <span style={{ flex: 1 }}>Admin</span>
+              <span style={{
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                padding: '1px 5px',
+                borderRadius: 3,
+                background: 'rgba(0,194,168,0.15)',
+                color: '#00C2A8',
+              }}>
+                INT
+              </span>
+            </Link>
+          )}
         </div>
 
         {/* Rescue Me */}
