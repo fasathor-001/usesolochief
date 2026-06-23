@@ -1,7 +1,8 @@
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { buildContextPackage, buildSystemPrompt } from '@/lib/ai/context-builder'
+import { canUseAI } from '@/lib/plan-limits'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -11,6 +12,15 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 })
+  }
+
+  // Enforce AI plan access
+  const { data: profile } = await supabase.from('profiles').select('plan').eq('user_id', user.id).single()
+  if (!canUseAI(profile?.plan ?? 'free')) {
+    return NextResponse.json(
+      { error: 'AI Chat is available on Pro and above. Upgrade to access your personal Chief of Staff.' },
+      { status: 403 },
+    )
   }
 
   const body = await request.json()

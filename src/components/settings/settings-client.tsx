@@ -4,15 +4,17 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import {
   MessageSquare, Clock, Sun, Smartphone, User, Trash2, Download,
-  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown,
+  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown, CreditCard,
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
+import { createCheckoutSession, createCustomerPortalSession } from '@/lib/actions/billing'
 import { createClient } from '@/lib/supabase/client'
 import { applyTheme, setStoredTheme } from '@/lib/theme'
 import type { ThemeValue } from '@/lib/theme'
 import type { UserPreferences } from '@/types/database'
 type Section =
+  | 'billing'
   | 'communication'
   | 'focus-rules'
   | 'ai-behaviour'
@@ -44,6 +46,7 @@ const TIMEZONES = [
 ]
 
 const NAV_ITEMS: { id: Section; label: string; icon: React.ElementType }[] = [
+  { id: 'billing',       label: 'Billing',       icon: CreditCard },
   { id: 'communication', label: 'Communication', icon: MessageSquare },
   { id: 'focus-rules',   label: 'Focus Rules',   icon: Shield },
   { id: 'ai-behaviour',  label: 'AI Behaviour',  icon: Bot },
@@ -69,9 +72,10 @@ interface SettingsClientProps {
   preferences: UserPreferences | null
   userEmail: string | null
   profile: { full_name: string | null; created_at: string } | null
+  currentPlan: string
 }
 
-export function SettingsClient({ preferences, userEmail, profile }: SettingsClientProps) {
+export function SettingsClient({ preferences, userEmail, profile, currentPlan }: SettingsClientProps) {
   const [activeSection, setActiveSection] = useState<Section>('communication')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
@@ -129,6 +133,10 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [magicLinkSent, setMagicLinkSent] = useState(false)
 
+  // ── Billing ────────────────────────────────────────────────────────
+  const [upgradeLoading, setUpgradeLoading] = useState<string | null>(null)
+  const [portalLoading, setPortalLoading] = useState(false)
+
   // ── Danger Zone ────────────────────────────────────────────────────
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -161,6 +169,22 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
   function handleThemeChange(value: ThemeValue) {
     setTheme(value)
     setStoredTheme(value)
+  }
+
+  async function handleUpgrade(plan: 'pro' | 'operator') {
+    setUpgradeLoading(plan)
+    const result = await createCheckoutSession(plan)
+    setUpgradeLoading(null)
+    if (result.error) { alert(result.error); return }
+    if (result.url) window.location.href = result.url
+  }
+
+  async function handleManageSubscription() {
+    setPortalLoading(true)
+    const result = await createCustomerPortalSession()
+    setPortalLoading(false)
+    if (result.error) { alert(result.error); return }
+    if (result.url) window.location.href = result.url
   }
 
   function handleInstall() {
@@ -370,6 +394,155 @@ export function SettingsClient({ preferences, userEmail, profile }: SettingsClie
 
         {/* Right content */}
         <main className="sc-settings-content">
+
+          {/* ── Billing ───────────────────────────────────────────── */}
+          {activeSection === 'billing' && (
+            <div>
+              {/* Current plan */}
+              <div className="sc-settings-section">
+                <p className="sc-settings-section-title">Current plan</p>
+                <div style={{
+                  padding: '16px',
+                  background: 'var(--sc-bg)',
+                  borderRadius: 'var(--sc-r)',
+                  border: '0.5px solid var(--sc-border)',
+                  marginBottom: '20px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 500, color: 'var(--sc-text)' }}>
+                        {currentPlan === 'free' && 'Free'}
+                        {currentPlan === 'pro' && 'Pro — $15/month'}
+                        {currentPlan === 'operator' && 'Operator — $24/month'}
+                        {currentPlan === 'chief' && 'Chief — $39/month'}
+                      </p>
+                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--sc-muted)' }}>
+                        {currentPlan === 'free' && '3 commitments, no AI features'}
+                        {currentPlan === 'pro' && 'Unlimited commitments, AI Chat, email reminders'}
+                        {currentPlan === 'operator' && 'Everything in Pro plus WhatsApp Chief of Staff'}
+                        {currentPlan === 'chief' && 'Everything in Operator plus pattern intelligence'}
+                      </p>
+                    </div>
+                    <span style={{
+                      padding: '4px 10px',
+                      background: currentPlan === 'free' ? 'var(--sc-border)' : 'rgba(0,194,168,0.1)',
+                      color: currentPlan === 'free' ? 'var(--sc-muted)' : 'var(--sc-teal)',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                    }}>
+                      {currentPlan === 'free' ? 'Free' : 'Active'}
+                    </span>
+                  </div>
+                </div>
+
+                {currentPlan !== 'free' && (
+                  <button
+                    className="sc-btn sc-btn-secondary"
+                    onClick={handleManageSubscription}
+                    disabled={portalLoading}
+                  >
+                    {portalLoading ? 'Loading...' : 'Manage subscription'}
+                  </button>
+                )}
+              </div>
+
+              {/* Upgrade options for free users */}
+              {currentPlan === 'free' && (
+                <div className="sc-settings-section">
+                  <p className="sc-settings-section-title">Upgrade your plan</p>
+
+                  {/* Pro card */}
+                  <div style={{
+                    padding: '20px',
+                    border: '0.5px solid var(--sc-border)',
+                    borderRadius: 'var(--sc-r)',
+                    marginBottom: '12px',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                      <div>
+                        <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 500, color: 'var(--sc-text)' }}>Pro</p>
+                        <p style={{ margin: 0, fontSize: '22px', fontWeight: 500, color: 'var(--sc-text)' }}>
+                          $15 <span style={{ fontSize: '13px', color: 'var(--sc-muted)', fontWeight: 400 }}>/month</span>
+                        </p>
+                      </div>
+                    </div>
+                    <ul style={{ margin: '0 0 16px', padding: '0 0 0 16px', fontSize: '13px', color: 'var(--sc-muted)', lineHeight: 1.7 }}>
+                      <li>Unlimited commitments</li>
+                      <li>AI Chat with full context</li>
+                      <li>AI planning assistance</li>
+                      <li>Email reminders</li>
+                    </ul>
+                    <button
+                      className="sc-btn sc-btn-primary"
+                      style={{ width: '100%' }}
+                      onClick={() => handleUpgrade('pro')}
+                      disabled={upgradeLoading === 'pro'}
+                    >
+                      {upgradeLoading === 'pro' ? 'Loading...' : 'Upgrade to Pro'}
+                    </button>
+                  </div>
+
+                  {/* Operator card */}
+                  <div style={{
+                    padding: '20px',
+                    border: '1px solid var(--sc-teal)',
+                    borderRadius: 'var(--sc-r)',
+                    marginBottom: '12px',
+                    position: 'relative',
+                  }}>
+                    <div style={{
+                      position: 'absolute', top: '-10px', left: '16px',
+                      background: 'var(--sc-teal)', color: '#fff',
+                      fontSize: '11px', fontWeight: 600, padding: '2px 10px',
+                      borderRadius: '10px', letterSpacing: '0.3px',
+                    }}>
+                      MOST POPULAR
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                      <div>
+                        <p style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 500, color: 'var(--sc-text)' }}>Operator</p>
+                        <p style={{ margin: 0, fontSize: '22px', fontWeight: 500, color: 'var(--sc-text)' }}>
+                          $24 <span style={{ fontSize: '13px', color: 'var(--sc-muted)', fontWeight: 400 }}>/month</span>
+                        </p>
+                      </div>
+                    </div>
+                    <ul style={{ margin: '0 0 16px', padding: '0 0 0 16px', fontSize: '13px', color: 'var(--sc-muted)', lineHeight: 1.7 }}>
+                      <li>Everything in Pro</li>
+                      <li>WhatsApp Chief of Staff</li>
+                      <li>Daily morning briefing</li>
+                      <li>Follow-up reminders on WhatsApp</li>
+                    </ul>
+                    <button
+                      className="sc-btn sc-btn-primary"
+                      style={{ width: '100%' }}
+                      onClick={() => handleUpgrade('operator')}
+                      disabled={upgradeLoading === 'operator'}
+                    >
+                      {upgradeLoading === 'operator' ? 'Loading...' : 'Upgrade to Operator'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Pro users — show Operator upgrade */}
+              {currentPlan === 'pro' && (
+                <div className="sc-settings-section">
+                  <p className="sc-settings-section-title">Upgrade to Operator</p>
+                  <p style={{ fontSize: '13px', color: 'var(--sc-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
+                    Add WhatsApp to your SoloChief. Get daily briefings, log progress on the go, and receive follow-up reminders throughout the day.
+                  </p>
+                  <button
+                    className="sc-btn sc-btn-primary"
+                    onClick={() => handleUpgrade('operator')}
+                    disabled={upgradeLoading === 'operator'}
+                  >
+                    {upgradeLoading === 'operator' ? 'Loading...' : 'Upgrade to Operator — $24/month'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ── Communication ─────────────────────────────────────── */}
           {activeSection === 'communication' && (

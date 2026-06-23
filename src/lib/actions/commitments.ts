@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { canAddCommitment } from '@/lib/plan-limits'
 import type { Commitment, CommitmentStage, PermissionLevel, ActionResult } from '@/types/database'
 
 // ============================================================
@@ -76,6 +77,17 @@ export async function createCommitment(rawData: unknown): Promise<ActionResult<C
 
   const parsed = CommitmentWriteSchema.safeParse(rawData)
   if (!parsed.success) return { data: null, error: parsed.error.issues[0].message }
+
+  // Enforce plan commitment limit
+  const [profileRes, countRes] = await Promise.all([
+    supabase.from('profiles').select('plan').eq('user_id', user.id).single(),
+    supabase.from('commitments').select('id', { count: 'exact', head: true }).eq('user_id', user.id).is('deleted_at', null),
+  ])
+  const plan = profileRes.data?.plan ?? 'free'
+  const currentCount = countRes.count ?? 0
+  if (!canAddCommitment(plan, currentCount)) {
+    return { data: null, error: `You have reached the commitment limit for your ${plan} plan. Upgrade to Pro for unlimited commitments.` }
+  }
 
   const { data, error } = await supabase
     .from('commitments')

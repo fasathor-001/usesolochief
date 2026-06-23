@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { UpgradeSuccessToast } from '@/components/billing/UpgradeSuccessToast'
 import { getWeekStart } from '@/lib/utils/date-utils'
 import { getDataSufficiency } from '@/lib/intelligence/intelligence-service'
 import { Archive, CheckCircle, Clock, RotateCcw } from 'lucide-react'
@@ -30,10 +31,16 @@ function weekNumber(date: Date): number {
   return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
 }
 
-export default async function CommandCentrePage() {
+export default async function CommandCentrePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ upgraded?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
+
+  const { upgraded } = await searchParams
 
   const weekStart = getWeekStart()
   const today = todayString()
@@ -52,7 +59,7 @@ export default async function CommandCentrePage() {
     supabase.from('followups').select('*').eq('user_id', user.id).is('deleted_at', null).not('status', 'in', '(completed,cancelled)').order('due_date'),
     supabase.from('parking_lot_items').select('*').eq('user_id', user.id).in('status', ['waiting', 'scheduled']).order('created_at', { ascending: false }),
     getDataSufficiency(),
-    supabase.from('profiles').select('full_name').eq('user_id', user.id).maybeSingle(),
+    supabase.from('profiles').select('full_name, plan').eq('user_id', user.id).maybeSingle(),
   ])
 
   const plan = planRes.data as WeeklyPlan | null
@@ -115,6 +122,7 @@ export default async function CommandCentrePage() {
 
   return (
     <>
+      {upgraded === 'true' && <UpgradeSuccessToast plan={profileRes.data?.plan ?? 'pro'} />}
 
       {/* Main content */}
       <div className="sc-content sc-page-container">
