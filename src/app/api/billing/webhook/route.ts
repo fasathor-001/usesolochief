@@ -4,18 +4,33 @@ import { validateEvent, WebhookVerificationError } from '@polar-sh/sdk/webhooks'
 
 export async function POST(request: Request) {
   const body = await request.text()
-  const signature = request.headers.get('webhook-signature') ?? ''
   const secret = process.env.POLAR_WEBHOOK_SECRET ?? ''
 
-  console.log('Webhook secret present:', !!process.env.POLAR_WEBHOOK_SECRET)
-  console.log('Signature header:', request.headers.get('webhook-signature'))
+  // Standard webhooks requires all three headers
+  const webhookId        = request.headers.get('webhook-id')        ?? ''
+  const webhookSignature = request.headers.get('webhook-signature') ?? ''
+  const webhookTimestamp = request.headers.get('webhook-timestamp') ?? ''
+
+  console.log('Webhook secret present:', !!secret)
+  console.log('webhook-id:', webhookId)
+  console.log('webhook-signature:', webhookSignature)
+  console.log('webhook-timestamp:', webhookTimestamp)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let event: any
 
   try {
-    event = validateEvent(body, { 'webhook-signature': signature }, secret)
+    event = validateEvent(
+      body,
+      {
+        'webhook-id':        webhookId,
+        'webhook-signature': webhookSignature,
+        'webhook-timestamp': webhookTimestamp,
+      },
+      secret,
+    )
   } catch (error) {
+    console.error('Webhook validation error:', error)
     if (error instanceof WebhookVerificationError) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 403 })
     }
