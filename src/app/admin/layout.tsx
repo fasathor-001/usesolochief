@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) redirect('/auth/signin')
+  if (!user) redirect('/auth/login')
   if (!isPlatformAdmin(user.email)) redirect('/dashboard')
 
   return <AdminShell userEmail={user.email ?? ''}>{children}</AdminShell>
