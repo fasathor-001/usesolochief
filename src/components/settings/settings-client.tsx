@@ -123,9 +123,10 @@ interface SettingsClientProps {
     plan_cancelled_at: string | null
   } | null
   currentPlan: string
+  hasPasswordProvider: boolean
 }
 
-export function SettingsClient({ preferences, userEmail, profile, currentPlan }: SettingsClientProps) {
+export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider }: SettingsClientProps) {
   const [activeSection, setActiveSection] = useState<Section>('communication')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
@@ -175,12 +176,13 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
   })
 
   // ── Security ───────────────────────────────────────────────────────
+  const [hasPassword, setHasPassword] = useState(hasPasswordProvider)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [passwordError, setPasswordError] = useState('')
-  const [passwordSuccess, setPasswordSuccess] = useState(false)
+  const [passwordSuccessMsg, setPasswordSuccessMsg] = useState('')
   const [magicLinkSent, setMagicLinkSent] = useState(false)
 
   // ── Billing ────────────────────────────────────────────────────────
@@ -314,8 +316,12 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
   }
 
   async function handleUpdatePassword() {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError('All fields are required.')
+    if (hasPassword && !currentPassword) {
+      setPasswordError('Enter your current password.')
+      return
+    }
+    if (!newPassword) {
+      setPasswordError('Enter a new password.')
       return
     }
     if (newPassword.length < 8) {
@@ -323,41 +329,46 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
       return
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match.')
+      setPasswordError('Passwords do not match.')
       return
     }
 
     setPasswordLoading(true)
     setPasswordError('')
-    setPasswordSuccess(false)
+    setPasswordSuccessMsg('')
 
     const supabase = createClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user?.email) {
-      setPasswordError('Unable to verify your account.')
-      setPasswordLoading(false)
-      return
+    if (hasPassword) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user?.email) {
+        setPasswordError('Unable to verify your account.')
+        setPasswordLoading(false)
+        return
+      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      })
+      if (signInError) {
+        setPasswordError('Current password is incorrect.')
+        setPasswordLoading(false)
+        return
+      }
     }
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: currentPassword,
-    })
-
-    if (signInError) {
-      setPasswordError('Current password is incorrect.')
-      setPasswordLoading(false)
-      return
-    }
+    const successMsg = hasPassword
+      ? 'Password updated.'
+      : 'Password set. You can now sign in with email and password.'
 
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     setPasswordLoading(false)
 
     if (error) {
-      setPasswordError(error.message)
+      setPasswordError('We could not update your password. Please try again.')
     } else {
-      setPasswordSuccess(true)
+      setHasPassword(true)
+      setPasswordSuccessMsg(successMsg)
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
@@ -1348,20 +1359,29 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
             <div>
               <div className="sc-settings-card">
                 <div className="sc-settings-card-header">
-                  <p className="sc-settings-card-title">Change password</p>
+                  <p className="sc-settings-card-title">
+                    {hasPassword ? 'Change password' : 'Set password'}
+                  </p>
+                  {!hasPassword && (
+                    <p className="sc-settings-card-subtitle">
+                      You currently sign in with a secure email link. Set a password if you want to sign in with email and password as well.
+                    </p>
+                  )}
                 </div>
 
-                <div className="sc-field" style={{ marginBottom: 12 }}>
-                  <label className="sc-label">Current password</label>
-                  <input
-                    type="password"
-                    className="sc-input"
-                    placeholder="Enter current password"
-                    value={currentPassword}
-                    onChange={e => setCurrentPassword(e.target.value)}
-                    style={{ marginTop: 6 }}
-                  />
-                </div>
+                {hasPassword && (
+                  <div className="sc-field" style={{ marginBottom: 12 }}>
+                    <label className="sc-label">Current password</label>
+                    <input
+                      type="password"
+                      className="sc-input"
+                      placeholder="Enter current password"
+                      value={currentPassword}
+                      onChange={e => { setCurrentPassword(e.target.value); setPasswordError('') }}
+                      style={{ marginTop: 6 }}
+                    />
+                  </div>
+                )}
 
                 <div className="sc-field" style={{ marginBottom: 12 }}>
                   <label className="sc-label">New password</label>
@@ -1370,7 +1390,7 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
                     className="sc-input"
                     placeholder="At least 8 characters"
                     value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
+                    onChange={e => { setNewPassword(e.target.value); setPasswordError('') }}
                     style={{ marginTop: 6 }}
                   />
                 </div>
@@ -1382,20 +1402,20 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
                     className="sc-input"
                     placeholder="Repeat new password"
                     value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
+                    onChange={e => { setConfirmPassword(e.target.value); setPasswordError('') }}
                     style={{ marginTop: 6 }}
                   />
                 </div>
 
                 {passwordError && (
-                  <p style={{ fontSize: '13px', color: 'var(--sc-error)', marginBottom: '12px' }}>
+                  <p style={{ fontSize: '13px', color: 'var(--sc-error, #EF4444)', marginBottom: '12px' }}>
                     {passwordError}
                   </p>
                 )}
 
-                {passwordSuccess && (
+                {passwordSuccessMsg && (
                   <p style={{ fontSize: '13px', color: 'var(--sc-success, #16a34a)', marginBottom: '12px' }}>
-                    Password updated successfully.
+                    {passwordSuccessMsg}
                   </p>
                 )}
 
@@ -1405,7 +1425,9 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
                   onClick={handleUpdatePassword}
                   disabled={passwordLoading}
                 >
-                  {passwordLoading ? 'Updating...' : 'Update password'}
+                  {passwordLoading
+                    ? (hasPassword ? 'Updating…' : 'Setting…')
+                    : (hasPassword ? 'Update password' : 'Set password')}
                 </button>
               </div>
 
@@ -1414,7 +1436,9 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan }:
                   <p className="sc-settings-card-title">Sign-in options</p>
                 </div>
                 <p style={{ fontSize: '13px', color: 'var(--sc-muted)', marginBottom: '16px', lineHeight: 1.5 }}>
-                  You can also sign in with a secure email link instead of a password.
+                  {hasPassword
+                    ? 'You can sign in with your password or request a secure email link when needed.'
+                    : 'You can continue using secure email links, or set a password above.'}
                 </p>
                 <button
                   type="button"

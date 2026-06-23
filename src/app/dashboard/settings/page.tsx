@@ -17,12 +17,19 @@ export default async function SettingsPage() {
     getCurrentPlan(),
   ])
 
+  // A user has a password if they have an email identity (created via signUp with password).
+  // Magic-link-only accounts also get an email identity in Supabase, but in SoloChief all
+  // accounts created through normal signup have a password. Admin-invited or OTP-only accounts
+  // won't have an email identity at all, so this check is the best available heuristic.
+  const hasPasswordProvider = user?.identities?.some(i => i.provider === 'email') ?? false
+
   return (
     <SettingsClient
       preferences={preferences}
       userEmail={user?.email ?? null}
       profile={profileRes.data}
       currentPlan={currentPlan}
+      hasPasswordProvider={hasPasswordProvider}
     />
   )
 }
