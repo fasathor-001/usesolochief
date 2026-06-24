@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import {
   MessageSquare, Clock, Sun, Smartphone, User, Trash2, Download,
-  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown, CreditCard, CheckCircle,
+  Shield, Bot, Lock, MessageCircle, Monitor, ChevronDown, CreditCard, CheckCircle, X,
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
+import { sendWhatsAppOtp, verifyWhatsAppOtp, unlinkWhatsApp, toggleWhatsAppNotifications } from '@/lib/actions/whatsapp'
 import { createCheckoutSession, createCustomerPortalSession } from '@/lib/actions/billing'
 import { createClient } from '@/lib/supabase/client'
 import { applyTheme, setStoredTheme } from '@/lib/theme'
@@ -124,9 +125,12 @@ interface SettingsClientProps {
   } | null
   currentPlan: string
   hasPasswordProvider: boolean
+  whatsappNumber: string | null
+  whatsappVerified: boolean
+  whatsappNotificationsEnabled: boolean
 }
 
-export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider }: SettingsClientProps) {
+export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider, whatsappNumber, whatsappVerified, whatsappNotificationsEnabled: initWaNotif }: SettingsClientProps) {
   const [activeSection, setActiveSection] = useState<Section>('communication')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
@@ -192,6 +196,16 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
   // ── Danger Zone ────────────────────────────────────────────────────
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  // ── WhatsApp ───────────────────────────────────────────────────────
+  type WaState = 'connected' | 'not_connected' | 'entering_phone' | 'otp_sent'
+  const [waState,      setWaState]      = useState<WaState>(whatsappVerified ? 'connected' : 'not_connected')
+  const [waPhone,      setWaPhone]      = useState(whatsappNumber ?? '')
+  const [waPhoneInput, setWaPhoneInput] = useState('')
+  const [waOtp,        setWaOtp]        = useState('')
+  const [waLoading,    setWaLoading]    = useState(false)
+  const [waError,      setWaError]      = useState('')
+  const [waNotif,      setWaNotif]      = useState(initWaNotif)
 
   useEffect(() => {
     // Apply saved theme on mount
@@ -1237,35 +1251,221 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
 
           {/* ── WhatsApp ──────────────────────────────────────────── */}
           {activeSection === 'whatsapp' && (
-            <div className="sc-settings-card">
-              <div className="sc-settings-card-header">
-                <p className="sc-settings-card-title">WhatsApp</p>
-                <p className="sc-settings-card-subtitle">Receive summaries and reply to SoloChief via WhatsApp.</p>
-              </div>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: '12px 14px',
-                borderRadius: 'var(--sc-r)',
-                border: '0.5px solid var(--sc-border)',
-                backgroundColor: 'var(--sc-bg)',
-                marginBottom: 14,
-              }}>
-                <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--sc-muted)', flexShrink: 0 }} />
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>Not connected</p>
-                  <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
-                    Connect WhatsApp to receive morning summaries and reply via chat.
-                  </p>
+            <div>
+              <div className="sc-settings-card">
+                <div className="sc-settings-card-header">
+                  <p className="sc-settings-card-title">WhatsApp</p>
+                  <p className="sc-settings-card-subtitle">Receive briefings and reply to SoloChief via WhatsApp.</p>
                 </div>
+
+                {/* Status indicator */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '12px 14px', borderRadius: 'var(--sc-r)',
+                  border: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', marginBottom: 16,
+                }}>
+                  <div style={{
+                    width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                    backgroundColor: waState === 'connected' ? 'var(--sc-teal, #00C2A8)' : 'var(--sc-muted)',
+                  }} />
+                  <div style={{ flex: 1 }}>
+                    {waState === 'connected' ? (
+                      <>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
+                          Connected — {waPhone.slice(0, 3)} *** {waPhone.slice(-4)}
+                        </p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
+                          Briefings and commands are active.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>Not connected</p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
+                          Connect WhatsApp to receive morning briefings and use quick commands.
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Connected state */}
+                {waState === 'connected' && (
+                  <div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', marginBottom: 18 }}>
+                      <input
+                        type="checkbox"
+                        checked={waNotif}
+                        onChange={async e => {
+                          const val = e.target.checked
+                          setWaNotif(val)
+                          await toggleWhatsAppNotifications(val)
+                        }}
+                        style={{ width: 15, height: 15, accentColor: 'var(--sc-teal)', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)' }}>WhatsApp notifications enabled</span>
+                    </label>
+                    <button
+                      type="button"
+                      className="sc-btn sc-btn-secondary sc-btn-sm"
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--sc-error, #EF4444)' }}
+                      onClick={async () => {
+                        setWaLoading(true)
+                        setWaError('')
+                        const res = await unlinkWhatsApp()
+                        setWaLoading(false)
+                        if (res.error) { setWaError(res.error); return }
+                        setWaState('not_connected')
+                        setWaPhone('')
+                      }}
+                      disabled={waLoading}
+                    >
+                      <X size={13} />
+                      {waLoading ? 'Removing…' : 'Remove WhatsApp'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Not connected — start flow */}
+                {waState === 'not_connected' && (
+                  <button
+                    type="button"
+                    className="sc-btn sc-btn-secondary sc-btn-sm"
+                    onClick={() => { setWaState('entering_phone'); setWaError('') }}
+                  >
+                    Connect WhatsApp
+                  </button>
+                )}
+
+                {/* Enter phone */}
+                {waState === 'entering_phone' && (
+                  <div>
+                    <div className="sc-field" style={{ marginBottom: 12 }}>
+                      <label className="sc-label">WhatsApp number (with country code)</label>
+                      <input
+                        type="tel"
+                        className="sc-input"
+                        placeholder="+27831234567"
+                        value={waPhoneInput}
+                        onChange={e => { setWaPhoneInput(e.target.value); setWaError('') }}
+                        style={{ marginTop: 6 }}
+                        autoFocus
+                      />
+                    </div>
+                    {waError && <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginBottom: 10 }}>{waError}</p>}
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-primary sc-btn-sm"
+                        onClick={async () => {
+                          setWaLoading(true); setWaError('')
+                          const res = await sendWhatsAppOtp(waPhoneInput)
+                          setWaLoading(false)
+                          if (res.error) { setWaError(res.error); return }
+                          setWaPhone(waPhoneInput)
+                          setWaState('otp_sent')
+                        }}
+                        disabled={waLoading || !waPhoneInput.trim()}
+                      >
+                        {waLoading ? 'Sending…' : 'Send verification code'}
+                      </button>
+                      <button type="button" className="sc-btn sc-btn-secondary sc-btn-sm" onClick={() => { setWaState('not_connected'); setWaError('') }}>
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Enter OTP */}
+                {waState === 'otp_sent' && (
+                  <div>
+                    <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                      A 6-digit code was sent to {waPhone}. Enter it below.
+                    </p>
+                    <div className="sc-field" style={{ marginBottom: 12 }}>
+                      <label className="sc-label">Verification code</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        autoComplete="one-time-code"
+                        maxLength={6}
+                        className="sc-input"
+                        placeholder="123456"
+                        value={waOtp}
+                        onChange={e => { setWaOtp(e.target.value.replace(/\D/g, '')); setWaError('') }}
+                        style={{ marginTop: 6, maxWidth: 160 }}
+                        autoFocus
+                      />
+                    </div>
+                    {waError && <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginBottom: 10 }}>{waError}</p>}
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-primary sc-btn-sm"
+                        onClick={async () => {
+                          setWaLoading(true); setWaError('')
+                          const res = await verifyWhatsAppOtp(waPhone, waOtp)
+                          setWaLoading(false)
+                          if (res.error) { setWaError(res.error); return }
+                          setWaState('connected')
+                          setWaOtp('')
+                        }}
+                        disabled={waLoading || waOtp.length !== 6}
+                      >
+                        {waLoading ? 'Verifying…' : 'Verify'}
+                      </button>
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-secondary sc-btn-sm"
+                        onClick={async () => {
+                          setWaOtp('')
+                          setWaError('')
+                          setWaLoading(true)
+                          const res = await sendWhatsAppOtp(waPhone)
+                          setWaLoading(false)
+                          if (res.error) setWaError(res.error)
+                        }}
+                        disabled={waLoading}
+                      >
+                        Resend code
+                      </button>
+                      <button type="button" className="sc-btn sc-btn-secondary sc-btn-sm" onClick={() => { setWaState('not_connected'); setWaOtp(''); setWaError('') }}>
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {waError && waState === 'connected' && (
+                  <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginTop: 10 }}>{waError}</p>
+                )}
               </div>
-              <button type="button" className="sc-btn sc-btn-secondary sc-btn-sm" disabled>
-                Connect WhatsApp
-              </button>
-              <p className="sc-meta" style={{ marginTop: 8 }}>
-                WhatsApp connection will be available when the messaging channel is enabled for your account.
-              </p>
+
+              <div className="sc-settings-card" style={{ marginTop: 10 }}>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 8 }}>
+                  COMMANDS
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {[
+                    ['hi / briefing', 'Morning briefing'],
+                    ['focus', "Today's focus"],
+                    ['follow-ups', 'Due follow-ups'],
+                    ['commitments', 'Active commitments'],
+                    ['plan', "This week's plan"],
+                    ['capture [item]', 'Save to parking lot'],
+                    ['done [name]', 'Mark follow-up complete'],
+                  ].map(([cmd, desc]) => (
+                    <div key={cmd} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '4px 0', borderBottom: '0.5px solid var(--sc-border)' }}>
+                      <code style={{ color: 'var(--sc-teal)', fontWeight: 600 }}>{cmd}</code>
+                      <span style={{ color: 'var(--sc-muted)' }}>{desc}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="sc-meta" style={{ marginTop: 12 }}>
+                  Sandbox number during testing: +1 415 523 8886. Send <code>join machine-spin</code> to opt in.
+                </p>
+              </div>
             </div>
           )}
 

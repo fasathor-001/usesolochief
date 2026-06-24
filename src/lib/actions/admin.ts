@@ -29,6 +29,8 @@ export interface AdminUserDetail extends AdminUserRow {
   parking_count: number
   review_count: number
   weekly_plan_count: number
+  whatsapp_number: string | null
+  whatsapp_verified: boolean
 }
 
 export interface AdminMetrics {
@@ -70,6 +72,7 @@ export interface SystemStatus {
   cronConfigured: boolean
   anthropicConfigured: boolean
   tableCounts: Record<string, number>
+  whatsappVerifiedCount: number
 }
 
 export interface AdminEmailStats {
@@ -271,6 +274,10 @@ export async function getAdminUserDetail(userId: string): Promise<AdminUserDetai
     parking_count,
     review_count,
     weekly_plan_count,
+    whatsapp_number: profile.whatsapp_number
+      ? profile.whatsapp_number.slice(0, 3) + ' *** ' + profile.whatsapp_number.slice(-4)
+      : null,
+    whatsapp_verified: profile.whatsapp_verified ?? false,
   }
 }
 
@@ -372,12 +379,13 @@ export async function getAdminSystemStatus(): Promise<SystemStatus> {
     'followups', 'parking_lot_items', 'reviews', 'daily_focus',
   ]
 
-  const results = await Promise.all(
-    tables.map(t => db.from(t).select('id', { count: 'exact', head: true })),
-  )
+  const [tableResults, waCountRes] = await Promise.all([
+    Promise.all(tables.map(t => db.from(t).select('id', { count: 'exact', head: true }))),
+    db.from('profiles').select('user_id', { count: 'exact', head: true }).eq('whatsapp_verified', true),
+  ])
 
   const tableCounts: Record<string, number> = {}
-  tables.forEach((t, i) => { tableCounts[t] = results[i].count ?? 0 })
+  tables.forEach((t, i) => { tableCounts[t] = tableResults[i].count ?? 0 })
 
   return {
     appUrl: process.env.NEXT_PUBLIC_APP_URL ?? '(not set)',
@@ -393,5 +401,6 @@ export async function getAdminSystemStatus(): Promise<SystemStatus> {
     cronConfigured: !!(process.env.CRON_SECRET),
     anthropicConfigured: !!(process.env.ANTHROPIC_API_KEY),
     tableCounts,
+    whatsappVerifiedCount: waCountRes.count ?? 0,
   }
 }

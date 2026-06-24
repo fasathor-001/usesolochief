@@ -76,6 +76,25 @@ export default async function AdminSystemPage() {
         <StatusRow label="Cron"      ok={s.cronConfigured}      note="CRON_SECRET" />
       </div>
 
+      {/* WhatsApp stats */}
+      <div className="sc-card" style={{ padding: '18px 20px', marginBottom: 16 }}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+          WhatsApp
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10 }}>
+          <div style={{ padding: '10px 14px', borderRadius: 'var(--sc-r)', border: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)' }}>
+            <p style={{ fontSize: 11, color: 'var(--sc-muted)' }}>Verified users</p>
+            <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--sc-text)', marginTop: 2 }}>{s.whatsappVerifiedCount}</p>
+          </div>
+          <div style={{ padding: '10px 14px', borderRadius: 'var(--sc-r)', border: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)' }}>
+            <p style={{ fontSize: 11, color: 'var(--sc-muted)' }}>Configured</p>
+            <p style={{ fontSize: 13, fontWeight: 500, color: s.twilioConfigured ? 'var(--sc-text)' : 'var(--sc-muted)', marginTop: 2 }}>
+              {s.twilioConfigured ? 'Yes' : 'Not set'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Table counts */}
       <div className="sc-card" style={{ padding: '18px 20px', marginBottom: 16 }}>
         <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>

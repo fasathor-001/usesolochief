@@ -7,14 +7,19 @@ export default async function SettingsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [preferences, profileRes, currentPlan] = await Promise.all([
+  const [preferences, profileRes, currentPlan, notifRes] = await Promise.all([
     getPreferences(),
     supabase
       .from('profiles')
-      .select('full_name, created_at, plan_expires_at, plan_cancelled_at')
+      .select('full_name, created_at, plan_expires_at, plan_cancelled_at, whatsapp_number, whatsapp_verified')
       .eq('user_id', user!.id)
       .single(),
     getCurrentPlan(),
+    supabase
+      .from('notification_preferences')
+      .select('whatsapp_notifications_enabled')
+      .eq('user_id', user!.id)
+      .maybeSingle(),
   ])
 
   // A user has a password if they have an email identity (created via signUp with password).
@@ -30,6 +35,9 @@ export default async function SettingsPage() {
       profile={profileRes.data}
       currentPlan={currentPlan}
       hasPasswordProvider={hasPasswordProvider}
+      whatsappNumber={profileRes.data?.whatsapp_number ?? null}
+      whatsappVerified={profileRes.data?.whatsapp_verified ?? false}
+      whatsappNotificationsEnabled={notifRes.data?.whatsapp_notifications_enabled ?? true}
     />
   )
 }
