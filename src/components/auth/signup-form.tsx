@@ -35,7 +35,7 @@ export default function SignupForm() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string>('')
   const [confirmationSent, setConfirmationSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -225,7 +225,7 @@ export default function SignupForm() {
                   </div>
                 </div>
 
-                {error && (
+                {typeof error === 'string' && error.length > 0 && (
                   <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
                     {error}
                   </p>
