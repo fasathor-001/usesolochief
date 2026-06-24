@@ -1,27 +1,39 @@
 import { NextRequest } from 'next/server'
+import twilio from 'twilio'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { validateTwilioSignature, twimlResponse, twimlEmpty } from '@/lib/whatsapp/twilio'
+import { twimlResponse, twimlEmpty } from '@/lib/whatsapp/twilio'
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
 
-// Twilio webhook — Cloudflare/Railway must forward the original Host header.
+// Twilio webhook — URL must exactly match what is configured in the Twilio console.
 // Configure this URL in the Twilio console:  https://solochief.app/api/whatsapp/webhook
 
 export async function POST(request: NextRequest) {
-  // ── 1. Signature validation ──────────────────────────────────────────────
-  const signature = request.headers.get('x-twilio-signature') ?? ''
-  const webhookUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://solochief.app'}/api/whatsapp/webhook`
-
-  let params: Record<string, string> = {}
+  // ── 1. Parse form body first (signature validation requires the params) ───
+  let formData: FormData
   try {
-    const formData = await request.formData()
-    for (const [key, value] of formData.entries()) {
-      params[key] = value.toString()
-    }
+    formData = await request.formData()
   } catch {
     return new Response('Bad request', { status: 400 })
   }
 
-  if (!validateTwilioSignature(signature, webhookUrl, params)) {
+  const params = Object.fromEntries(formData.entries()) as Record<string, string>
+
+  // ── 2. Signature validation ───────────────────────────────────────────────
+  const twilioSignature = request.headers.get('x-twilio-signature') ?? ''
+  // URL must be hardcoded — dynamic construction causes mismatches with Twilio's signed URL.
+  const url = 'https://solochief.app/api/whatsapp/webhook'
+
+  const isValid = twilio.validateRequest(
+    process.env.TWILIO_AUTH_TOKEN!,
+    twilioSignature,
+    url,
+    params,
+  )
+
+  // Bypass signature check in sandbox mode (Twilio sandbox does not sign requests reliably).
+  const isSandbox = process.env.TWILIO_SANDBOX === 'true'
+
+  if (!isValid && !isSandbox) {
     console.warn('[whatsapp/webhook] Invalid Twilio signature')
     return new Response('Forbidden', { status: 403 })
   }
