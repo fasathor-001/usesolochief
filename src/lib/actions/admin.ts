@@ -404,3 +404,54 @@ export async function getAdminSystemStatus(): Promise<SystemStatus> {
     whatsappVerifiedCount: waCountRes.count ?? 0,
   }
 }
+
+// ── Agent MDP stats ────────────────────────────────────────────────────────
+
+export interface AgentMdpStats {
+  byState: { candidate: number; proving: number; valued: number; void: number }
+  allValuedUsers: number
+  anyVoidUsers:   number
+  lastEvaluatedAt: string | null
+}
+
+export async function getAgentMdpStats(): Promise<AgentMdpStats> {
+  const db = await requireAdmin()
+
+  // Fetch all agent rows (table may not exist yet — handle gracefully)
+  let rows: { state: string; user_id: string; last_evaluated_at: string | null }[] = []
+  try {
+    const { data } = await db
+      .from('agent_mdp_states')
+      .select('state, user_id, last_evaluated_at')
+      .order('last_evaluated_at', { ascending: false })
+    rows = (data ?? []) as typeof rows
+  } catch {
+    // Migration not yet applied
+  }
+
+  const byState = { candidate: 0, proving: 0, valued: 0, void: 0 }
+  const userStateCounts: Record<string, { valued: number; void: number; total: number }> = {}
+
+  for (const row of rows) {
+    const s = row.state as keyof typeof byState
+    if (s in byState) byState[s]++
+
+    if (!userStateCounts[row.user_id]) {
+      userStateCounts[row.user_id] = { valued: 0, void: 0, total: 0 }
+    }
+    userStateCounts[row.user_id].total++
+    if (s === 'valued') userStateCounts[row.user_id].valued++
+    if (s === 'void')   userStateCounts[row.user_id].void++
+  }
+
+  let allValuedUsers = 0
+  let anyVoidUsers   = 0
+  for (const counts of Object.values(userStateCounts)) {
+    if (counts.total === 4 && counts.valued === 4) allValuedUsers++
+    if (counts.void > 0) anyVoidUsers++
+  }
+
+  const lastEvaluatedAt = rows[0]?.last_evaluated_at ?? null
+
+  return { byState, allValuedUsers, anyVoidUsers, lastEvaluatedAt }
+}

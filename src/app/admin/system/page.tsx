@@ -1,4 +1,4 @@
-import { getAdminSystemStatus, getAdminEmailStats } from '@/lib/actions/admin'
+import { getAdminSystemStatus, getAdminEmailStats, getAgentMdpStats } from '@/lib/actions/admin'
 import { AdminCronButtons } from '@/components/admin/AdminCronButtons'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 
@@ -27,9 +27,10 @@ function StatusRow({ label, ok, note }: { label: string; ok: boolean; note?: str
 }
 
 export default async function AdminSystemPage() {
-  const [s, emailStats] = await Promise.all([
+  const [s, emailStats, mdpStats] = await Promise.all([
     getAdminSystemStatus(),
     getAdminEmailStats(),
+    getAgentMdpStats(),
   ])
 
   const envBadgeStyle = {
@@ -90,6 +91,41 @@ export default async function AdminSystemPage() {
             <p style={{ fontSize: 11, color: 'var(--sc-muted)' }}>Configured</p>
             <p style={{ fontSize: 13, fontWeight: 500, color: s.twilioConfigured ? 'var(--sc-text)' : 'var(--sc-muted)', marginTop: 2 }}>
               {s.twilioConfigured ? 'Yes' : 'Not set'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Agent Trust Engine */}
+      <div className="sc-card" style={{ padding: '18px 20px', marginBottom: 16 }}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--sc-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+          Agent Trust Engine
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 10, marginBottom: 10 }}>
+          {(['candidate', 'proving', 'valued', 'void'] as const).map(state => (
+            <div key={state} style={{ padding: '10px 12px', borderRadius: 6, border: '0.5px solid var(--sc-border)', background: 'var(--sc-bg)' }}>
+              <p style={{ fontSize: 11, color: 'var(--sc-muted)', textTransform: 'capitalize' }}>{state === 'void' ? 'Rebuilding' : state}</p>
+              <p style={{ fontSize: 20, fontWeight: 700, color: state === 'valued' ? '#007A6A' : state === 'void' ? 'var(--sc-error)' : 'var(--sc-text)', marginTop: 2 }}>
+                {mdpStats.byState[state]}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 10 }}>
+          <div style={{ padding: '10px 12px', borderRadius: 6, border: '0.5px solid var(--sc-border)', background: 'var(--sc-bg)' }}>
+            <p style={{ fontSize: 11, color: 'var(--sc-muted)' }}>All Valued users</p>
+            <p style={{ fontSize: 20, fontWeight: 700, color: '#007A6A', marginTop: 2 }}>{mdpStats.allValuedUsers}</p>
+          </div>
+          <div style={{ padding: '10px 12px', borderRadius: 6, border: '0.5px solid var(--sc-border)', background: 'var(--sc-bg)' }}>
+            <p style={{ fontSize: 11, color: 'var(--sc-muted)' }}>Any Rebuilding users</p>
+            <p style={{ fontSize: 20, fontWeight: 700, color: mdpStats.anyVoidUsers > 0 ? 'var(--sc-error)' : 'var(--sc-text)', marginTop: 2 }}>{mdpStats.anyVoidUsers}</p>
+          </div>
+          <div style={{ padding: '10px 12px', borderRadius: 6, border: '0.5px solid var(--sc-border)', background: 'var(--sc-bg)' }}>
+            <p style={{ fontSize: 11, color: 'var(--sc-muted)' }}>Last evaluated</p>
+            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--sc-text)', marginTop: 2 }}>
+              {mdpStats.lastEvaluatedAt
+                ? new Date(mdpStats.lastEvaluatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+                : 'Never'}
             </p>
           </div>
         </div>

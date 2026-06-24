@@ -6,6 +6,9 @@ import { createClient } from '@/lib/supabase/server'
 import type { ActionResult, Review, ReviewItem, WeeklyPlan, WeeklyOutcome, Followup, ParkingLotItem, Commitment } from '@/types/database'
 import { incrementWeeklyReviews } from '@/lib/intelligence/intelligence-service'
 import { getWeekStart } from '@/lib/utils/date-utils'
+import { evaluateAgent } from '@/lib/actions/mdp'
+import { collectPlanningSignal, collectFocusSignal, collectFollowupSignal } from '@/lib/actions/mdp-signals'
+import { collectReviewSignal } from '@/lib/mdp/types'
 
 export interface ReviewPageData {
   plan: WeeklyPlan | null
@@ -193,6 +196,33 @@ export async function completeReview(input: CompleteReviewInput): Promise<Action
 
   // Update intelligence state
   await incrementWeeklyReviews(user.id)
+
+  // MDP Agent Trust Engine — collect signals and evaluate all four agents.
+  // Runs after review is saved; failures do not block the review save.
+  try {
+    const [planningSignal, focusSignal, followupSignal] = await Promise.all([
+      collectPlanningSignal(user.id),
+      collectFocusSignal(user.id),
+      collectFollowupSignal(user.id),
+    ])
+    const reviewSignal = collectReviewSignal(true, input.energyRating, input.focusRating)
+
+    const evaluations: Array<{ agent: Parameters<typeof evaluateAgent>[1]; signal: boolean | null }> = [
+      { agent: 'planning', signal: planningSignal },
+      { agent: 'focus',    signal: focusSignal    },
+      { agent: 'followup', signal: followupSignal  },
+      { agent: 'review',   signal: reviewSignal    },
+    ]
+
+    for (const { agent, signal } of evaluations) {
+      if (signal !== null) {
+        const result = await evaluateAgent(user.id, agent, signal)
+        console.log(`[review/mdp] ${result.message}`)
+      }
+    }
+  } catch (err) {
+    console.error('[review/mdp] MDP evaluation error (non-blocking):', err instanceof Error ? err.message : 'unknown')
+  }
 
   revalidatePath('/dashboard/review')
   revalidatePath('/dashboard')

@@ -2,12 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { getPreferences } from '@/lib/actions/preferences'
 import { getCurrentPlan } from '@/lib/actions/billing'
 import { SettingsClient } from '@/components/settings/settings-client'
+import { getUserAgentStates } from '@/lib/actions/mdp'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [preferences, profileRes, currentPlan, notifRes] = await Promise.all([
+  const [preferences, profileRes, currentPlan, notifRes, agentStates] = await Promise.all([
     getPreferences(),
     supabase
       .from('profiles')
@@ -20,6 +21,7 @@ export default async function SettingsPage() {
       .select('whatsapp_notifications_enabled')
       .eq('user_id', user!.id)
       .maybeSingle(),
+    getUserAgentStates(user!.id),
   ])
 
   // A user has a password if they have an email identity (created via signUp with password).
@@ -38,6 +40,7 @@ export default async function SettingsPage() {
       whatsappNumber={profileRes.data?.whatsapp_number ?? null}
       whatsappVerified={profileRes.data?.whatsapp_verified ?? false}
       whatsappNotificationsEnabled={notifRes.data?.whatsapp_notifications_enabled ?? true}
+      agentStates={agentStates}
     />
   )
 }

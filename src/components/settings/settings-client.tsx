@@ -9,6 +9,8 @@ import {
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
 import { sendWhatsAppOtp, verifyWhatsAppOtp, unlinkWhatsApp, toggleWhatsAppNotifications } from '@/lib/actions/whatsapp'
+import { AgentTrustPanel } from '@/components/mdp/AgentTrustPanel'
+import type { AgentMdpRow } from '@/lib/mdp/types'
 import { createCheckoutSession, createCustomerPortalSession } from '@/lib/actions/billing'
 import { createClient } from '@/lib/supabase/client'
 import { applyTheme, setStoredTheme } from '@/lib/theme'
@@ -26,6 +28,7 @@ type Section =
   | 'account'
   | 'security'
   | 'data-privacy'
+  | 'agent-trust'
   | 'danger-zone'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -89,6 +92,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
       { id: 'billing',      label: 'Billing',       icon: CreditCard },
       { id: 'security',     label: 'Security',      icon: Lock },
       { id: 'data-privacy', label: 'Data & Privacy', icon: Lock },
+      { id: 'agent-trust',  label: 'Agent Trust',   icon: Shield },
       { id: 'danger-zone',  label: 'Danger Zone',   icon: Trash2 },
     ],
   },
@@ -128,9 +132,10 @@ interface SettingsClientProps {
   whatsappNumber: string | null
   whatsappVerified: boolean
   whatsappNotificationsEnabled: boolean
+  agentStates: AgentMdpRow[]
 }
 
-export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider, whatsappNumber, whatsappVerified, whatsappNotificationsEnabled: initWaNotif }: SettingsClientProps) {
+export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider, whatsappNumber, whatsappVerified, whatsappNotificationsEnabled: initWaNotif, agentStates }: SettingsClientProps) {
   const [activeSection, setActiveSection] = useState<Section>('communication')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
@@ -1696,6 +1701,17 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                   No data is sold or shared with third parties. SoloChief AI processing uses the Anthropic API with your data processed in transit only.
                 </p>
               </div>
+            </div>
+          )}
+
+          {/* ── Agent Trust ───────────────────────────────────────── */}
+          {activeSection === 'agent-trust' && (
+            <div className="sc-settings-card">
+              <div className="sc-settings-card-header">
+                <p className="sc-settings-card-title">Agent Trust</p>
+                <p className="sc-settings-card-subtitle">How much trust each SoloChief agent has earned based on useful outcomes.</p>
+              </div>
+              <AgentTrustPanel states={agentStates} />
             </div>
           )}
 
