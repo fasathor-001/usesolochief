@@ -250,7 +250,7 @@ async function handleCommitments(db: any, userId: string): Promise<string> {
     return 'No active commitments. Add one at solochief.app/dashboard/commitments'
   }
 
-  const lines = (commitments as any[]).map((c: any) => `• ${c.title} [${c.stage}]`)
+  const lines = (commitments as any[]).map((c: any) => `• ${c.title}`)
   return `ACTIVE COMMITMENTS\n${lines.join('\n')}`
 }
 
