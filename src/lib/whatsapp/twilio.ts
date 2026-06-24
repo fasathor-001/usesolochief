@@ -1,7 +1,5 @@
 import twilio from 'twilio'
 
-export const WHATSAPP_FROM = `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER ?? ''}`
-
 export function createTwilioClient() {
   const sid    = process.env.TWILIO_ACCOUNT_SID
   const token  = process.env.TWILIO_AUTH_TOKEN
@@ -17,6 +15,10 @@ export function isTwilioConfigured(): boolean {
   )
 }
 
+function withWhatsAppPrefix(number: string): string {
+  return number.startsWith('whatsapp:') ? number : `whatsapp:${number}`
+}
+
 export async function sendWhatsApp(
   to: string,
   body: string,
@@ -26,12 +28,13 @@ export async function sendWhatsApp(
     return { error: 'not_configured' }
   }
 
-  const toFormatted = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`
+  const fromFormatted = withWhatsAppPrefix(process.env.TWILIO_WHATSAPP_NUMBER!)
+  const toFormatted   = withWhatsAppPrefix(to)
 
   try {
-    const client = createTwilioClient()
+    const client  = createTwilioClient()
     const message = await client.messages.create({
-      from: WHATSAPP_FROM,
+      from: fromFormatted,
       to:   toFormatted,
       body,
     })
