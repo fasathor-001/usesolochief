@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 export default function FeedbackPage() {
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div className="max-w-2xl mx-auto px-4 py-8">
       <div style={{ marginBottom: 24 }}>
         <h1 style={{
           fontSize: 20,
