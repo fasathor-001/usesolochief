@@ -78,7 +78,7 @@ export default async function AdminFeedbackPage({
   }
 
   return (
-    <div>
+    <div style={{ maxWidth: 960, margin: '0 auto' }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--sc-text)', marginBottom: 4, letterSpacing: '-0.3px' }}>
           Feedback
