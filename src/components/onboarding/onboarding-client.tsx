@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveOnboarding } from '@/lib/actions/onboarding'
 import { generateWhatsAppConnectLink, getWhatsAppStatus } from '@/lib/actions/whatsapp'
+import { createClient } from '@/lib/supabase/client'
 import { TEMPLATE_DEFAULTS, TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS } from '@/lib/onboarding-data'
 import type { OnboardingTemplate } from '@/types/database'
 import type { CommitmentDraft } from '@/lib/onboarding-data'
@@ -49,23 +50,44 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   const [waState, setWaState] = useState<WaState>('default')
   const [waGenerating, setWaGenerating] = useState(false)
 
-  // Set up polling on mount for waiting state
+  // Set up Realtime subscription for WhatsApp connection status
   useEffect(() => {
-    if (step !== 3 || waState !== 'waiting') return
+    if (waState !== 'waiting') return
 
-    const checkConnection = async () => {
-      const status = await getWhatsAppStatus()
-      if (status.data?.connected) {
-        setWaState('connected')
+    const setupRealtime = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const channel = supabase
+        .channel(`whatsapp-connection-${user.id}`)
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        }, (payload: any) => {
+          if (payload.new.whatsapp_connected === true) {
+            setWaState('connected')
+          }
+        })
+        .subscribe()
+
+      // Return cleanup function
+      return () => {
+        channel.unsubscribe()
       }
     }
 
-    checkConnection()
+    let cleanup: (() => void) | undefined
+    setupRealtime().then((cleanupFn) => {
+      cleanup = cleanupFn
+    })
 
-    // Poll every 2 seconds while waiting
-    const interval = setInterval(checkConnection, 2000)
-    return () => clearInterval(interval)
-  }, [step, waState])
+    return () => {
+      if (cleanup) cleanup()
+    }
+  }, [waState])
 
   function selectTemplate(t: OnboardingTemplate) {
     setTemplate(t)

@@ -210,22 +210,44 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
   const [waError,        setWaError]        = useState('')
   const [waNotif,        setWaNotif]        = useState(initWaNotif)
 
-  // Poll for WhatsApp connection status while in waiting state
+  // Set up Realtime subscription for WhatsApp connection status
   useEffect(() => {
     if (activeSection !== 'whatsapp' || waState !== 'waiting') return
 
-    const checkConnection = async () => {
-      const status = await getWhatsAppStatus()
-      if (status.data?.connected) {
-        setWaState('connected')
-        setWaPhone(status.data.number || '')
+    const setupRealtime = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const channel = supabase
+        .channel(`whatsapp-connection-${user.id}`)
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${user.id}`
+        }, (payload: any) => {
+          if (payload.new.whatsapp_connected === true) {
+            setWaState('connected')
+            setWaPhone(payload.new.whatsapp_number || '')
+          }
+        })
+        .subscribe()
+
+      // Return cleanup function
+      return () => {
+        channel.unsubscribe()
       }
     }
 
-    checkConnection()
+    let cleanup: (() => void) | undefined
+    setupRealtime().then((cleanupFn) => {
+      cleanup = cleanupFn
+    })
 
-    const interval = setInterval(checkConnection, 2000)
-    return () => clearInterval(interval)
+    return () => {
+      if (cleanup) cleanup()
+    }
   }, [activeSection, waState])
 
   useEffect(() => {
