@@ -352,8 +352,23 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 Connect WhatsApp
               </h2>
               <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
-                WhatsApp will open with a message ready to send. Tap send to connect SoloChief.
+                Connect your WhatsApp to receive your daily brief and log updates on the go.
               </p>
+
+              {/* Info box */}
+              <div
+                className="p-4 rounded-xl border mb-6"
+                style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
+              >
+                <p className="text-sm font-medium mb-2" style={{ color: 'var(--sc-text)' }}>
+                  What WhatsApp does:
+                </p>
+                <ul className="space-y-1 text-sm" style={{ color: 'var(--sc-muted)' }}>
+                  <li>• Sends your morning brief so you start the day with clarity</li>
+                  <li>• Lets you log updates, follow-ups and ideas with a quick reply</li>
+                  <li>• Checks in when you go quiet for too long</li>
+                </ul>
+              </div>
 
               {/* Sandbox note */}
               {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && (
@@ -430,7 +445,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                   Waiting for WhatsApp connection...
                 </h2>
                 <p className="text-sm mt-2" style={{ color: 'var(--sc-muted)' }}>
-                  This may take a moment. Keep WhatsApp open.
+                  WhatsApp should open automatically. Tap the button again if it did not.
                 </p>
               </div>
 
