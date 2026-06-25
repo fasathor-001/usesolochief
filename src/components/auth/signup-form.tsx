@@ -32,10 +32,12 @@ const labelStyle: React.CSSProperties = {
   marginBottom: '5px',
 }
 
-function SignupFormInner() {
+interface SignupFormInnerProps {
+  initialError?: string
+}
+
+function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const rawError = searchParams.get('error')
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -43,7 +45,7 @@ function SignupFormInner() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>(
-    rawError ? (ERROR_MESSAGES[rawError] ?? 'Something went wrong. Please try again.') : '',
+    initialError ? (ERROR_MESSAGES[initialError] ?? 'Something went wrong. Please try again.') : '',
   )
   const [confirmationSent, setConfirmationSent] = useState(false)
 
@@ -272,7 +274,11 @@ function SignupFormInner() {
   )
 }
 
-export default function SignupForm() {
+interface SignupFormProps {
+  initialError?: string
+}
+
+export default function SignupForm({ initialError = '' }: SignupFormProps) {
   return (
     <div style={{
       display: 'flex',
@@ -305,7 +311,7 @@ export default function SignupForm() {
           </p>
 
           <Suspense fallback={<div style={{ height: 400 }} />}>
-            <SignupFormInner />
+            <SignupFormInner initialError={initialError} />
           </Suspense>
         </div>
       </div>
