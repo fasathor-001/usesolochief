@@ -141,6 +141,24 @@ export async function verifyWhatsAppOtp(rawPhone: string, otp: string): Promise<
     .update({ whatsapp_number: phone, whatsapp_verified: true })
     .eq('user_id', user.id)
 
+  // Send activation message
+  const activationMessage = `SOLOCHIEF CONNECTED
+
+You're all set. Your daily brief will arrive each morning at your chosen time.
+
+Try these now:
+hi - Morning briefing
+focus - Today's focus
+help - All commands
+
+Full app: solochief.app`
+
+  const activationResult = await sendWhatsApp(phone, activationMessage)
+  if (activationResult.error && activationResult.error !== 'not_configured') {
+    console.warn('[whatsapp] Failed to send activation message:', activationResult.error)
+    // Continue anyway — verification succeeded, just the message failed
+  }
+
   // Start onboarding flow
   const consentMessage = await startOnboarding(user.id)
   await sendWhatsApp(phone, consentMessage)
