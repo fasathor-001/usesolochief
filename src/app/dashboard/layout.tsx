@@ -5,6 +5,7 @@ import { getWeekStart } from '@/lib/utils/date-utils'
 import { SidebarNav } from '@/components/sidebar-nav'
 import { DashboardTopbar } from '@/components/dashboard/DashboardTopbar'
 import { InstallPrompt } from '@/components/pwa/InstallPrompt'
+import { PWAInstallPrompt } from '@/components/pwa/pwa-install-prompt'
 import { isPlatformAdmin } from '@/lib/admin'
 
 export default async function DashboardLayout({
@@ -84,6 +85,7 @@ export default async function DashboardLayout({
         <DashboardTopbar />
         {children}
         <InstallPrompt />
+        <PWAInstallPrompt />
       </div>
     </div>
   )
