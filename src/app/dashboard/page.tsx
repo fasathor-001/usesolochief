@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { UpgradeSuccessToast } from '@/components/billing/UpgradeSuccessToast'
 import { getWeekStart } from '@/lib/utils/date-utils'
 import { getDataSufficiency } from '@/lib/intelligence/intelligence-service'
+import { backfillAgentMdpStatesIfNeeded } from '@/lib/actions/mdp'
 import { Archive, CheckCircle, Clock, RotateCcw } from 'lucide-react'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
@@ -39,6 +40,9 @@ export default async function CommandCentrePage({
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
+
+  // Backfill MDP states for users who completed onboarding before this fix
+  await backfillAgentMdpStatesIfNeeded(user.id)
 
   const { upgraded } = await searchParams
 

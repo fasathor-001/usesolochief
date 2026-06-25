@@ -1,5 +1,6 @@
 'use server'
 
+import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import type { AgentName, AgentState, AgentMdpRow, EvaluationResult } from '@/lib/mdp/types'
 import { stateLabel } from '@/lib/mdp/types'
@@ -118,5 +119,34 @@ export async function getUserAgentStates(userId: string): Promise<AgentMdpRow[]>
     return []
   }
   return (data ?? []) as AgentMdpRow[]
+}
+
+export async function seedAgentMdpStates(userId: string) {
+  const supabase = await createClient()
+  const agents = ['planning', 'focus', 'followup', 'review'] as const
+  const rows = agents.map(agent_name => ({
+    user_id: userId,
+    agent_name,
+    state: 'candidate' as const,
+  }))
+  const { error } = await supabase
+    .from('agent_mdp_states')
+    .upsert(rows, { onConflict: 'user_id,agent_name', ignoreDuplicates: true })
+  if (error) {
+    console.error('Failed to seed MDP states:', error.message)
+  }
+}
+
+export async function backfillAgentMdpStatesIfNeeded(userId: string): Promise<void> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('agent_mdp_states')
+    .select('id', { count: 'exact' })
+    .eq('user_id', userId)
+
+  // If zero rows found, backfill them
+  if (!error && (data?.length ?? 0) === 0) {
+    await seedAgentMdpStates(userId)
+  }
 }
 

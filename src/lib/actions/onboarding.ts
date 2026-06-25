@@ -7,6 +7,7 @@ import { ensureIntelligenceState } from '@/lib/intelligence/intelligence-service
 import { getWeekStart } from '@/lib/utils/date-utils'
 import { sendEmail } from '@/lib/email/resend'
 import { welcomeEmail } from '@/lib/email/templates/welcome'
+import { seedAgentMdpStates } from '@/lib/actions/mdp'
 
 export interface OnboardingInput {
   template: OnboardingTemplate
@@ -105,6 +106,9 @@ export async function saveOnboarding(input: OnboardingInput): Promise<void> {
     .from('profiles')
     .update({ onboarded_at: new Date().toISOString() })
     .eq('user_id', user.id)
+
+  // Seed MDP states for Agent Trust Engine
+  await seedAgentMdpStates(user.id)
 
   // Initialise intelligence state
   await ensureIntelligenceState(user.id, workspace.id)
