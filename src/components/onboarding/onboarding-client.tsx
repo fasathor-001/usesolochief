@@ -455,7 +455,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 </p>
               </div>
 
-              <div className="flex gap-3 mt-8">
+              <div className="flex flex-col sm:flex-row gap-3 mt-8">
                 <button
                   type="button"
                   onClick={() => {
@@ -480,7 +480,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                   className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
                   style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
                 >
-                  I&apos;ve sent the message — check connection
+                  Check connection
                 </button>
               </div>
 
