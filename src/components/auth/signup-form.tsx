@@ -73,7 +73,8 @@ function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
       })
 
       if (signUpError) {
-        setError(signUpError.message || 'Sign-up failed. Please try again.')
+        const errorMsg = typeof signUpError.message === 'string' ? signUpError.message : 'Sign-up failed. Please try again.'
+        setError(errorMsg)
         return
       }
 
@@ -84,7 +85,8 @@ function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
 
       setConfirmationSent(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+      const errorMsg = err instanceof Error && typeof err.message === 'string' ? err.message : 'Something went wrong. Please try again.'
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }

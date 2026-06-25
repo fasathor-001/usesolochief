@@ -149,7 +149,8 @@ function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
     })
     setLoading(false)
     if (signInError) {
-      setAuthError('We could not sign you in with those details. Check your email and password, or use a secure email link.')
+      const errorMsg = typeof signInError.message === 'string' ? signInError.message : 'We could not sign you in with those details. Check your email and password, or use a secure email link.'
+      setAuthError(errorMsg)
     } else {
       router.push('/dashboard')
     }
@@ -171,7 +172,8 @@ function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
     })
     setEmailLinkLoading(false)
     if (otpError) {
-      if (otpError.message.toLowerCase().includes('rate limit')) {
+      const otpMsg = typeof otpError.message === 'string' ? otpError.message : ''
+      if (otpMsg.toLowerCase().includes('rate limit')) {
         // Still show code entry — a previous email was likely sent
         setEmailLinkSent(true)
         setCode('')
@@ -204,7 +206,8 @@ function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
     })
     setVerifyLoading(false)
     if (verifyError) {
-      setCodeError('That code did not work. Check the code and try again, or request a new email.')
+      const verifyMsg = typeof verifyError.message === 'string' ? verifyError.message : 'That code did not work. Check the code and try again, or request a new email.'
+      setCodeError(verifyMsg)
     } else {
       router.push('/dashboard')
     }
