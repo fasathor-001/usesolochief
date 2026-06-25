@@ -73,8 +73,12 @@ function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
       })
 
       if (signUpError) {
-        const errorMsg = typeof signUpError.message === 'string' ? signUpError.message : 'Sign-up failed. Please try again.'
-        setError(errorMsg)
+        const msg = signUpError.message && typeof signUpError.message === 'string' && signUpError.message.length > 0
+          ? signUpError.message
+          : signUpError.status === 500
+          ? 'Our service is temporarily unavailable. Please try again in a moment.'
+          : 'Sign-up failed. Please try again.'
+        setError(msg)
         return
       }
 
@@ -85,8 +89,7 @@ function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
 
       setConfirmationSent(true)
     } catch (err) {
-      const errorMsg = err instanceof Error && typeof err.message === 'string' ? err.message : 'Something went wrong. Please try again.'
-      setError(errorMsg)
+      setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)
     }
