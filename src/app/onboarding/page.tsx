@@ -1,5 +1,7 @@
 import { OnboardingClient } from '@/components/onboarding/onboarding-client'
 
+export const dynamic = 'force-dynamic'
+
 type Step = 1 | 2 | 3 | 4
 
 export default async function OnboardingPage({
