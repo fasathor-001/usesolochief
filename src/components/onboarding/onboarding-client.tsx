@@ -315,10 +315,10 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           </p>
 
           {/* Part A: Sandbox join block (only in sandbox mode) */}
-          {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && (
+          {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && process.env.NEXT_PUBLIC_TWILIO_WHATSAPP_NUMBER && process.env.NEXT_PUBLIC_TWILIO_SANDBOX_JOIN_CODE && (
             <div className="p-4 rounded-lg border mb-4" style={{ borderColor: 'var(--sc-border)', backgroundColor: 'rgba(0,194,168,0.05)' }}>
               <a
-                href="https://wa.me/14155238886?text=join%20machine-spin"
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_TWILIO_WHATSAPP_NUMBER}?text=${encodeURIComponent(`join ${process.env.NEXT_PUBLIC_TWILIO_SANDBOX_JOIN_CODE}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block py-2.5 rounded-lg font-medium text-sm transition-colors text-center"
@@ -327,7 +327,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 Open WhatsApp to Connect
               </a>
               <p className="text-xs mt-2" style={{ color: 'var(--sc-muted)' }}>
-                This opens WhatsApp with the join code pre-filled. Send the message, then come back here.
+                This opens WhatsApp with the join code pre-filled. Just hit send.
               </p>
             </div>
           )}
