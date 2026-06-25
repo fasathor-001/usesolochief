@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect, useTransition } from 'react'
 import { toast } from 'sonner'
-import { Send, MessageCircle, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Send, MessageCircle, AlertCircle, CheckCircle2, Zap } from 'lucide-react'
+import Link from 'next/link'
 
 interface Message {
   id: string
@@ -15,6 +16,9 @@ interface ChatClientProps {
   mainFocus?: string | null
   overdueCount?: number
   dueTodayCount?: number
+  plan?: string
+  chatUsedThisMonth?: number
+  chatLimit?: number
 }
 
 const SUGGESTED_PROMPTS = [
@@ -30,13 +34,26 @@ function randomId(): string {
   return Math.random().toString(36).slice(2)
 }
 
-export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTodayCount = 0 }: ChatClientProps) {
+export function ChatClient({
+  initialMessages,
+  mainFocus,
+  overdueCount = 0,
+  dueTodayCount = 0,
+  plan = 'free',
+  chatUsedThisMonth = 0,
+  chatLimit = Infinity,
+}: ChatClientProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
+  const [usedCount, setUsedCount] = useState(chatUsedThisMonth)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [, startTransition] = useTransition()
+
+  const isLimited = chatLimit !== Infinity
+  const remaining = isLimited ? Math.max(0, chatLimit - usedCount) : Infinity
+  const quotaExceeded = isLimited && remaining === 0
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -44,7 +61,7 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
 
   async function sendMessage() {
     const text = input.trim()
-    if (!text || isStreaming) return
+    if (!text || isStreaming || quotaExceeded) return
 
     const userMsg: Message = { id: randomId(), role: 'user', content: text }
     const aiMsg: Message = { id: randomId(), role: 'assistant', content: '' }
@@ -62,8 +79,17 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
 
       if (!response.ok) {
         const err = await response.json()
+        if (err.quotaExceeded) {
+          setUsedCount(err.used ?? chatLimit)
+          setMessages(prev => prev.filter(m => m.id !== userMsg.id && m.id !== aiMsg.id))
+          toast.error(err.error ?? 'Monthly message limit reached.')
+          return
+        }
         throw new Error(err.error ?? 'Request failed')
       }
+
+      // Optimistically increment usage counter
+      setUsedCount(prev => prev + 1)
 
       const reader = response.body!.getReader()
       const decoder = new TextDecoder()
@@ -215,27 +241,54 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
           <div ref={bottomRef} />
         </div>
 
+        {/* Quota exceeded banner */}
+        {quotaExceeded && (
+          <div style={{
+            margin: '0 28px 12px',
+            padding: '12px 16px',
+            borderRadius: 'var(--sc-radius)',
+            backgroundColor: 'rgba(0,194,168,0.06)',
+            border: '0.5px solid var(--sc-teal)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <Zap size={15} style={{ color: 'var(--sc-teal)', flexShrink: 0 }} />
+            <p style={{ fontSize: 13, color: 'var(--sc-text)', flex: 1, lineHeight: 1.5 }}>
+              You&apos;ve used all {chatLimit} free messages this month.{' '}
+              <Link href="/dashboard/settings?tab=billing" style={{ color: 'var(--sc-teal)', fontWeight: 500, textDecoration: 'none' }}>
+                Upgrade to Pro
+              </Link>{' '}
+              for unlimited AI Chat.
+            </p>
+          </div>
+        )}
+
         {/* Input */}
         <div style={{ padding: '12px 28px 20px', borderTop: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', flexShrink: 0 }}>
           <div
             className="flex gap-3 items-end rounded-xl border p-3"
-            style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
+            style={{
+              borderColor: quotaExceeded ? 'var(--sc-border)' : 'var(--sc-border)',
+              backgroundColor: quotaExceeded ? 'var(--sc-surface-2, var(--sc-surface))' : 'var(--sc-surface)',
+              opacity: quotaExceeded ? 0.6 : 1,
+            }}
           >
             <textarea
               ref={inputRef}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask anything... (Enter to send, Shift+Enter for new line)"
+              placeholder={quotaExceeded ? 'Monthly limit reached — upgrade to continue' : 'Ask anything... (Enter to send, Shift+Enter for new line)'}
               rows={1}
-              disabled={isStreaming}
+              disabled={isStreaming || quotaExceeded}
               className="flex-1 resize-none text-sm outline-none bg-transparent leading-relaxed disabled:opacity-50"
               style={{ color: 'var(--sc-text)', maxHeight: '120px' }}
             />
             <button
               type="button"
               onClick={sendMessage}
-              disabled={isStreaming || !input.trim()}
+              disabled={isStreaming || !input.trim() || quotaExceeded}
               className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all disabled:opacity-40"
               style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
             >
@@ -243,7 +296,11 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
             </button>
           </div>
           <p className="text-xs text-center mt-2" style={{ color: 'var(--sc-muted)' }}>
-            All context loaded before every message.
+            {isLimited
+              ? quotaExceeded
+                ? 'Resets on the 1st of next month.'
+                : `${remaining} of ${chatLimit} messages remaining this month.`
+              : 'All context loaded before every message.'}
           </p>
         </div>
       </div>
@@ -282,11 +339,48 @@ export function ChatClient({ initialMessages, mainFocus, overdueCount = 0, dueTo
             )}
           </div>
 
+          {/* Monthly usage — shown for free plan only */}
+          {isLimited && (
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>AI Chat this month</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <div style={{
+                  flex: 1,
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: 'var(--sc-border)',
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${Math.min(100, (usedCount / chatLimit) * 100)}%`,
+                    backgroundColor: remaining <= 2 ? '#EF4444' : 'var(--sc-teal)',
+                    borderRadius: 2,
+                    transition: 'width 0.3s',
+                  }} />
+                </div>
+                <p style={{ fontSize: 11, color: remaining <= 2 ? '#EF4444' : 'var(--sc-muted)', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
+                  {usedCount}/{chatLimit}
+                </p>
+              </div>
+              {!quotaExceeded && (
+                <Link
+                  href="/dashboard/settings?tab=billing"
+                  style={{ fontSize: 11, color: 'var(--sc-teal)', textDecoration: 'none' }}
+                >
+                  Upgrade for unlimited →
+                </Link>
+              )}
+            </div>
+          )}
+
           {/* Weekly progress */}
-          <div>
-            <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Weekly progress</p>
-            <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Not enough data yet</p>
-          </div>
+          {!isLimited && (
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--sc-muted)', marginBottom: 6 }}>Weekly progress</p>
+              <p style={{ fontSize: 12, color: 'var(--sc-hint)' }}>Not enough data yet</p>
+            </div>
+          )}
 
           {/* Stop list */}
           <div>

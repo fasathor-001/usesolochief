@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { buildContextPackage, buildSystemPrompt } from '@/lib/ai/context-builder'
-import { canUseAI } from '@/lib/plan-limits'
+import { getAIChatLimit } from '@/lib/plan-limits'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+function monthStart(): string {
+  const now = new Date()
+  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+}
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient()
@@ -14,13 +19,36 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 })
   }
 
-  // Enforce AI plan access
-  const { data: profile } = await supabase.from('profiles').select('plan').eq('user_id', user.id).single()
-  if (!canUseAI(profile?.plan ?? 'free')) {
-    return NextResponse.json(
-      { error: 'AI Chat is available on Pro and above. Upgrade to access your personal Chief of Staff.' },
-      { status: 403 },
-    )
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('user_id', user.id)
+    .single()
+
+  const plan = profile?.plan ?? 'free'
+  const limit = getAIChatLimit(plan)
+
+  // Enforce monthly quota — count this month's user messages
+  if (limit !== Infinity) {
+    const { count } = await supabase
+      .from('ai_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('role', 'user')
+      .gte('created_at', monthStart())
+
+    const used = count ?? 0
+    if (used >= limit) {
+      return NextResponse.json(
+        {
+          error: `You have used all ${limit} AI Chat messages for this month. Upgrade to Pro for unlimited access.`,
+          quotaExceeded: true,
+          used,
+          limit,
+        },
+        { status: 429 },
+      )
+    }
   }
 
   const body = await request.json()

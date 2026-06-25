@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import type { ActionResult, Review, ReviewItem, WeeklyPlan, WeeklyOutcome, Followup, ParkingLotItem, Commitment } from '@/types/database'
 import { incrementWeeklyReviews } from '@/lib/intelligence/intelligence-service'
@@ -9,6 +10,8 @@ import { getWeekStart } from '@/lib/utils/date-utils'
 import { evaluateAgent } from '@/lib/actions/mdp'
 import { collectPlanningSignal, collectFocusSignal, collectFollowupSignal } from '@/lib/actions/mdp-signals'
 import { collectReviewSignal } from '@/lib/mdp/types'
+import { getAIReviewSummaryLimit } from '@/lib/plan-limits'
+import { getReviewSummaryUsageThisMonth } from '@/lib/actions/usage'
 
 export interface ReviewPageData {
   plan: WeeklyPlan | null
@@ -222,6 +225,48 @@ export async function completeReview(input: CompleteReviewInput): Promise<Action
     }
   } catch (err) {
     console.error('[review/mdp] MDP evaluation error (non-blocking):', err instanceof Error ? err.message : 'unknown')
+  }
+
+  // Generate AI summary — non-blocking, respects monthly quota
+  try {
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('plan')
+      .eq('user_id', user.id)
+      .single()
+    const plan = profileData?.plan ?? 'free'
+    const summaryLimit = getAIReviewSummaryLimit(plan)
+    const summaryUsed = await getReviewSummaryUsageThisMonth(user.id)
+
+    if (summaryLimit === Infinity || summaryUsed < summaryLimit) {
+      const parts: string[] = []
+      if (input.shippedText) parts.push(`Got done: ${input.shippedText}`)
+      if (input.slippedText) parts.push(`Slipped: ${input.slippedText}`)
+      if (input.wronglyTouchedText) parts.push(`Wrongly touched: ${input.wronglyTouchedText}`)
+      if (input.belowLevelText) parts.push(`Below-level work: ${input.belowLevelText}`)
+      if (input.nextWeekStopListChange) parts.push(`Stop-list change: ${input.nextWeekStopListChange}`)
+      if (input.energyRating) parts.push(`Energy: ${input.energyRating}/5`)
+      if (input.focusRating) parts.push(`Focus: ${input.focusRating}/5`)
+
+      if (parts.length > 0) {
+        const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+        const msg = await anthropic.messages.create({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 200,
+          system: 'You write concise, honest weekly review summaries for solo operators. 2-3 sentences. No filler. Plain prose, no bullet points.',
+          messages: [{ role: 'user', content: `Summarise this week:\n${parts.join('\n')}` }],
+        })
+        const summaryText = msg.content[0]?.type === 'text' ? msg.content[0].text.trim() : null
+        if (summaryText) {
+          await supabase
+            .from('reviews')
+            .update({ summary: summaryText })
+            .eq('id', review.id)
+        }
+      }
+    }
+  } catch (err) {
+    console.error('[review/summary] AI summary error (non-blocking):', err instanceof Error ? err.message : 'unknown')
   }
 
   revalidatePath('/dashboard/review')

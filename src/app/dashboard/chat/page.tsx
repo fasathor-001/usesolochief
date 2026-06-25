@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { ChatClient } from '@/components/chat/chat-client'
+import { getAIChatLimit } from '@/lib/plan-limits'
+
+function monthStart(): string {
+  const now = new Date()
+  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+}
 
 export default async function AIChatPage() {
   const supabase = await createClient()
@@ -9,11 +15,13 @@ export default async function AIChatPage() {
   let mainFocus: string | null = null
   let overdueCount = 0
   let dueTodayCount = 0
+  let plan = 'free'
+  let chatUsedThisMonth = 0
 
   if (user) {
     const today = new Date().toISOString().split('T')[0]
 
-    const [historyResult, planResult, followupsResult] = await Promise.all([
+    const [historyResult, planResult, followupsResult, profileResult, usageResult] = await Promise.all([
       supabase
         .from('ai_messages')
         .select('id, role, content')
@@ -37,6 +45,19 @@ export default async function AIChatPage() {
         .eq('status', 'open')
         .is('deleted_at', null)
         .lte('due_date', today),
+
+      supabase
+        .from('profiles')
+        .select('plan')
+        .eq('user_id', user.id)
+        .single(),
+
+      supabase
+        .from('ai_messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('role', 'user')
+        .gte('created_at', monthStart()),
     ])
 
     initialMessages = ((historyResult.data ?? []).reverse() as { id: string; role: 'user' | 'assistant'; content: string }[])
@@ -54,7 +75,12 @@ export default async function AIChatPage() {
     const followups = followupsResult.data ?? []
     overdueCount = followups.filter(f => f.due_date < today).length
     dueTodayCount = followups.filter(f => f.due_date === today).length
+
+    plan = profileResult.data?.plan ?? 'free'
+    chatUsedThisMonth = usageResult.count ?? 0
   }
+
+  const chatLimit = getAIChatLimit(plan)
 
   return (
     <ChatClient
@@ -62,6 +88,9 @@ export default async function AIChatPage() {
       mainFocus={mainFocus}
       overdueCount={overdueCount}
       dueTodayCount={dueTodayCount}
+      plan={plan}
+      chatUsedThisMonth={chatUsedThisMonth}
+      chatLimit={chatLimit}
     />
   )
 }

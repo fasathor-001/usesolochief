@@ -105,6 +105,14 @@ export function ReviewClient({
             </p>
           </div>
 
+          {/* AI summary */}
+          {r?.summary && (
+            <div className="sc-card" style={{ marginBottom: 24 }}>
+              <p className="sc-section-heading" style={{ marginBottom: 8 }}>AI summary</p>
+              <p style={{ fontSize: 13, color: 'var(--sc-text)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{r.summary}</p>
+            </div>
+          )}
+
           {/* Weekly summary */}
           <div className="space-y-5">
 

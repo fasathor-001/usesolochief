@@ -1,7 +1,8 @@
 export const PLAN_LIMITS = {
   free: {
     maxCommitments: 3,
-    hasAI: false,
+    aiChatMonthlyLimit: 10,
+    aiReviewSummaryMonthlyLimit: 1,
     hasWhatsApp: false,
     hasPatternIntelligence: false,
     hasCustomAgents: false,
@@ -9,7 +10,8 @@ export const PLAN_LIMITS = {
   },
   pro: {
     maxCommitments: Infinity,
-    hasAI: true,
+    aiChatMonthlyLimit: Infinity,
+    aiReviewSummaryMonthlyLimit: Infinity,
     hasWhatsApp: false,
     hasPatternIntelligence: false,
     hasCustomAgents: false,
@@ -17,7 +19,8 @@ export const PLAN_LIMITS = {
   },
   operator: {
     maxCommitments: Infinity,
-    hasAI: true,
+    aiChatMonthlyLimit: Infinity,
+    aiReviewSummaryMonthlyLimit: Infinity,
     hasWhatsApp: true,
     hasPatternIntelligence: false,
     hasCustomAgents: false,
@@ -25,7 +28,8 @@ export const PLAN_LIMITS = {
   },
   chief: {
     maxCommitments: Infinity,
-    hasAI: true,
+    aiChatMonthlyLimit: Infinity,
+    aiReviewSummaryMonthlyLimit: Infinity,
     hasWhatsApp: true,
     hasPatternIntelligence: true,
     hasCustomAgents: true,
@@ -44,8 +48,12 @@ export function canAddCommitment(plan: string, currentCount: number): boolean {
   return currentCount < limits.maxCommitments
 }
 
-export function canUseAI(plan: string): boolean {
-  return getPlanLimits(plan).hasAI
+export function getAIChatLimit(plan: string): number {
+  return getPlanLimits(plan).aiChatMonthlyLimit
+}
+
+export function getAIReviewSummaryLimit(plan: string): number {
+  return getPlanLimits(plan).aiReviewSummaryMonthlyLimit
 }
 
 export function canUseWhatsApp(plan: string): boolean {
