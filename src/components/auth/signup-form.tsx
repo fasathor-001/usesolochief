@@ -38,6 +38,7 @@ interface SignupFormInnerProps {
 
 function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
   const router = useRouter()
+  const safeInitialError = typeof initialError === 'string' ? initialError : ''
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -45,7 +46,7 @@ function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>(
-    initialError ? (ERROR_MESSAGES[initialError] ?? 'Something went wrong. Please try again.') : '',
+    safeInitialError ? (ERROR_MESSAGES[safeInitialError] ?? 'Something went wrong. Please try again.') : '',
   )
   const [confirmationSent, setConfirmationSent] = useState(false)
 
@@ -213,9 +214,9 @@ function SignupFormInner({ initialError = '' }: SignupFormInnerProps) {
           </div>
         </div>
 
-        {typeof error === 'string' && error.length > 0 && (
+        {error && typeof error === 'string' && error.trim().length > 0 && (
           <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
-            {error}
+            {error.trim()}
           </p>
         )}
 

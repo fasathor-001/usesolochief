@@ -89,6 +89,7 @@ interface SigninFormInnerProps {
 
 function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
   const router = useRouter()
+  const safeInitialError = typeof initialError === 'string' ? initialError : ''
 
   const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
@@ -106,7 +107,7 @@ function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
   const [resendSent, setResendSent] = useState(false)
 
   const [authError, setAuthError] = useState<string>(
-    initialError ? (ERROR_MESSAGES[initialError] ?? 'Something went wrong. Please try again.') : '',
+    safeInitialError ? (ERROR_MESSAGES[safeInitialError] ?? 'Something went wrong. Please try again.') : '',
   )
   const [emailFieldError, setEmailFieldError] = useState('')
   const [passwordFieldError, setPasswordFieldError] = useState('')
