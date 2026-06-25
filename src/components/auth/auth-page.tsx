@@ -151,7 +151,7 @@ function AuthForm({ mode }: AuthPageProps) {
           />
         </div>
 
-        {error && (
+        {typeof error === 'string' && error.length > 0 && (
           <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
             {error}
           </p>
