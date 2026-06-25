@@ -50,6 +50,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   const [onboardingWaOtp, setOnboardingWaOtp] = useState('')
   const [onboardingWaOtpSent, setOnboardingWaOtpSent] = useState(false)
   const [onboardingWaSending, setOnboardingWaSending] = useState(false)
+  const [sandboxJoinConfirmed, setSandboxJoinConfirmed] = useState(false)
 
   function selectTemplate(t: OnboardingTemplate) {
     setTemplate(t)
@@ -314,7 +315,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
             Connect your WhatsApp to receive your daily brief and log updates on the go.
           </p>
 
-          {/* Part A: Sandbox join block (only in sandbox mode) */}
+          {/* Part 3a: Sandbox join confirmation (always visible) */}
           {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && process.env.NEXT_PUBLIC_TWILIO_WHATSAPP_NUMBER && process.env.NEXT_PUBLIC_TWILIO_SANDBOX_JOIN_CODE && (
             <div className="p-4 rounded-lg border mb-4" style={{ borderColor: 'var(--sc-border)', backgroundColor: 'rgba(0,194,168,0.05)' }}>
               <a
@@ -327,13 +328,44 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 Open WhatsApp to Connect
               </a>
               <p className="text-xs mt-2" style={{ color: 'var(--sc-muted)' }}>
-                This opens WhatsApp with the join code pre-filled. Just hit send.
+                Tap the button above and send the message in WhatsApp.
               </p>
+
+              {/* Confirmation checkbox */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+                <input
+                  type="checkbox"
+                  id="sandbox-join-confirm"
+                  checked={sandboxJoinConfirmed}
+                  onChange={(e) => setSandboxJoinConfirmed(e.target.checked)}
+                  style={{
+                    width: 18,
+                    height: 18,
+                    cursor: 'pointer',
+                    accentColor: 'var(--sc-accent)',
+                  }}
+                />
+                <label
+                  htmlFor="sandbox-join-confirm"
+                  style={{
+                    fontSize: 13,
+                    cursor: 'pointer',
+                    color: 'var(--sc-text)',
+                    userSelect: 'none',
+                  }}
+                >
+                  I&apos;ve sent the message
+                </label>
+              </div>
             </div>
           )}
 
-          {/* Part B: Phone linking flow */}
-          <div style={{ marginBottom: 6 }}>
+          {/* Part 3b: Phone verification (hidden until Part 3a confirmed) */}
+          {sandboxJoinConfirmed && (
+            <div style={{ marginBottom: 6 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 12 }}>
+                Now enter your phone number to verify your account
+              </h3>
             {/* Status indicator */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: 12,
@@ -423,7 +455,14 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                     autoFocus
                   />
                 </div>
-                {error && error.includes('OTP') && <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginBottom: 10 }}>{error}</p>}
+                {error && error.includes('OTP') && (
+                  <div style={{ marginBottom: 10 }}>
+                    <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginBottom: 6 }}>{error}</p>
+                    <p style={{ fontSize: 12, color: 'var(--sc-muted)' }}>
+                      Make sure you&apos;ve joined on WhatsApp first by tapping the button above and sending the join message.
+                    </p>
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <button
                     type="button"
@@ -456,7 +495,8 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 </div>
               </div>
             )}
-          </div>
+            </div>
+          )}
 
           {/* Info box */}
           <div
