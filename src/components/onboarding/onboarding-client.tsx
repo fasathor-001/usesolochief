@@ -45,29 +45,27 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   const [isPending, startTransition] = useTransition()
 
   // WhatsApp onboarding state
-  const [waConnected, setWaConnected] = useState(false)
-  const [waWaiting, setWaWaiting] = useState(false)
+  type WaState = 'default' | 'waiting' | 'connected'
+  const [waState, setWaState] = useState<WaState>('default')
   const [waGenerating, setWaGenerating] = useState(false)
 
-  // Set up Realtime subscription on mount
+  // Set up polling on mount for waiting state
   useEffect(() => {
-    if (step !== 3) return
+    if (step !== 3 || waState !== 'waiting') return
 
     const checkConnection = async () => {
       const status = await getWhatsAppStatus()
       if (status.data?.connected) {
-        setWaConnected(true)
+        setWaState('connected')
       }
     }
 
     checkConnection()
 
     // Poll every 2 seconds while waiting
-    if (waWaiting) {
-      const interval = setInterval(checkConnection, 2000)
-      return () => clearInterval(interval)
-    }
-  }, [step, waWaiting])
+    const interval = setInterval(checkConnection, 2000)
+    return () => clearInterval(interval)
+  }, [step, waState])
 
   function selectTemplate(t: OnboardingTemplate) {
     setTemplate(t)
@@ -325,7 +323,8 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
       {/* Step 3 — WhatsApp Connection */}
       {step === 3 && (
         <div>
-          {!waConnected && !waWaiting && (
+          {/* DEFAULT STATE */}
+          {waState === 'default' && (
             <>
               <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
                 Connect WhatsApp
@@ -345,21 +344,6 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                   </p>
                 </div>
               )}
-
-              {/* Info box */}
-              <div
-                className="p-4 rounded-xl border mb-6"
-                style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
-              >
-                <p className="text-sm font-medium mb-2" style={{ color: 'var(--sc-text)' }}>
-                  What WhatsApp integration will do:
-                </p>
-                <ul className="space-y-1 text-sm" style={{ color: 'var(--sc-muted)' }}>
-                  <li>• Send your daily brief every morning</li>
-                  <li>• Let you log your day with a simple reply</li>
-                  <li>• Check in when you go quiet for too long</li>
-                </ul>
-              </div>
 
               {error && (
                 <p className="text-sm mb-4" style={{ color: 'var(--sc-error)' }}>{error}</p>
@@ -382,13 +366,14 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                     setWaGenerating(true)
                     try {
                       const result = await generateWhatsAppConnectLink()
-                      setWaGenerating(false)
                       if (result.error) {
                         setError(result.error)
+                        setWaGenerating(false)
                         return
                       }
                       if (result.data) {
-                        setWaWaiting(true)
+                        setWaState('waiting')
+                        setWaGenerating(false)
                         window.open(result.data, '_blank')
                       }
                     } catch (err) {
@@ -414,7 +399,8 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
             </>
           )}
 
-          {waWaiting && !waConnected && (
+          {/* WAITING STATE */}
+          {waState === 'waiting' && (
             <>
               <div className="flex flex-col items-center justify-center py-8">
                 <Loader2 size={40} className="animate-spin mb-4" style={{ color: 'var(--sc-accent)' }} />
@@ -430,7 +416,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    setWaWaiting(false)
+                    setWaState('default')
                     setError(null)
                   }}
                   className="flex-1 py-2.5 rounded-lg font-medium text-sm border transition-colors"
@@ -443,7 +429,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                   onClick={async () => {
                     const status = await getWhatsAppStatus()
                     if (status.data?.connected) {
-                      setWaConnected(true)
+                      setWaState('connected')
                     } else {
                       setError('Connection not confirmed yet. Send the message in WhatsApp and check again.')
                     }
@@ -454,10 +440,15 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                   I&apos;ve sent the message — check connection
                 </button>
               </div>
+
+              {error && (
+                <p className="text-sm mt-4" style={{ color: 'var(--sc-error)' }}>{error}</p>
+              )}
             </>
           )}
 
-          {waConnected && (
+          {/* CONNECTED STATE */}
+          {waState === 'connected' && (
             <>
               <div className="flex flex-col items-center justify-center py-8">
                 <CheckCircle2 size={40} className="mb-4" style={{ color: 'var(--sc-accent)' }} />
@@ -469,11 +460,11 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 </p>
               </div>
               {useEffect(() => {
-                if (waConnected) {
+                if (waState === 'connected') {
                   const timer = setTimeout(() => setStep(4), 2000)
                   return () => clearTimeout(timer)
                 }
-              }, [waConnected])}
+              }, [waState])}
             </>
           )}
         </div>

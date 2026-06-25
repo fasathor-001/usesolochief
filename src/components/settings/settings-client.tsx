@@ -203,12 +203,30 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   // ── WhatsApp ───────────────────────────────────────────────────────
-  type WaState = 'connected' | 'not_connected' | 'waiting'
-  const [waState,        setWaState]        = useState<WaState>(whatsappConnected ? 'connected' : 'not_connected')
+  type WaState = 'connected' | 'disconnected' | 'waiting'
+  const [waState,        setWaState]        = useState<WaState>(whatsappConnected ? 'connected' : 'disconnected')
   const [waPhone,        setWaPhone]        = useState(whatsappNumber ?? '')
   const [waLoading,      setWaLoading]      = useState(false)
   const [waError,        setWaError]        = useState('')
   const [waNotif,        setWaNotif]        = useState(initWaNotif)
+
+  // Poll for WhatsApp connection status while in waiting state
+  useEffect(() => {
+    if (activeSection !== 'whatsapp' || waState !== 'waiting') return
+
+    const checkConnection = async () => {
+      const status = await getWhatsAppStatus()
+      if (status.data?.connected) {
+        setWaState('connected')
+        setWaPhone(status.data.number || '')
+      }
+    }
+
+    checkConnection()
+
+    const interval = setInterval(checkConnection, 2000)
+    return () => clearInterval(interval)
+  }, [activeSection, waState])
 
   useEffect(() => {
     // Apply saved theme on mount
@@ -1261,84 +1279,30 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                   <p className="sc-settings-card-subtitle">Receive briefings and reply to SoloChief via WhatsApp.</p>
                 </div>
 
-                {/* Status indicator */}
-                <div style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '12px 14px', borderRadius: 'var(--sc-r)',
-                  border: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', marginBottom: 16,
-                }}>
-                  <div style={{
-                    width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-                    backgroundColor: waState === 'connected' ? 'var(--sc-teal, #00C2A8)' : 'var(--sc-muted)',
-                  }} />
-                  <div style={{ flex: 1 }}>
-                    {waState === 'connected' ? (
-                      <>
-                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
-                          Connected — {waPhone.slice(0, 3)} *** {waPhone.slice(-4)}
-                        </p>
-                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
-                          Briefings and commands are active.
-                        </p>
-                      </>
-                    ) : waState === 'waiting' ? (
-                      <>
-                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>Connecting...</p>
-                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
-                          Waiting for WhatsApp connection. Keep WhatsApp open.
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>Not connected</p>
-                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
-                          Connect WhatsApp to receive morning briefings and use quick commands.
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Connected state */}
-                {waState === 'connected' && (
+                {/* DISCONNECTED STATE */}
+                {waState === 'disconnected' && (
                   <div>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', marginBottom: 18 }}>
-                      <input
-                        type="checkbox"
-                        checked={waNotif}
-                        onChange={async e => {
-                          const val = e.target.checked
-                          setWaNotif(val)
-                          await toggleWhatsAppNotifications(val)
+                    <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                      Connect WhatsApp to receive your morning brief and log updates on the go.
+                    </p>
+
+                    {/* Sandbox note */}
+                    {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && (
+                      <div
+                        style={{
+                          padding: '12px',
+                          borderRadius: 'var(--sc-r)',
+                          border: '0.5px solid var(--sc-border)',
+                          backgroundColor: 'rgba(0,194,168,0.05)',
+                          marginBottom: 12,
                         }}
-                        style={{ width: 15, height: 15, accentColor: 'var(--sc-teal)', cursor: 'pointer' }}
-                      />
-                      <span style={{ fontSize: 13, color: 'var(--sc-text)' }}>WhatsApp notifications enabled</span>
-                    </label>
-                    <button
-                      type="button"
-                      className="sc-btn sc-btn-secondary sc-btn-sm"
-                      style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--sc-error, #EF4444)' }}
-                      onClick={async () => {
-                        setWaLoading(true)
-                        setWaError('')
-                        const res = await disconnectWhatsApp()
-                        setWaLoading(false)
-                        if (res.error) { setWaError(res.error); return }
-                        setWaState('not_connected')
-                        setWaPhone('')
-                      }}
-                      disabled={waLoading}
-                    >
-                      <X size={13} />
-                      {waLoading ? 'Removing…' : 'Remove WhatsApp'}
-                    </button>
-                  </div>
-                )}
+                      >
+                        <p style={{ fontSize: 12, color: 'var(--sc-text)' }}>
+                          <strong>Sandbox testing:</strong> Open WhatsApp and send &apos;join machine-spin&apos; to +1 415 523 8886 first. Then tap Connect WhatsApp.
+                        </p>
+                      </div>
+                    )}
 
-                {/* Not connected — start flow */}
-                {waState === 'not_connected' && (
-                  <div>
                     <button
                       type="button"
                       className="sc-btn sc-btn-secondary sc-btn-sm"
@@ -1355,56 +1319,115 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                           setWaState('waiting')
                           setWaLoading(false)
                           window.open(result.data, '_blank')
-                          // Poll for connection status
-                          const checkInterval = setInterval(async () => {
-                            const status = await getWhatsAppStatus()
-                            if (status.data?.connected) {
-                              setWaState('connected')
-                              setWaPhone(status.data.number || '')
-                              clearInterval(checkInterval)
-                            }
-                          }, 2000)
-                          // Stop polling after 5 minutes
-                          setTimeout(() => clearInterval(checkInterval), 5 * 60 * 1000)
                         }
                       }}
                       disabled={waLoading}
                     >
                       {waLoading ? 'Generating link…' : 'Connect WhatsApp'}
                     </button>
-                    <div style={{ fontSize: 12, color: 'var(--sc-text-secondary)', marginTop: 8 }}>
-                      WhatsApp will open with a message ready to send. Tap send to connect.
-                    </div>
+
+                    {waError && (
+                      <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginTop: 10 }}>{waError}</p>
+                    )}
                   </div>
                 )}
 
-                {/* Waiting state */}
+                {/* WAITING STATE */}
                 {waState === 'waiting' && (
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
                       <Loader2 size={16} className="animate-spin" style={{ color: 'var(--sc-accent)' }} />
                       <p style={{ fontSize: 12, color: 'var(--sc-text)' }}>Waiting for WhatsApp connection...</p>
                     </div>
-                    <button
-                      type="button"
-                      className="sc-btn sc-btn-secondary sc-btn-sm"
-                      onClick={async () => {
-                        const status = await getWhatsAppStatus()
-                        if (status.data?.connected) {
-                          setWaState('connected')
-                          setWaPhone(status.data.number || '')
-                        } else {
-                          setWaError('Connection not confirmed yet. Send the message in WhatsApp and check again.')
-                        }
-                      }}
-                    >
-                      I&apos;ve sent the message — check connection
-                    </button>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-secondary sc-btn-sm"
+                        onClick={() => {
+                          setWaState('disconnected')
+                          setWaError('')
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-secondary sc-btn-sm"
+                        onClick={async () => {
+                          const status = await getWhatsAppStatus()
+                          if (status.data?.connected) {
+                            setWaState('connected')
+                            setWaPhone(status.data.number || '')
+                          } else {
+                            setWaError('Connection not confirmed yet. Send the message in WhatsApp and check again.')
+                          }
+                        }}
+                      >
+                        I&apos;ve sent the message — check connection
+                      </button>
+                    </div>
+
+                    {waError && (
+                      <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginTop: 10 }}>{waError}</p>
+                    )}
                   </div>
                 )}
 
-                {waError && (
-                  <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginTop: 10 }}>{waError}</p>
+                {/* CONNECTED STATE */}
+                {waState === 'connected' && (
+                  <div>
+                    {/* Status indicator */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '12px 14px', borderRadius: 'var(--sc-r)',
+                      border: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', marginBottom: 16,
+                    }}>
+                      <div style={{
+                        width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                        backgroundColor: 'var(--sc-teal, #00C2A8)',
+                      }} />
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
+                          Connected — {waPhone.slice(0, 3)} *** {waPhone.slice(-4)}
+                        </p>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
+                          Briefings and commands are active.
+                        </p>
+                      </div>
+                    </div>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', marginBottom: 18 }}>
+                      <input
+                        type="checkbox"
+                        checked={waNotif}
+                        onChange={async e => {
+                          const val = e.target.checked
+                          setWaNotif(val)
+                          await toggleWhatsAppNotifications(val)
+                        }}
+                        style={{ width: 15, height: 15, accentColor: 'var(--sc-teal)', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: 13, color: 'var(--sc-text)' }}>Pause notifications</span>
+                    </label>
+                    <button
+                      type="button"
+                      className="sc-btn sc-btn-secondary sc-btn-sm"
+                      style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--sc-error, #EF4444)' }}
+                      onClick={async () => {
+                        setWaLoading(true)
+                        setWaError('')
+                        const res = await disconnectWhatsApp()
+                        setWaLoading(false)
+                        if (res.error) { setWaError(res.error); return }
+                        setWaState('disconnected')
+                        setWaPhone('')
+                      }}
+                      disabled={waLoading}
+                    >
+                      <X size={13} />
+                      {waLoading ? 'Removing…' : 'Disconnect WhatsApp'}
+                    </button>
+                  </div>
                 )}
               </div>
 
