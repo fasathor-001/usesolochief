@@ -83,10 +83,12 @@ function FieldError({ msg }: { msg: string }) {
   )
 }
 
-function SigninFormInner() {
+interface SigninFormInnerProps {
+  initialError?: string
+}
+
+function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const rawError = searchParams.get('error')
 
   const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
@@ -104,7 +106,7 @@ function SigninFormInner() {
   const [resendSent, setResendSent] = useState(false)
 
   const [authError, setAuthError] = useState<string>(
-    rawError ? (ERROR_MESSAGES[rawError] ?? 'Something went wrong. Please try again.') : '',
+    initialError ? (ERROR_MESSAGES[initialError] ?? 'Something went wrong. Please try again.') : '',
   )
   const [emailFieldError, setEmailFieldError] = useState('')
   const [passwordFieldError, setPasswordFieldError] = useState('')
@@ -451,7 +453,11 @@ function SigninFormInner() {
   )
 }
 
-export default function SigninForm() {
+interface SigninFormProps {
+  initialError?: string
+}
+
+export default function SigninForm({ initialError = '' }: SigninFormProps) {
   return (
     <div style={{
       display: 'flex',
@@ -484,7 +490,7 @@ export default function SigninForm() {
           </p>
 
           <Suspense fallback={<div style={{ height: 320 }} />}>
-            <SigninFormInner />
+            <SigninFormInner initialError={initialError} />
           </Suspense>
         </div>
       </div>
