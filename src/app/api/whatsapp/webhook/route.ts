@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       return twimlResponse(consentMessage)
     } else {
       // Already had a number, just send connected confirmation
-      return twimlResponse(`SoloChief connected.
+      return twimlResponse(`✅ SoloChief connected.
 
 Your Pocket Chief of Staff is now active on WhatsApp.
 

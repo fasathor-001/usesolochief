@@ -134,15 +134,15 @@ async function buildMorningBriefing(db: any, userId: string, name: string): Prom
     mainFocusTitle = commitment?.title ?? null
   }
 
-  const greeting = name ? `Morning, ${name.split(' ')[0]}.` : 'Morning.'
+  const greeting = name ? `👋 Morning, ${name.split(' ')[0]}.` : '👋 Morning.'
 
   const focusLine = mainFocusTitle
-    ? `FOCUS TODAY\n${mainFocusTitle}`
-    : `FOCUS TODAY\nNo focus set — open SoloChief to plan your day.`
+    ? `🎯 FOCUS TODAY\n${mainFocusTitle}`
+    : `🎯 FOCUS TODAY\nNo focus set — open SoloChief to plan your day.`
 
   const followups = (followupsRes.data ?? []) as any[]
   const followupLines = followups.length > 0
-    ? `FOLLOW-UPS DUE\n${followups.slice(0, 5).map((f: any) => `• ${f.title}`).join('\n')}`
+    ? `🔁 FOLLOW-UPS DUE\n${followups.slice(0, 5).map((f: any) => `• ${f.title}`).join('\n')}`
     : null
 
   const parts = [greeting, focusLine]
