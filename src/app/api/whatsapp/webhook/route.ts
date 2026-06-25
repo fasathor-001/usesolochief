@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import twilio from 'twilio'
+import { createHash } from 'crypto'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { twimlResponse, twimlEmpty } from '@/lib/whatsapp/twilio'
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
@@ -46,12 +47,106 @@ export async function POST(request: NextRequest) {
 
   if (!rawFrom || !bodyText) return twimlEmpty()
 
-  // ── 3. Look up user by WhatsApp number ──────────────────────────────────
   const db = createAdminClient()
+
+  // ── 2.5. Handle connection token flow ────────────────────────────────────
+  if (bodyText.startsWith('connect-')) {
+    const rawToken = bodyText.slice(8).trim()
+    const tokenHash = createHash('sha256').update(rawToken).digest('hex')
+
+    // Look up token
+    const { data: tokenRecord } = await db
+      .from('whatsapp_connect_tokens')
+      .select('user_id, expires_at, failed_attempts')
+      .eq('token_hash', tokenHash)
+      .eq('used', false)
+      .maybeSingle()
+
+    if (!tokenRecord) {
+      return twimlResponse('That connection link has expired. Go back to SoloChief and tap Connect WhatsApp again.')
+    }
+
+    if (new Date(tokenRecord.expires_at) < new Date()) {
+      await db
+        .from('whatsapp_connect_tokens')
+        .update({ failed_attempts: tokenRecord.failed_attempts + 1, last_attempt_at: new Date().toISOString() })
+        .eq('token_hash', tokenHash)
+      return twimlResponse('That connection link has expired. Go back to SoloChief and tap Connect WhatsApp again.')
+    }
+
+    const userId = tokenRecord.user_id
+
+    // Check for duplicate scenarios
+    const { data: existingProfile } = await db
+      .from('profiles')
+      .select('user_id, whatsapp_number, whatsapp_onboarding_step')
+      .eq('whatsapp_number', rawFrom)
+      .maybeSingle()
+
+    if (existingProfile) {
+      if (existingProfile.user_id === userId) {
+        // Same user, already linked
+        await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
+        return twimlResponse('WhatsApp is already connected.')
+      } else {
+        // Different user has this number
+        return twimlResponse('This WhatsApp number is connected to another SoloChief account. Please contact support.')
+      }
+    }
+
+    // Check if user already has a different WhatsApp number
+    const { data: userProfile } = await db
+      .from('profiles')
+      .select('whatsapp_number')
+      .eq('user_id', userId)
+      .single()
+
+    if (userProfile?.whatsapp_number && userProfile.whatsapp_number !== rawFrom) {
+      // Replace old number with new one
+      await db
+        .from('profiles')
+        .update({
+          whatsapp_number: rawFrom,
+          whatsapp_connected: true,
+          whatsapp_connected_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId)
+    } else {
+      // New connection
+      await db
+        .from('profiles')
+        .update({
+          whatsapp_number: rawFrom,
+          whatsapp_connected: true,
+          whatsapp_connected_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId)
+    }
+
+    // Mark token as used
+    await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
+
+    // Check if onboarding needs to be started
+    const onboardingStep = userProfile?.whatsapp_number ? null : undefined
+    if (!userProfile?.whatsapp_number) {
+      // New connection, start onboarding
+      const consentMessage = await startOnboarding(userId)
+      return twimlResponse(consentMessage)
+    } else {
+      // Already had a number, just send connected confirmation
+      return twimlResponse(`SoloChief connected.
+
+Your Pocket Chief of Staff is now active on WhatsApp.
+
+Send 'help' to see what I can do.`)
+    }
+  }
+
+  // ── 3. Look up user by WhatsApp number ──────────────────────────────────
 
   const { data: profile } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_verified, whatsapp_onboarding_step')
+    .select('user_id, full_name, whatsapp_connected, whatsapp_onboarding_step')
     .eq('whatsapp_number', rawFrom)
     .maybeSingle()
 
@@ -64,7 +159,7 @@ export async function POST(request: NextRequest) {
     status:    'sent',
   }).then()
 
-  if (!profile || !profile.whatsapp_verified) {
+  if (!profile || !profile.whatsapp_connected) {
     return twimlResponse(
       'This number is not linked to a SoloChief account. Visit solochief.app/dashboard/settings → WhatsApp to connect.',
     )

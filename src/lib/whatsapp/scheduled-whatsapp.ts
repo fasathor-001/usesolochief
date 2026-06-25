@@ -66,8 +66,8 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
   // Fetch all verified, opted-in users who have completed onboarding
   const { data: profiles } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_number, whatsapp_verified, whatsapp_onboarded_at, whatsapp_briefing_hour, whatsapp_quiet_start, whatsapp_quiet_end')
-    .eq('whatsapp_verified', true)
+    .select('user_id, full_name, whatsapp_number, whatsapp_connected, whatsapp_onboarded_at, whatsapp_briefing_hour, whatsapp_quiet_start, whatsapp_quiet_end')
+    .eq('whatsapp_connected', true)
     .not('whatsapp_number', 'is', null)
     .not('whatsapp_onboarded_at', 'is', null)
 
@@ -163,8 +163,8 @@ export async function sendFollowupNudges(): Promise<WhatsAppResult> {
   // Fetch all verified, opted-in users who have completed onboarding
   const { data: profiles } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_number, whatsapp_verified, whatsapp_onboarded_at, whatsapp_quiet_start, whatsapp_quiet_end')
-    .eq('whatsapp_verified', true)
+    .select('user_id, full_name, whatsapp_number, whatsapp_connected, whatsapp_onboarded_at, whatsapp_quiet_start, whatsapp_quiet_end')
+    .eq('whatsapp_connected', true)
     .not('whatsapp_number', 'is', null)
     .not('whatsapp_onboarded_at', 'is', null)
 

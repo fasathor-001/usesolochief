@@ -30,7 +30,7 @@ export interface AdminUserDetail extends AdminUserRow {
   review_count: number
   weekly_plan_count: number
   whatsapp_number: string | null
-  whatsapp_verified: boolean
+  whatsapp_connected: boolean
 }
 
 export interface AdminMetrics {
@@ -277,7 +277,7 @@ export async function getAdminUserDetail(userId: string): Promise<AdminUserDetai
     whatsapp_number: profile.whatsapp_number
       ? profile.whatsapp_number.slice(0, 3) + ' *** ' + profile.whatsapp_number.slice(-4)
       : null,
-    whatsapp_verified: profile.whatsapp_verified ?? false,
+    whatsapp_connected: profile.whatsapp_connected ?? false,
   }
 }
 
@@ -381,7 +381,7 @@ export async function getAdminSystemStatus(): Promise<SystemStatus> {
 
   const [tableResults, waCountRes] = await Promise.all([
     Promise.all(tables.map(t => db.from(t).select('id', { count: 'exact', head: true }))),
-    db.from('profiles').select('user_id', { count: 'exact', head: true }).eq('whatsapp_verified', true),
+    db.from('profiles').select('user_id', { count: 'exact', head: true }).eq('whatsapp_connected', true),
   ])
 
   const tableCounts: Record<string, number> = {}

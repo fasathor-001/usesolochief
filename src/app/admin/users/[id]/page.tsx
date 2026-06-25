@@ -111,8 +111,8 @@ export default async function AdminUserDetailPage({ params }: { params: Promise<
           <Row label="Sign-in methods"  value={user.providers.join(', ') || '—'} />
           <Row label="User ID"          value={<code style={{ fontSize: 11, color: 'var(--sc-muted)' }}>{user.id}</code>} />
           <Row label="WhatsApp"         value={
-            user.whatsapp_verified
-              ? <span className="sc-badge sc-badge-green">{user.whatsapp_number ?? 'Verified'}</span>
+            user.whatsapp_connected
+              ? <span className="sc-badge sc-badge-green">{user.whatsapp_number ?? 'Connected'}</span>
               : <span style={{ color: 'var(--sc-muted)' }}>Not connected</span>
           } />
         </div>

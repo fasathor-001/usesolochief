@@ -8,19 +8,14 @@ export default async function SettingsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [preferences, profileRes, currentPlan, notifRes, agentStates] = await Promise.all([
+  const [preferences, profileRes, currentPlan, agentStates] = await Promise.all([
     getPreferences(),
     supabase
       .from('profiles')
-      .select('full_name, created_at, plan_expires_at, plan_cancelled_at, whatsapp_number, whatsapp_verified')
+      .select('full_name, created_at, plan_expires_at, plan_cancelled_at, whatsapp_number, whatsapp_connected, whatsapp_notifications_enabled')
       .eq('user_id', user!.id)
       .single(),
     getCurrentPlan(),
-    supabase
-      .from('notification_preferences')
-      .select('whatsapp_notifications_enabled')
-      .eq('user_id', user!.id)
-      .maybeSingle(),
     getUserAgentStates(user!.id),
   ])
 
@@ -38,8 +33,8 @@ export default async function SettingsPage() {
       currentPlan={currentPlan}
       hasPasswordProvider={hasPasswordProvider}
       whatsappNumber={profileRes.data?.whatsapp_number ?? null}
-      whatsappVerified={profileRes.data?.whatsapp_verified ?? false}
-      whatsappNotificationsEnabled={notifRes.data?.whatsapp_notifications_enabled ?? true}
+      whatsappConnected={profileRes.data?.whatsapp_connected ?? false}
+      whatsappNotificationsEnabled={profileRes.data?.whatsapp_notifications_enabled ?? true}
       agentStates={agentStates}
     />
   )
