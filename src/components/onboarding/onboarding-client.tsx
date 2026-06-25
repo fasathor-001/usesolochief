@@ -370,20 +370,26 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 </ul>
               </div>
 
-              {/* Sandbox note */}
+              {error && (
+                <p className="text-sm mb-4" style={{ color: 'var(--sc-error)' }}>{error}</p>
+              )}
+
+              {/* Sandbox warning - prominent amber box above buttons */}
               {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && (
                 <div
                   className="p-4 rounded-lg border mb-6"
-                  style={{ borderColor: 'var(--sc-border)', backgroundColor: 'rgba(0,194,168,0.05)' }}
+                  style={{ borderColor: '#D97706', backgroundColor: '#FEF3C7' }}
                 >
-                  <p className="text-sm" style={{ color: 'var(--sc-text)' }}>
-                    <strong>Sandbox testing:</strong> Open WhatsApp and send &apos;join machine-spin&apos; to +1 415 523 8886 first. Then tap Connect WhatsApp.
+                  <p className="text-sm font-medium" style={{ color: '#92400E' }}>
+                    ⚠️ Sandbox setup required
+                  </p>
+                  <p className="text-sm mt-2" style={{ color: '#92400E' }}>
+                    Before connecting, open WhatsApp and message +1 415 523 8886 with exactly: <strong>join machine-spin</strong>
+                  </p>
+                  <p className="text-sm mt-1" style={{ color: '#92400E' }}>
+                    Wait for Twilio to confirm, then tap Connect WhatsApp.
                   </p>
                 </div>
-              )}
-
-              {error && (
-                <p className="text-sm mb-4" style={{ color: 'var(--sc-error)' }}>{error}</p>
               )}
 
               {/* Buttons */}

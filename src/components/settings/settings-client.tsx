@@ -1314,13 +1314,19 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                         style={{
                           padding: '12px',
                           borderRadius: 'var(--sc-r)',
-                          border: '0.5px solid var(--sc-border)',
-                          backgroundColor: 'rgba(0,194,168,0.05)',
+                          border: '1px solid #D97706',
+                          backgroundColor: '#FEF3C7',
                           marginBottom: 12,
                         }}
                       >
-                        <p style={{ fontSize: 12, color: 'var(--sc-text)' }}>
-                          <strong>Sandbox testing:</strong> Open WhatsApp and send &apos;join machine-spin&apos; to +1 415 523 8886 first. Then tap Connect WhatsApp.
+                        <p style={{ fontSize: 13, fontWeight: 500, color: '#92400E', marginBottom: 6 }}>
+                          ⚠️ Sandbox setup required
+                        </p>
+                        <p style={{ fontSize: 12, color: '#92400E', marginBottom: 4 }}>
+                          Before connecting, open WhatsApp and message +1 415 523 8886 with exactly: <strong>join machine-spin</strong>
+                        </p>
+                        <p style={{ fontSize: 12, color: '#92400E' }}>
+                          Wait for Twilio to confirm, then tap Connect WhatsApp.
                         </p>
                       </div>
                     )}
