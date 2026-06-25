@@ -1333,13 +1333,32 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
 
                 {/* Not connected — start flow */}
                 {waState === 'not_connected' && (
-                  <button
-                    type="button"
-                    className="sc-btn sc-btn-secondary sc-btn-sm"
-                    onClick={() => { setWaState('entering_phone'); setWaError('') }}
-                  >
-                    Connect WhatsApp
-                  </button>
+                  <div>
+                    {process.env.NEXT_PUBLIC_TWILIO_WHATSAPP_NUMBER && process.env.NEXT_PUBLIC_TWILIO_SANDBOX_JOIN_CODE ? (
+                      <div>
+                        <a
+                          href={`https://wa.me/${process.env.NEXT_PUBLIC_TWILIO_WHATSAPP_NUMBER}?text=${encodeURIComponent(`join ${process.env.NEXT_PUBLIC_TWILIO_SANDBOX_JOIN_CODE}`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="sc-btn sc-btn-secondary sc-btn-sm"
+                          style={{ display: 'inline-block', textDecoration: 'none', color: 'inherit' }}
+                        >
+                          Connect WhatsApp
+                        </a>
+                        <div style={{ fontSize: 12, color: 'var(--sc-text-secondary)', marginTop: 8 }}>
+                          Opens WhatsApp. Just hit send to connect.
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="sc-btn sc-btn-secondary sc-btn-sm"
+                        onClick={() => { setWaState('entering_phone'); setWaError('') }}
+                      >
+                        Connect WhatsApp
+                      </button>
+                    )}
+                  </div>
                 )}
 
                 {/* Enter phone */}
