@@ -158,6 +158,7 @@ Full app: solochief.app`
     console.warn('[whatsapp] Failed to send activation message:', activationResult.error)
     // Continue anyway — verification succeeded, just the message failed
   }
+  console.log('[WhatsApp] Activation send result:', JSON.stringify(activationResult))
 
   // Start onboarding flow
   const consentMessage = await startOnboarding(user.id)
