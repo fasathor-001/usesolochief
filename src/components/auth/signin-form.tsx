@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, Suspense } from 'react'
+import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -493,9 +493,7 @@ export default function SigninForm({ initialError = '' }: SigninFormProps) {
             SoloChief <span style={{ color: '#00C2A8' }}>AI</span>
           </p>
 
-          <Suspense fallback={<div style={{ height: 320 }} />}>
-            <SigninFormInner initialError={initialError} />
-          </Suspense>
+          <SigninFormInner initialError={initialError} />
         </div>
       </div>
     </div>
