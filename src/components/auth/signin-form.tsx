@@ -3,7 +3,7 @@
 import { useState, useRef, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, ArrowRight, CheckCircle2 } from 'lucide-react'
 import AuthBrandPanel from './auth-brand-panel'
 
