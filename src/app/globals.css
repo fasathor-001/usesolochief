@@ -222,7 +222,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 28px;
+  padding: env(safe-area-inset-top) 28px 0;
   position: sticky;
   top: 0;
   z-index: 40;
@@ -1004,6 +1004,47 @@
   border-radius: var(--sc-r-lg);
   padding: 14px 16px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* ── PWA install banner (new) ───────────────────────────────────────── */
+
+.sc-pwa-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: #0F1B2D;
+  border-top: 0.5px solid var(--sc-border);
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.sc-pwa-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+}
+
+.sc-pwa-banner-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--sc-r);
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.1s;
+  padding: 0;
+}
+
+.sc-pwa-banner-close:hover {
+  color: rgba(255,255,255,0.9);
 }
 
 /* ── Topbar beta badge ──────────────────────────────────────────────── */
