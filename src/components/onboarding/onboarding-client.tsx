@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveOnboarding } from '@/lib/actions/onboarding'
+import { sendWhatsAppOtp, verifyWhatsAppOtp } from '@/lib/actions/whatsapp'
 import { TEMPLATE_DEFAULTS, TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS } from '@/lib/onboarding-data'
 import type { OnboardingTemplate } from '@/types/database'
 import type { CommitmentDraft } from '@/lib/onboarding-data'
@@ -42,6 +43,13 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   const [newCommitmentTitle, setNewCommitmentTitle] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  // WhatsApp onboarding state
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null)
+  const [onboardingWaPhone, setOnboardingWaPhone] = useState('')
+  const [onboardingWaOtp, setOnboardingWaOtp] = useState('')
+  const [onboardingWaOtpSent, setOnboardingWaOtpSent] = useState(false)
+  const [onboardingWaSending, setOnboardingWaSending] = useState(false)
 
   function selectTemplate(t: OnboardingTemplate) {
     setTemplate(t)
@@ -296,15 +304,161 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
         </div>
       )}
 
-      {/* Step 3 — WhatsApp (Phase 1: skip) */}
+      {/* Step 3 — WhatsApp Connection */}
       {step === 3 && (
         <div>
           <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
             WhatsApp Connection
           </h2>
           <p className="text-sm mb-4" style={{ color: 'var(--sc-muted)' }}>
-            Coming in Phase 2.
+            Connect your WhatsApp to receive your daily brief and log updates on the go.
           </p>
+
+          {/* Part A: Sandbox join block (only in sandbox mode) */}
+          {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && (
+            <div className="p-4 rounded-lg border mb-4" style={{ borderColor: 'var(--sc-border)', backgroundColor: 'rgba(0,194,168,0.05)' }}>
+              <a
+                href="https://wa.me/14155238886?text=join%20machine-spin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block py-2.5 rounded-lg font-medium text-sm transition-colors text-center"
+                style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+              >
+                Open WhatsApp to Connect
+              </a>
+              <p className="text-xs mt-2" style={{ color: 'var(--sc-muted)' }}>
+                This opens WhatsApp with the join code pre-filled. Send the message, then come back here.
+              </p>
+            </div>
+          )}
+
+          {/* Part B: Phone linking flow */}
+          <div style={{ marginBottom: 6 }}>
+            {/* Status indicator */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '12px 14px', borderRadius: 'var(--sc-r)',
+              border: '0.5px solid var(--sc-border)', backgroundColor: 'var(--sc-bg)', marginBottom: 16,
+            }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+                backgroundColor: whatsappNumber ? 'var(--sc-teal, #00C2A8)' : 'var(--sc-muted)',
+              }} />
+              <div style={{ flex: 1 }}>
+                {whatsappNumber ? (
+                  <>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
+                      Connected — {whatsappNumber.slice(0, 3)} *** {whatsappNumber.slice(-4)}
+                    </p>
+                    <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
+                      Ready to receive updates.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>Not connected</p>
+                    <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
+                      Enter your WhatsApp phone number to proceed.
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Phone input if not connected */}
+            {!whatsappNumber && (
+              <div>
+                <div className="sc-field" style={{ marginBottom: 12 }}>
+                  <label className="sc-label">WhatsApp number (with country code)</label>
+                  <input
+                    type="tel"
+                    className="sc-input"
+                    placeholder="+27 831 234 567"
+                    value={onboardingWaPhone}
+                    onChange={e => { setOnboardingWaPhone(e.target.value); setError(null) }}
+                    style={{ marginTop: 6 }}
+                    autoFocus
+                  />
+                </div>
+                {error && error.includes('WhatsApp') && <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginBottom: 10 }}>{error}</p>}
+                <button
+                  type="button"
+                  className="w-full py-2.5 rounded-lg font-medium text-sm transition-colors"
+                  style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+                  onClick={async () => {
+                    setError(null)
+                    setOnboardingWaSending(true)
+                    const result = await sendWhatsAppOtp(onboardingWaPhone)
+                    setOnboardingWaSending(false)
+                    if (result.error) { setError(result.error); return }
+                    setWhatsappNumber(onboardingWaPhone)
+                    setOnboardingWaOtpSent(true)
+                  }}
+                  disabled={!onboardingWaPhone.trim() || onboardingWaSending}
+                >
+                  {onboardingWaSending ? 'Sending…' : 'Send verification code'}
+                </button>
+              </div>
+            )}
+
+            {/* OTP verification if sent */}
+            {onboardingWaOtpSent && whatsappNumber && (
+              <div>
+                <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                  A 6-digit code was sent to {whatsappNumber}. Enter it below.
+                </p>
+                <div className="sc-field" style={{ marginBottom: 12 }}>
+                  <label className="sc-label">Verification code</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete="one-time-code"
+                    maxLength={6}
+                    className="sc-input"
+                    placeholder="123456"
+                    value={onboardingWaOtp}
+                    onChange={e => { setOnboardingWaOtp(e.target.value.replace(/\D/g, '')); setError(null) }}
+                    style={{ marginTop: 6, maxWidth: 160 }}
+                    autoFocus
+                  />
+                </div>
+                {error && error.includes('OTP') && <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginBottom: 10 }}>{error}</p>}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
+                    style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+                    onClick={async () => {
+                      setError(null)
+                      const result = await verifyWhatsAppOtp(whatsappNumber, onboardingWaOtp)
+                      if (result.error) { setError(result.error); return }
+                      setOnboardingWaOtpSent(false)
+                      setOnboardingWaOtp('')
+                    }}
+                    disabled={onboardingWaSending || onboardingWaOtp.length !== 6}
+                  >
+                    {onboardingWaSending ? 'Verifying…' : 'Verify'}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex-1 py-2.5 rounded-lg font-medium text-sm border transition-colors"
+                    style={{ borderColor: 'var(--sc-border)', color: 'var(--sc-muted)' }}
+                    onClick={async () => {
+                      setError(null)
+                      const result = await sendWhatsAppOtp(whatsappNumber)
+                      if (result.error) { setError(result.error); return }
+                    }}
+                    disabled={onboardingWaSending}
+                  >
+                    Resend
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Info box */}
           <div
             className="p-4 rounded-xl border mb-6"
             style={{ borderColor: 'var(--sc-border)', backgroundColor: 'var(--sc-surface)' }}
@@ -317,10 +471,9 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
               <li>• Let you log your day with a simple reply</li>
               <li>• Check in when you go quiet for too long</li>
             </ul>
-            <p className="text-xs mt-3 italic" style={{ color: 'var(--sc-muted)' }}>
-              For now, use the web app. WhatsApp access will be available in the next phase.
-            </p>
           </div>
+
+          {/* Buttons */}
           <div className="flex gap-3">
             <button
               type="button"
