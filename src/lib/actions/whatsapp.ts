@@ -4,6 +4,7 @@ import { createHash, randomInt } from 'crypto'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWhatsApp } from '@/lib/whatsapp/twilio'
+import { startOnboarding } from '@/lib/whatsapp/onboarding'
 import type { ActionResult } from '@/types/database'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -140,11 +141,9 @@ export async function verifyWhatsAppOtp(rawPhone: string, otp: string): Promise<
     .update({ whatsapp_number: phone, whatsapp_verified: true })
     .eq('user_id', user.id)
 
-  // Send welcome message
-  await sendWhatsApp(
-    phone,
-    `SoloChief connected.\n\nSend 'hi' for your daily briefing, 'help' to see all commands, or just ask a question.\n\nWelcome to your pocket Chief of Staff.`,
-  )
+  // Start onboarding flow
+  const consentMessage = await startOnboarding(user.id)
+  await sendWhatsApp(phone, consentMessage)
 
   return { data: undefined, error: null }
 }

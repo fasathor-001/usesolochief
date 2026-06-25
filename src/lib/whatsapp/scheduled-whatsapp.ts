@@ -45,19 +45,31 @@ function toDateStr(date: Date): string {
   return date.toISOString().split('T')[0]
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isInQuietHours(profile: any, now: Date): boolean {
+  const hour = now.getHours()
+  const start = profile.whatsapp_quiet_start
+  const end = profile.whatsapp_quiet_end
+  if (start === null || end === null) return false // No quiet hours
+  if (start < end) return hour >= start && hour < end // Normal range (e.g. 9-17)
+  return hour >= start || hour < end // Overnight wrap (e.g. 21-7)
+}
+
 // ── Morning briefing ──────────────────────────────────────────────────────────
 
 export async function sendMorningBriefings(): Promise<WhatsAppResult> {
   const db      = createAdminClient()
-  const today   = toDateStr(new Date())
+  const now     = new Date()
+  const today   = toDateStr(now)
   const result: WhatsAppResult = { sent: 0, skipped: 0, failed: 0 }
 
-  // Fetch all verified, opted-in users
+  // Fetch all verified, opted-in users who have completed onboarding
   const { data: profiles } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_number, whatsapp_verified')
+    .select('user_id, full_name, whatsapp_number, whatsapp_verified, whatsapp_onboarded_at, whatsapp_briefing_hour, whatsapp_quiet_start, whatsapp_quiet_end')
     .eq('whatsapp_verified', true)
     .not('whatsapp_number', 'is', null)
+    .not('whatsapp_onboarded_at', 'is', null)
 
   if (!profiles || profiles.length === 0) return result
 
@@ -73,9 +85,18 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
   )
 
   for (const profile of profiles as any[]) {
-    const { user_id, full_name, whatsapp_number } = profile
+    const { user_id, full_name, whatsapp_number, whatsapp_briefing_hour } = profile
     if (!whatsapp_number) { result.skipped++; continue }
     if (optedOut.has(user_id)) { result.skipped++; continue }
+
+    // Check if briefing hour matches current hour
+    if (whatsapp_briefing_hour !== null && whatsapp_briefing_hour !== now.getHours()) {
+      result.skipped++
+      continue
+    }
+
+    // Skip if user is in quiet hours
+    if (isInQuietHours(profile, now)) { result.skipped++; continue }
 
     const dedupeKey = `whatsapp_morning:${user_id}:${today}`
     if (await alreadySent(db, dedupeKey)) { result.skipped++; continue }
@@ -135,15 +156,17 @@ async function buildMorningBriefing(db: any, userId: string, name: string): Prom
 
 export async function sendFollowupNudges(): Promise<WhatsAppResult> {
   const db      = createAdminClient()
-  const today   = toDateStr(new Date())
+  const now     = new Date()
+  const today   = toDateStr(now)
   const result: WhatsAppResult = { sent: 0, skipped: 0, failed: 0 }
 
-  // Fetch all verified, opted-in users
+  // Fetch all verified, opted-in users who have completed onboarding
   const { data: profiles } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_number, whatsapp_verified')
+    .select('user_id, full_name, whatsapp_number, whatsapp_verified, whatsapp_onboarded_at, whatsapp_quiet_start, whatsapp_quiet_end')
     .eq('whatsapp_verified', true)
     .not('whatsapp_number', 'is', null)
+    .not('whatsapp_onboarded_at', 'is', null)
 
   if (!profiles || profiles.length === 0) return result
 
@@ -161,6 +184,9 @@ export async function sendFollowupNudges(): Promise<WhatsAppResult> {
     const { user_id, whatsapp_number } = profile
     if (!whatsapp_number) { result.skipped++; continue }
     if (optedOut.has(user_id)) { result.skipped++; continue }
+
+    // Skip if user is in quiet hours
+    if (isInQuietHours(profile, now)) { result.skipped++; continue }
 
     const dedupeKey = `whatsapp_followup_nudge:${user_id}:${today}`
     if (await alreadySent(db, dedupeKey)) { result.skipped++; continue }

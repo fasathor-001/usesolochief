@@ -3,6 +3,8 @@ import twilio from 'twilio'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { twimlResponse, twimlEmpty } from '@/lib/whatsapp/twilio'
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
+import { handleOnboardingReply, startOnboarding } from '@/lib/whatsapp/onboarding'
+import type { OnboardingStep } from '@/lib/whatsapp/onboarding'
 
 // Twilio webhook — URL must exactly match what is configured in the Twilio console.
 // Configure this URL in the Twilio console:  https://solochief.app/api/whatsapp/webhook
@@ -49,7 +51,7 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_verified')
+    .select('user_id, full_name, whatsapp_verified, whatsapp_onboarding_step')
     .eq('whatsapp_number', rawFrom)
     .maybeSingle()
 
@@ -79,8 +81,22 @@ export async function POST(request: NextRequest) {
     .maybeSingle()
   const workspaceId = workspace?.id ?? ''
 
-  // ── 5. Command routing ───────────────────────────────────────────────────
+  // ── 5. Onboarding check ─────────────────────────────────────────────────
+  // If user is mid-onboarding, route to onboarding handler instead of commands
+  const onboardingStep = profile.whatsapp_onboarding_step as OnboardingStep | null
+  if (onboardingStep && onboardingStep !== 'complete') {
+    const reply = await handleOnboardingReply(userId, onboardingStep, bodyText)
+    return twimlResponse(reply)
+  }
+
+  // ── 6. Command routing ───────────────────────────────────────────────────
   const lower = bodyText.toLowerCase()
+
+  // setup / start setup → initiate onboarding
+  if (/^(setup|start\s+setup)\b/.test(lower)) {
+    const reply = await startOnboarding(userId)
+    return twimlResponse(reply)
+  }
 
   // hi / hello / hey / start → briefing
   if (/^(hi|hello|hey|start)\b/.test(lower)) {
