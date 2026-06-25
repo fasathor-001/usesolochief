@@ -31,17 +31,21 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
-    })
+    try {
+      const supabase = createClient()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+      })
 
-    setLoading(false)
-
-    if (resetError) {
-      setError(resetError.message)
-    } else {
-      setSent(true)
+      if (resetError) {
+        setError(resetError.message || 'Failed to send reset email. Please try again.')
+      } else {
+        setSent(true)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -139,7 +143,7 @@ export default function ForgotPasswordPage() {
                   />
                 </div>
 
-                {error && (
+                {typeof error === 'string' && error.length > 0 && (
                   <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
                     {error}
                   </p>

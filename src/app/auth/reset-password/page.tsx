@@ -75,15 +75,19 @@ export default function ResetPasswordPage() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    try {
+      const supabase = createClient()
+      const { error: updateError } = await supabase.auth.updateUser({ password })
 
-    setLoading(false)
-
-    if (updateError) {
-      setError(updateError.message)
-    } else {
-      router.replace('/dashboard')
+      if (updateError) {
+        setError(updateError.message || 'Failed to update password. Please try again.')
+      } else {
+        router.replace('/dashboard')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -179,7 +183,7 @@ export default function ResetPasswordPage() {
                   </div>
                 </div>
 
-                {error && (
+                {typeof error === 'string' && error.length > 0 && (
                   <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#EF4444', lineHeight: 1.4 }}>
                     {error}
                   </p>

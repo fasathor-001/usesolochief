@@ -58,29 +58,33 @@ function SignupFormInner() {
     setLoading(true)
     setError('')
 
-    const supabase = createClient()
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: { full_name: fullName.trim() },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-      },
-    })
+    try {
+      const supabase = createClient()
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: { full_name: fullName.trim() },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+        },
+      })
 
-    setLoading(false)
+      if (signUpError) {
+        setError(signUpError.message || 'Sign-up failed. Please try again.')
+        return
+      }
 
-    if (signUpError) {
-      setError(signUpError.message)
-      return
+      if (data?.session) {
+        router.push('/dashboard')
+        return
+      }
+
+      setConfirmationSent(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    if (data.session) {
-      router.push('/dashboard')
-      return
-    }
-
-    setConfirmationSent(true)
   }
 
   const isDisabled = loading || !fullName.trim() || !email.trim() || !password
