@@ -253,10 +253,8 @@ export async function POST(request: NextRequest) {
         console.log('[whatsapp/webhook] Welcome text message sent')
       }
 
-      // Then immediately trigger D-111 consent flow
-      console.log('[whatsapp/webhook] Starting onboarding consent flow')
-      const consentMessage = await startOnboarding(userId, rawFrom)
-      return twimlResponse(consentMessage)
+      // Welcome message sent - user will tap "Get started 🚀" button to continue
+      return twimlResponse('Welcome message sent. Tap the "Get started" button to continue.')
     } else {
       // Reconnection: send connected confirmation
       console.log('[whatsapp/webhook] Reconnection - sending connected confirmation')

@@ -97,6 +97,14 @@ export async function sendInteractiveMessage(
 
   const fromFormatted = withWhatsAppPrefix(process.env.TWILIO_WHATSAPP_NUMBER!)
   const toFormatted = withWhatsAppPrefix(to)
+  const stringifiedVars = JSON.stringify(variables)
+
+  console.log('[whatsapp] sendInteractiveMessage:', {
+    to: toFormatted,
+    contentSid,
+    variables,
+    stringifiedVars,
+  })
 
   try {
     const client = createTwilioClient()
@@ -104,8 +112,9 @@ export async function sendInteractiveMessage(
       from: fromFormatted,
       to: toFormatted,
       contentSid: contentSid,
-      contentVariables: JSON.stringify(variables),
+      contentVariables: stringifiedVars,
     })
+    console.log('[whatsapp] interactive message sent:', message.sid)
     return { sid: message.sid }
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'unknown'
