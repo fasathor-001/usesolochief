@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
     // Look up token
     const { data: tokenRecord } = await db
       .from('whatsapp_connect_tokens')
-      .select('user_id, expires_at, failed_attempts')
+      .select('user_id, expires_at, failed_attempts, used, used_at')
       .eq('token_hash', tokenHash)
       .eq('used', false)
       .maybeSingle()
