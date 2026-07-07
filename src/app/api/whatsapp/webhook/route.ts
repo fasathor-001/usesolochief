@@ -203,10 +203,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if this user already has a different actively connected WhatsApp number
-    let { data: userProfile, error: profileError } = await db
+    const { data: userProfile, error: profileError } = await db
       .from('profiles')
       .select('user_id, whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
-      .eq('user_id', userId)
+      .eq('id', userId)
       .single()
 
     console.log('[Token Handler] Profile fetch result:', {
@@ -215,23 +215,6 @@ export async function POST(request: NextRequest) {
       token_user_id: tokenRecord?.user_id,
       profile_user_id: userProfile?.user_id
     })
-
-    // If profile not found, create it as fallback
-    if (!userProfile) {
-      console.log('[Token Handler] Profile missing — attempting to create')
-      const { data: newProfile, error: createError } = await db
-        .from('profiles')
-        .insert({ user_id: userId })
-        .select('user_id, whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
-        .single()
-
-      if (createError) {
-        console.log('[Token Handler] Failed to create profile:', createError?.message)
-      } else {
-        console.log('[Token Handler] Profile created successfully')
-        userProfile = newProfile
-      }
-    }
 
     // Check WhatsApp access before allowing connection
     console.log('[Webhook] Profile passed to hasWhatsAppAccess (token handler):', {
