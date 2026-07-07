@@ -99,7 +99,15 @@ export async function sendInteractiveMessage(
   const toFormatted = withWhatsAppPrefix(to)
   const stringifiedVars = JSON.stringify(variables)
 
+  // Identify template type for debugging
+  let templateType = 'unknown'
+  if (contentSid === process.env.TWILIO_CONTENT_CONNECTED_SID) templateType = 'welcome'
+  else if (contentSid === process.env.TWILIO_CONTENT_CONSENT_SID) templateType = 'consent'
+  else if (contentSid === process.env.TWILIO_CONTENT_QUIET_HOURS_SID) templateType = 'quiet_hours'
+  else if (contentSid === process.env.TWILIO_CONTENT_BRIEFING_TIME_SID) templateType = 'briefing_time'
+
   console.log('[whatsapp] sendInteractiveMessage:', {
+    template: templateType,
     to: toFormatted,
     contentSid,
     variables,

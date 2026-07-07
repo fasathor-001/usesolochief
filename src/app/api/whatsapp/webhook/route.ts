@@ -81,7 +81,15 @@ export async function POST(request: NextRequest) {
 
     // Route button actions
     if (buttonPayload.includes('get_started') || bodyText === 'Get started 🚀') {
-      console.log('[whatsapp/webhook] Get Started button → starting onboarding')
+      console.log('[whatsapp/webhook] Get Started button')
+      // Only trigger onboarding if not already complete
+      if (profile.whatsapp_onboarding_step === 'complete') {
+        console.log('[whatsapp/webhook] User already completed onboarding, skipping')
+        return twimlResponse(
+          `✅ You're already set up. Send *hi* for your morning brief or *help* to see all commands.`
+        )
+      }
+      console.log('[whatsapp/webhook] Starting onboarding')
       const consentMessage = await startOnboarding(userId, rawFrom)
       return twimlResponse(consentMessage)
     }
@@ -309,6 +317,14 @@ export async function POST(request: NextRequest) {
 
   // setup / start setup → initiate onboarding
   if (/^(setup|start\s+setup)\b/.test(lower)) {
+    // Only trigger onboarding if not already complete
+    if (profile.whatsapp_onboarding_step === 'complete') {
+      console.log('[whatsapp/webhook] Setup command but user already completed onboarding')
+      return twimlResponse(
+        `✅ You're already set up. Send *hi* for your morning brief or *help* to see all commands.`
+      )
+    }
+    console.log('[whatsapp/webhook] Setup command → starting onboarding')
     const reply = await startOnboarding(userId, rawFrom)
     return twimlResponse(reply)
   }
@@ -381,10 +397,11 @@ export async function POST(request: NextRequest) {
 async function handleBriefing(db: any, userId: string, name: string): Promise<string> {
   const today = new Date().toISOString().split('T')[0]
 
-  const [focusRes, followupsRes, planRes] = await Promise.all([
+  const [focusRes, followupsRes, planRes, commitmentsRes] = await Promise.all([
     db.from('daily_logs').select('status, commitment_id').eq('user_id', userId).eq('log_date', today).maybeSingle(),
     db.from('followups').select('title, due_date').eq('user_id', userId).is('deleted_at', null).in('status', ['open', 'waiting']).lte('due_date', today).order('due_date').limit(5),
     db.from('weekly_plans').select('main_focus_commitment_id').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+    db.from('commitments').select('title').eq('user_id', userId).is('deleted_at', null).in('stage', ['main_focus', 'active']).order('priority').limit(5),
   ])
 
   let mainFocusTitle: string | null = null
@@ -394,17 +411,23 @@ async function handleBriefing(db: any, userId: string, name: string): Promise<st
   }
 
   const focusLine = mainFocusTitle
-    ? `FOCUS TODAY\n${mainFocusTitle}`
-    : `FOCUS TODAY\nNo focus set — open SoloChief to plan your day.`
+    ? `🎯 FOCUS TODAY\n${mainFocusTitle}`
+    : `🎯 FOCUS TODAY\nNo focus set. Open SoloChief to plan your day.`
 
   const followups = (followupsRes.data ?? []) as any[]
   const followupLines = followups.length > 0
-    ? `FOLLOW-UPS DUE\n${followups.map((f: any) => `• ${f.title}`).join('\n')}`
+    ? `🔁 FOLLOW-UPS DUE\n${followups.map((f: any) => `• ${f.title}`).join('\n')}`
     : null
 
-  const parts = [`Morning, ${name}.`, focusLine]
+  const commitments = (commitmentsRes.data ?? []) as any[]
+  const commitmentLines = commitments.length > 0
+    ? `📋 COMMITMENTS\n${commitments.map((c: any) => `• ${c.title}`).join('\n')}`
+    : null
+
+  const parts = [`☀️ Morning, ${name}.`, focusLine]
   if (followupLines) parts.push(followupLines)
-  parts.push(`Reply 'help' for all commands.`)
+  if (commitmentLines) parts.push(commitmentLines)
+  parts.push(`Reply *help* for all commands.`)
 
   return parts.join('\n\n')
 }
