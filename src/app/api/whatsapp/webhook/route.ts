@@ -199,11 +199,17 @@ export async function POST(request: NextRequest) {
     // Check if this user already has a different actively connected WhatsApp number
     const { data: userProfile } = await db
       .from('profiles')
-      .select('whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
+      .select('user_id, whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
       .eq('user_id', userId)
       .single()
 
     // Check WhatsApp access before allowing connection
+    console.log('[Webhook] Profile passed to hasWhatsAppAccess (token handler):', {
+      user_id: userProfile?.user_id,
+      plan: userProfile?.plan,
+      trial_ends_at: userProfile?.whatsapp_trial_ends_at,
+      raw_profile: JSON.stringify(userProfile)
+    })
     if (!userProfile || !hasWhatsAppAccess(userProfile)) {
       console.log('[whatsapp/webhook] User lacks WhatsApp access - blocking connection')
       await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
@@ -414,6 +420,12 @@ export async function POST(request: NextRequest) {
   }
 
   // AI fallback - check access first
+  console.log('[Webhook] Profile passed to hasWhatsAppAccess (AI fallback):', {
+    user_id: profile?.user_id,
+    plan: profile?.plan,
+    trial_ends_at: profile?.whatsapp_trial_ends_at,
+    raw_profile: JSON.stringify(profile)
+  })
   if (!hasWhatsAppAccess(profile)) {
     console.log('[whatsapp/webhook] User lacks WhatsApp access - blocking AI reply')
     await db.from('whatsapp_upgrade_prompts').insert({ user_id: userId, prompt_location: 'ai_fallback' }).then()
