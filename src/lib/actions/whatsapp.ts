@@ -100,7 +100,14 @@ export async function disconnectWhatsApp(): Promise<ActionResult<void>> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { data: null, error: 'Not authenticated' }
 
-  const { error } = await supabase
+  console.log('[disconnectWhatsApp] Starting disconnect for user:', user.id)
+  console.log('[disconnectWhatsApp] Setting:', {
+    whatsapp_connected: false,
+    whatsapp_number: null,
+    whatsapp_disconnected_at: new Date().toISOString(),
+  })
+
+  const { error, data } = await supabase
     .from('profiles')
     .update({
       whatsapp_connected: false,
@@ -109,7 +116,12 @@ export async function disconnectWhatsApp(): Promise<ActionResult<void>> {
     })
     .eq('user_id', user.id)
 
-  if (error) return { data: null, error: 'Failed to remove WhatsApp connection.' }
+  if (error) {
+    console.error('[disconnectWhatsApp] Supabase update failed:', error)
+    return { data: null, error: 'Failed to remove WhatsApp connection.' }
+  }
+
+  console.log('[disconnectWhatsApp] Successfully disconnected for user:', user.id, 'Response:', data)
   return { data: undefined, error: null }
 }
 

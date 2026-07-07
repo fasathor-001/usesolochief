@@ -85,19 +85,30 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (existingProfile) {
+      console.log('[whatsapp/webhook] Found existing profile for number:', rawFrom, {
+        user_id: existingProfile.user_id,
+        whatsapp_connected: existingProfile.whatsapp_connected,
+        current_user_id: userId,
+      })
+
       if (existingProfile.user_id === userId) {
         // Same user with this number
         if (existingProfile.whatsapp_connected === true) {
           // Already actively connected - don't reconnect
+          console.log('[whatsapp/webhook] Same user, already connected - blocking reconnect')
           await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
           return twimlResponse('WhatsApp is already connected.')
         }
         // Same user but disconnected - allow reconnection (continue below)
+        console.log('[whatsapp/webhook] Same user but disconnected - allowing reconnect')
       } else if (existingProfile.whatsapp_connected === true) {
         // Different user has this number AND it's actively connected - block
+        console.log('[whatsapp/webhook] Different user, actively connected - blocking')
         return twimlResponse('This WhatsApp number is connected to another SoloChief account. Please contact support.')
+      } else {
+        // Different user but their connection is disconnected - allow this user to take it
+        console.log('[whatsapp/webhook] Different user but disconnected - allowing takeover')
       }
-      // Different user but their connection is disconnected - allow this user to take it
     }
 
     // Check if this user already has a different actively connected WhatsApp number
