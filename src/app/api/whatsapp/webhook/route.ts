@@ -60,10 +60,21 @@ export async function POST(request: NextRequest) {
     allParams: params,
   })
 
-  // ── 2.4. Handle interactive button replies ─────────────────────────────────
-  // Check for button payloads BEFORE processing other message types
-  if (buttonPayload || ['Get started 🚀', 'Yes, let\'s go', 'No thanks'].includes(bodyText)) {
-    console.log('[whatsapp/webhook] Button reply detected:', buttonPayload || bodyText)
+  // ── 2.4. Handle interactive button and list replies ────────────────────────
+  // Check for button payloads and list selections BEFORE processing other message types
+  const listId = params['ListId'] ?? ''
+
+  // Log all interactive payloads for debugging
+  if (buttonPayload || listId || ['Get started 🚀', 'Yes, let\'s go', 'No thanks'].includes(bodyText)) {
+    console.log('[Webhook] Button/List payload received:', {
+      buttonPayload: buttonPayload,
+      listId: listId,
+      body: bodyText
+    })
+  }
+
+  if (buttonPayload || listId || ['Get started 🚀', 'Yes, let\'s go', 'No thanks'].includes(bodyText)) {
+    console.log('[whatsapp/webhook] Button/List reply detected:', buttonPayload || listId || bodyText)
 
     // Get user info
     const { data: profile } = await db
@@ -73,7 +84,7 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (!profile) {
-      console.log('[whatsapp/webhook] No profile found for button reply')
+      console.log('[whatsapp/webhook] No profile found for button/list reply')
       return twimlResponse(
         'Hey. I\'m Chief, your personal Chief of Staff.\n\n' +
         'I help you:\n\n' +
@@ -88,6 +99,7 @@ export async function POST(request: NextRequest) {
 
     const userId = profile.user_id
     const firstName = profile.full_name ? profile.full_name.split(' ')[0] : 'there'
+    const currentOnboardingStep = profile.whatsapp_onboarding_step as OnboardingStep | null
 
     // Route button actions
     if (buttonPayload.includes('get_started') || bodyText === 'Get started 🚀') {
@@ -104,31 +116,80 @@ export async function POST(request: NextRequest) {
       return twimlResponse(consentMessage)
     }
 
+    // ── Consent payload handling (buttons or list) ─────────────────────────────
+    if (currentOnboardingStep === 'consent' && (buttonPayload || listId)) {
+      if (buttonPayload.includes('consent_yes') || listId.includes('consent_yes') || bodyText === 'Yes, send me briefings') {
+        console.log('[whatsapp/webhook] Consent Yes - button or list')
+        const reply = await handleOnboardingReply(userId, 'consent', '1', rawFrom)
+        return twimlResponse(reply)
+      }
+      if (buttonPayload.includes('consent_no') || listId.includes('consent_no') || bodyText === 'No thanks') {
+        console.log('[whatsapp/webhook] Consent No - button or list')
+        const reply = await handleOnboardingReply(userId, 'consent', '2', rawFrom)
+        return twimlResponse(reply)
+      }
+    }
+
+    // ── Quiet hours payload handling (buttons or list) ──────────────────────────
+    if (currentOnboardingStep === 'quiet_hours' && (buttonPayload || listId)) {
+      // Check all quiet hours patterns
+      const quietHoursMatch =
+        (buttonPayload.includes('quiet_1') || listId.includes('quiet_1') || bodyText.includes('10pm') || bodyText.includes('10PM')) ? '1' :
+        (buttonPayload.includes('quiet_2') || listId.includes('quiet_2') || bodyText.includes('11pm') || bodyText.includes('11PM')) ? '2' :
+        (buttonPayload.includes('quiet_3') || listId.includes('quiet_3') || bodyText.includes('Midnight') || bodyText.includes('midnight')) ? '3' :
+        (buttonPayload.includes('quiet_4') || listId.includes('quiet_4') || bodyText.includes('No quiet hours')) ? '4' :
+        null
+
+      if (quietHoursMatch) {
+        console.log(`[whatsapp/webhook] Quiet hours option ${quietHoursMatch} - button or list`)
+        const reply = await handleOnboardingReply(userId, 'quiet_hours', quietHoursMatch, rawFrom)
+        return twimlResponse(reply)
+      }
+    }
+
+    // ── Briefing time payload handling (buttons or list) ───────────────────────
+    if (currentOnboardingStep === 'briefing_time' && (buttonPayload || listId)) {
+      // Check all briefing time patterns
+      const briefingMatch =
+        (buttonPayload.includes('brief_6') || listId.includes('brief_6') || bodyText.includes('6:00') || bodyText.includes('6 AM') || bodyText.includes('6am')) ? '1' :
+        (buttonPayload.includes('brief_7') || listId.includes('brief_7') || bodyText.includes('7:00') || bodyText.includes('7 AM') || bodyText.includes('7am')) ? '2' :
+        (buttonPayload.includes('brief_8') || listId.includes('brief_8') || bodyText.includes('8:00') || bodyText.includes('8 AM') || bodyText.includes('8am')) ? '3' :
+        (buttonPayload.includes('brief_9') || listId.includes('brief_9') || bodyText.includes('9:00') || bodyText.includes('9 AM') || bodyText.includes('9am')) ? '4' :
+        null
+
+      if (briefingMatch) {
+        console.log(`[whatsapp/webhook] Briefing time option ${briefingMatch} - button or list`)
+        const reply = await handleOnboardingReply(userId, 'briefing_time', briefingMatch, rawFrom)
+        return twimlResponse(reply)
+      }
+    }
+
+    // Legacy button payload routing (for backwards compatibility)
     if (buttonPayload.includes('consent_yes') || bodyText === 'Yes, let\'s go') {
-      console.log('[whatsapp/webhook] Consent Yes button')
+      console.log('[whatsapp/webhook] Consent Yes button (legacy)')
       const reply = await handleOnboardingReply(userId, 'consent', '1', rawFrom)
       return twimlResponse(reply)
     }
 
     if (buttonPayload.includes('consent_no') || bodyText === 'No thanks') {
-      console.log('[whatsapp/webhook] Consent No button')
+      console.log('[whatsapp/webhook] Consent No button (legacy)')
       const reply = await handleOnboardingReply(userId, 'consent', '2', rawFrom)
       return twimlResponse(reply)
     }
 
-    // Quiet hours button routing
+    // Quiet hours button routing (legacy)
     for (let i = 1; i <= 4; i++) {
       if (buttonPayload.includes(`quiet_${i}`)) {
-        console.log(`[whatsapp/webhook] Quiet hours option ${i} button`)
+        console.log(`[whatsapp/webhook] Quiet hours option ${i} button (legacy)`)
         const reply = await handleOnboardingReply(userId, 'quiet_hours', String(i), rawFrom)
         return twimlResponse(reply)
       }
     }
 
-    // Briefing time button routing
+    // Briefing time button routing (legacy)
     for (let i = 1; i <= 4; i++) {
       if (buttonPayload.includes(`brief_${i}`)) {
-        console.log(`[whatsapp/webhook] Briefing time option ${i} button`)
+        console.log(`[whatsapp/webhook] Briefing time option ${i} button (legacy)`)
         const reply = await handleOnboardingReply(userId, 'briefing_time', String(i), rawFrom)
         return twimlResponse(reply)
       }
