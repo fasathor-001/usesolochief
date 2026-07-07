@@ -103,14 +103,14 @@ Send *hi* for your morning brief or *help* to see all commands. 🤝`
 export function helpText(): string {
   return `🤝 *CHIEF COMMANDS*
 
-☀️ *hi* or *briefing* — Morning briefing
-🎯 *focus* — Today's focus
-🔁 *follow-ups* — Due follow-ups
-📋 *commitments* — Active commitments
-🗓 *plan* — This week's plan
-💡 *capture* [item] — Park an idea
-✅ *done* [name] — Close a follow-up
-🤝 *help* — This list
+☀️ *hi* or *briefing*: Morning briefing
+🎯 *focus*: Today's focus
+🔁 *follow-ups*: Due follow-ups
+📋 *commitments*: Active commitments
+🗓 *plan*: This week's plan
+💡 *capture* [item]: Park an idea
+✅ *done* [name]: Close a follow-up
+🤝 *help*: This list
 
 👉 Full app: solochief.app`
 }
