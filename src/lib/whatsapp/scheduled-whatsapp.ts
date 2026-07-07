@@ -242,7 +242,7 @@ export async function buildAiReply(
   const systemPrompt = `You are SoloChief AI, responding via WhatsApp. The user is ${name}.
 Active commitments: ${commitments}.
 Overdue follow-ups: ${overdue}.
-Keep your reply to 2–3 sentences maximum. Be calm, direct, and specific. UK spelling. No emojis.
+Keep your reply to 2–3 sentences maximum. Be calm, direct, and specific. UK spelling.
 CRITICAL: Never use em dashes (—) in any response. Use a comma, full stop, or new line instead.`
 
   if (!process.env.ANTHROPIC_API_KEY) return "I'm not able to answer that right now — open SoloChief at solochief.app for assistance."
