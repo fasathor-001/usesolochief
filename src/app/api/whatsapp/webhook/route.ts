@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = profile.user_id
-    const firstName = profile.full_name ? profile.full_name.split(' ')[0] : 'there'
+    const firstName = profile.full_name?.split(' ')[0] || ''
     const currentOnboardingStep = profile.whatsapp_onboarding_step as OnboardingStep | null
 
     // Route button actions
@@ -339,7 +339,7 @@ export async function POST(request: NextRequest) {
       .select('full_name')
       .eq('user_id', userId)
       .maybeSingle()
-    const firstName = userProfile2?.full_name ? userProfile2.full_name.split(' ')[0] : 'there'
+    const firstName = userProfile2?.full_name?.split(' ')[0] || ''
 
     // Check if this is a new connection or reconnection
     if (!userProfile?.whatsapp_number) {
@@ -390,7 +390,7 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = profile.user_id
-  const name   = (profile.full_name ?? '').split(' ')[0] || 'there'
+  const name   = profile.full_name?.split(' ')[0] || ''
 
   // ── 4. Workspace lookup ──────────────────────────────────────────────────
   const { data: workspace } = await db

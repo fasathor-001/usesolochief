@@ -14,8 +14,8 @@ import {
 
 // Interactive message helpers
 async function sendConsentMessage(userId: string, userPhone: string, firstName: string): Promise<void> {
-  // Ensure firstName is always valid (fallback to 'there' if empty)
-  const displayName = firstName && firstName.trim() ? firstName : 'there'
+  // Use firstName as-is, empty string if not available (no "there" fallback)
+  const displayName = firstName && firstName.trim() ? firstName : ''
   console.log('[Interactive] sendConsentMessage with variables:', { '1': displayName })
   const contentSid = process.env.TWILIO_CONTENT_CONSENT_SID
   if (contentSid) {
@@ -26,8 +26,8 @@ async function sendConsentMessage(userId: string, userPhone: string, firstName: 
 }
 
 async function sendQuietHoursMessage(userPhone: string, firstName: string): Promise<void> {
-  // Ensure firstName is always valid (fallback to 'there' if empty)
-  const displayName = firstName && firstName.trim() ? firstName : 'there'
+  // Use firstName as-is, empty string if not available (no "there" fallback)
+  const displayName = firstName && firstName.trim() ? firstName : ''
   console.log('[Interactive] sendQuietHoursMessage with variables:', { '1': displayName })
   const contentSid = process.env.TWILIO_CONTENT_QUIET_HOURS_SID
   if (contentSid) {
@@ -38,8 +38,8 @@ async function sendQuietHoursMessage(userPhone: string, firstName: string): Prom
 }
 
 async function sendBriefingTimeMessage(userPhone: string, firstName: string): Promise<void> {
-  // Ensure firstName is always valid (fallback to 'there' if empty)
-  const displayName = firstName && firstName.trim() ? firstName : 'there'
+  // Use firstName as-is, empty string if not available (no "there" fallback)
+  const displayName = firstName && firstName.trim() ? firstName : ''
   console.log('[Interactive] sendBriefingTimeMessage with variables:', { '1': displayName })
   const contentSid = process.env.TWILIO_CONTENT_BRIEFING_TIME_SID
   if (contentSid) {
@@ -64,14 +64,14 @@ export async function handleOnboardingReply(
   const lower = reply.toLowerCase()
 
   // Get user's first name for interactive messages
-  let firstName = 'there'
+  let firstName = ''
   if (userPhone) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('full_name')
       .eq('user_id', userId)
       .maybeSingle()
-    firstName = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+    firstName = profile?.full_name?.split(' ')[0] || ''
   }
 
   // Consent step: expect 1, 2, or button IDs
@@ -253,7 +253,7 @@ export async function startOnboarding(userId: string, userPhone?: string): Promi
       .select('full_name')
       .eq('user_id', userId)
       .maybeSingle()
-    const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+    const firstName = profile?.full_name?.split(' ')[0] || ''
     await sendConsentMessage(userId, userPhone, firstName)
     return ''
   }
@@ -273,7 +273,7 @@ async function getCompleteMessage(userId: string, userPhone?: string): Promise<s
     .eq('user_id', userId)
     .maybeSingle()
 
-  const name = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+  const name = profile?.full_name?.split(' ')[0] || ''
   const briefingHour = profile?.whatsapp_briefing_hour ?? null
 
   if (userPhone) {
