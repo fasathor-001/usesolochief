@@ -1,35 +1,30 @@
 export function consentMessage(): string {
-  return `Welcome to SoloChief.
+  return `👋 Hey, I'm Chief, your AI Chief of Staff.
 
-I'm your Chief of Staff on WhatsApp. I'll send your morning briefing, flag follow-ups that need attention, and help you keep the week on track.
+Before we start, I need your consent to send you daily briefings and operational check-ins on WhatsApp.
 
-Just your commitments and follow-ups. No spam. No distractions.
-
-Ready to set up?
-1. Yes, set me up
-2. Not now`
+1. Yes, let's go
+2. No thanks`
 }
 
 export function quietHoursMessage(): string {
-  return `When should I stay quiet?
+  return `🔕 When should I go quiet?
 
-I won't send anything during your quiet hours.
+I won't send messages during these hours.
 
-Reply with a number:
-1. 9pm to 7am (default)
-2. 10pm to 8am
-3. 11pm to 6am
+1. 10pm to 6am
+2. 11pm to 7am
+3. Midnight to 8am
 4. No quiet hours`
 }
 
 export function briefingTimeMessage(): string {
-  return `Last step. What time do you want your morning briefing?
+  return `☀️ What time should your morning brief arrive?
 
-Reply with a number:
-1. 6am
-2. 7am
-3. 8am
-4. Skip for now`
+1. 6:00 AM
+2. 7:00 AM
+3. 8:00 AM
+4. 9:00 AM`
 }
 
 export function completeMessage(name: string): string {

@@ -24,9 +24,12 @@ export async function handleOnboardingReply(
   const reply = body.trim()
   const lower = reply.toLowerCase()
 
-  // Consent step: expect 1 or 2
+  // Consent step: expect 1, 2, or button IDs
   if (currentStep === 'consent') {
-    if (reply === '1') {
+    const isYes = reply === '1' || lower === 'consent_yes'
+    const isNo = reply === '2' || lower === 'consent_no'
+
+    if (isYes) {
       // Advance to quiet_hours
       await supabase
         .from('profiles')
@@ -34,7 +37,7 @@ export async function handleOnboardingReply(
         .eq('user_id', userId)
 
       return quietHoursMessage()
-    } else if (reply === '2') {
+    } else if (isNo) {
       // Skip onboarding
       await supabase
         .from('profiles')
@@ -47,45 +50,50 @@ export async function handleOnboardingReply(
     return consentMessage()
   }
 
-  // Quiet hours step: expect 1-4
+  // Quiet hours step: expect 1-4 or button IDs
   if (currentStep === 'quiet_hours') {
-    if (reply === '1') {
-      // 9pm to 7am (default)
-      await supabase
-        .from('profiles')
-        .update({
-          whatsapp_quiet_start: 21,
-          whatsapp_quiet_end: 7,
-          whatsapp_onboarding_step: 'briefing_time',
-        })
-        .eq('user_id', userId)
+    const option1 = reply === '1' || lower === 'quiet_hours_1' || lower.includes('10pm') || lower.includes('6am')
+    const option2 = reply === '2' || lower === 'quiet_hours_2' || lower.includes('11pm') || lower.includes('7am')
+    const option3 = reply === '3' || lower === 'quiet_hours_3' || lower.includes('midnight') || lower.includes('8am')
+    const option4 = reply === '4' || lower === 'quiet_hours_4' || lower.includes('no quiet')
 
-      return briefingTimeMessage()
-    } else if (reply === '2') {
-      // 10pm to 8am
+    if (option1) {
+      // 10pm to 6am
       await supabase
         .from('profiles')
         .update({
           whatsapp_quiet_start: 22,
-          whatsapp_quiet_end: 8,
-          whatsapp_onboarding_step: 'briefing_time',
-        })
-        .eq('user_id', userId)
-
-      return briefingTimeMessage()
-    } else if (reply === '3') {
-      // 11pm to 6am
-      await supabase
-        .from('profiles')
-        .update({
-          whatsapp_quiet_start: 23,
           whatsapp_quiet_end: 6,
           whatsapp_onboarding_step: 'briefing_time',
         })
         .eq('user_id', userId)
 
       return briefingTimeMessage()
-    } else if (reply === '4') {
+    } else if (option2) {
+      // 11pm to 7am
+      await supabase
+        .from('profiles')
+        .update({
+          whatsapp_quiet_start: 23,
+          whatsapp_quiet_end: 7,
+          whatsapp_onboarding_step: 'briefing_time',
+        })
+        .eq('user_id', userId)
+
+      return briefingTimeMessage()
+    } else if (option3) {
+      // Midnight to 8am
+      await supabase
+        .from('profiles')
+        .update({
+          whatsapp_quiet_start: 0,
+          whatsapp_quiet_end: 8,
+          whatsapp_onboarding_step: 'briefing_time',
+        })
+        .eq('user_id', userId)
+
+      return briefingTimeMessage()
+    } else if (option4) {
       // No quiet hours
       await supabase
         .from('profiles')
@@ -102,9 +110,14 @@ export async function handleOnboardingReply(
     return quietHoursMessage()
   }
 
-  // Briefing time step: expect 1-4
+  // Briefing time step: expect 1-4 or button IDs
   if (currentStep === 'briefing_time') {
-    if (reply === '1') {
+    const option1 = reply === '1' || lower === 'briefing_time_1' || lower.includes('6:00') || lower.includes('6am')
+    const option2 = reply === '2' || lower === 'briefing_time_2' || lower.includes('7:00') || lower.includes('7am')
+    const option3 = reply === '3' || lower === 'briefing_time_3' || lower.includes('8:00') || lower.includes('8am')
+    const option4 = reply === '4' || lower === 'briefing_time_4' || lower.includes('9:00') || lower.includes('9am')
+
+    if (option1) {
       // 6am
       await supabase
         .from('profiles')
@@ -116,7 +129,7 @@ export async function handleOnboardingReply(
         .eq('user_id', userId)
 
       return await getCompleteMessage(userId)
-    } else if (reply === '2') {
+    } else if (option2) {
       // 7am
       await supabase
         .from('profiles')
@@ -128,7 +141,7 @@ export async function handleOnboardingReply(
         .eq('user_id', userId)
 
       return await getCompleteMessage(userId)
-    } else if (reply === '3') {
+    } else if (option3) {
       // 8am
       await supabase
         .from('profiles')
@@ -140,12 +153,12 @@ export async function handleOnboardingReply(
         .eq('user_id', userId)
 
       return await getCompleteMessage(userId)
-    } else if (reply === '4') {
-      // No morning briefing
+    } else if (option4) {
+      // 9am
       await supabase
         .from('profiles')
         .update({
-          whatsapp_briefing_hour: null,
+          whatsapp_briefing_hour: 9,
           whatsapp_onboarding_step: 'complete',
           whatsapp_onboarded_at: new Date().toISOString(),
         })
