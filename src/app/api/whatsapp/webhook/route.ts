@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
     const onboardingStep = userProfile?.whatsapp_number ? null : undefined
     if (!userProfile?.whatsapp_number) {
       // New connection, start onboarding
-      const consentMessage = await startOnboarding(userId)
+      const consentMessage = await startOnboarding(userId, rawFrom)
       return twimlResponse(consentMessage)
     } else {
       // Already had a number, send connected confirmation with user's name
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
   // If user is mid-onboarding, route to onboarding handler instead of commands
   const onboardingStep = profile.whatsapp_onboarding_step as OnboardingStep | null
   if (onboardingStep && onboardingStep !== 'complete') {
-    const reply = await handleOnboardingReply(userId, onboardingStep, bodyText)
+    const reply = await handleOnboardingReply(userId, onboardingStep, bodyText, rawFrom)
     return twimlResponse(reply)
   }
 
@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
 
   // setup / start setup → initiate onboarding
   if (/^(setup|start\s+setup)\b/.test(lower)) {
-    const reply = await startOnboarding(userId)
+    const reply = await startOnboarding(userId, rawFrom)
     return twimlResponse(reply)
   }
 

@@ -84,3 +84,32 @@ export function maskPhone(phone: string): string {
   if (!phone || phone.length < 7) return phone
   return phone.slice(0, 3) + ' *** ' + phone.slice(-4)
 }
+
+export async function sendInteractiveMessage(
+  to: string,
+  contentSid: string,
+  variables: Record<string, string>,
+): Promise<{ sid?: string; error?: string }> {
+  if (!isTwilioConfigured()) {
+    console.warn('[whatsapp] Twilio not configured — skipping send')
+    return { error: 'not_configured' }
+  }
+
+  const fromFormatted = withWhatsAppPrefix(process.env.TWILIO_WHATSAPP_NUMBER!)
+  const toFormatted = withWhatsAppPrefix(to)
+
+  try {
+    const client = createTwilioClient()
+    const message = await client.messages.create({
+      from: fromFormatted,
+      to: toFormatted,
+      contentSid: contentSid,
+      contentVariables: JSON.stringify(variables),
+    })
+    return { sid: message.sid }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'unknown'
+    console.error('[whatsapp] interactive send failed:', msg)
+    return { error: msg }
+  }
+}

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { sendWhatsApp, sendInteractiveMessage } from '@/lib/whatsapp/twilio'
 
 export type OnboardingStep = 'consent' | 'quiet_hours' | 'briefing_time' | 'complete'
 
@@ -11,6 +12,34 @@ import {
   skippedMessage,
 } from './templates'
 
+// Interactive message helpers
+async function sendConsentMessage(userId: string, userPhone: string, firstName: string): Promise<void> {
+  const contentSid = process.env.TWILIO_CONTENT_CONSENT_SID
+  if (contentSid) {
+    await sendInteractiveMessage(userPhone, contentSid, { '1': firstName })
+  } else {
+    await sendWhatsApp(userPhone, consentMessage())
+  }
+}
+
+async function sendQuietHoursMessage(userPhone: string, firstName: string): Promise<void> {
+  const contentSid = process.env.TWILIO_CONTENT_QUIET_HOURS_SID
+  if (contentSid) {
+    await sendInteractiveMessage(userPhone, contentSid, { '1': firstName })
+  } else {
+    await sendWhatsApp(userPhone, quietHoursMessage())
+  }
+}
+
+async function sendBriefingTimeMessage(userPhone: string, firstName: string): Promise<void> {
+  const contentSid = process.env.TWILIO_CONTENT_BRIEFING_TIME_SID
+  if (contentSid) {
+    await sendInteractiveMessage(userPhone, contentSid, { '1': firstName })
+  } else {
+    await sendWhatsApp(userPhone, briefingTimeMessage())
+  }
+}
+
 /**
  * Handle an onboarding reply and advance the state machine.
  * Returns the message to send to the user.
@@ -19,10 +48,22 @@ export async function handleOnboardingReply(
   userId: string,
   currentStep: OnboardingStep,
   body: string,
+  userPhone?: string,
 ): Promise<string> {
   const supabase = await createClient()
   const reply = body.trim()
   const lower = reply.toLowerCase()
+
+  // Get user's first name for interactive messages
+  let firstName = 'there'
+  if (userPhone) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', userId)
+      .maybeSingle()
+    firstName = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+  }
 
   // Consent step: expect 1, 2, or button IDs
   if (currentStep === 'consent') {
@@ -36,6 +77,10 @@ export async function handleOnboardingReply(
         .update({ whatsapp_onboarding_step: 'quiet_hours', whatsapp_consent_at: new Date().toISOString() })
         .eq('user_id', userId)
 
+      if (userPhone) {
+        await sendQuietHoursMessage(userPhone, firstName)
+        return ''
+      }
       return quietHoursMessage()
     } else if (isNo) {
       // Skip onboarding
@@ -57,6 +102,14 @@ export async function handleOnboardingReply(
     const option3 = reply === '3' || lower === 'quiet_hours_3' || lower.includes('midnight') || lower.includes('8am')
     const option4 = reply === '4' || lower === 'quiet_hours_4' || lower.includes('no quiet')
 
+    const advanceToNextStep = async () => {
+      if (userPhone) {
+        await sendBriefingTimeMessage(userPhone, firstName)
+        return ''
+      }
+      return briefingTimeMessage()
+    }
+
     if (option1) {
       // 10pm to 6am
       await supabase
@@ -68,7 +121,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return briefingTimeMessage()
+      return await advanceToNextStep()
     } else if (option2) {
       // 11pm to 7am
       await supabase
@@ -80,7 +133,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return briefingTimeMessage()
+      return await advanceToNextStep()
     } else if (option3) {
       // Midnight to 8am
       await supabase
@@ -92,7 +145,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return briefingTimeMessage()
+      return await advanceToNextStep()
     } else if (option4) {
       // No quiet hours
       await supabase
@@ -104,7 +157,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return briefingTimeMessage()
+      return await advanceToNextStep()
     }
     // Invalid reply
     return quietHoursMessage()
@@ -128,7 +181,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return await getCompleteMessage(userId)
+      return await getCompleteMessage(userId, userPhone)
     } else if (option2) {
       // 7am
       await supabase
@@ -140,7 +193,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return await getCompleteMessage(userId)
+      return await getCompleteMessage(userId, userPhone)
     } else if (option3) {
       // 8am
       await supabase
@@ -152,7 +205,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return await getCompleteMessage(userId)
+      return await getCompleteMessage(userId, userPhone)
     } else if (option4) {
       // 9am
       await supabase
@@ -164,7 +217,7 @@ export async function handleOnboardingReply(
         })
         .eq('user_id', userId)
 
-      return await getCompleteMessage(userId)
+      return await getCompleteMessage(userId, userPhone)
     }
     // Invalid reply
     return briefingTimeMessage()
@@ -177,7 +230,7 @@ export async function handleOnboardingReply(
 /**
  * Start onboarding for a user. Sets step to 'consent' and returns the consent message.
  */
-export async function startOnboarding(userId: string): Promise<string> {
+export async function startOnboarding(userId: string, userPhone?: string): Promise<string> {
   const supabase = await createClient()
 
   await supabase
@@ -185,13 +238,24 @@ export async function startOnboarding(userId: string): Promise<string> {
     .update({ whatsapp_onboarding_step: 'consent' })
     .eq('user_id', userId)
 
+  if (userPhone) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', userId)
+      .maybeSingle()
+    const firstName = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+    await sendConsentMessage(userId, userPhone, firstName)
+    return ''
+  }
+
   return consentMessage()
 }
 
 /**
  * Get the complete message with user's name
  */
-async function getCompleteMessage(userId: string): Promise<string> {
+async function getCompleteMessage(userId: string, userPhone?: string): Promise<string> {
   const supabase = await createClient()
 
   const { data: profile } = await supabase
@@ -202,5 +266,11 @@ async function getCompleteMessage(userId: string): Promise<string> {
 
   const name = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
   const briefingHour = profile?.whatsapp_briefing_hour ?? null
+
+  if (userPhone) {
+    await sendWhatsApp(userPhone, completeMessage(name, briefingHour))
+    return ''
+  }
+
   return completeMessage(name, briefingHour)
 }
