@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWhatsApp } from '@/lib/whatsapp/twilio'
+import { getTimeOfDayGreeting } from '@/lib/whatsapp/templates'
 import Anthropic from '@anthropic-ai/sdk'
 
 export interface WhatsAppResult {
@@ -122,10 +123,11 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
 async function buildMorningBriefing(db: any, userId: string, name: string): Promise<string> {
   const today = toDateStr(new Date())
 
-  const [focusRes, followupsRes, planRes] = await Promise.all([
+  const [focusRes, followupsRes, planRes, profileRes] = await Promise.all([
     db.from('daily_logs').select('status, notes, commitment_id').eq('user_id', userId).eq('log_date', today).maybeSingle(),
     db.from('followups').select('title, due_date').eq('user_id', userId).is('deleted_at', null).in('status', ['open', 'waiting']).lte('due_date', today).order('due_date').limit(5),
     db.from('weekly_plans').select('main_focus_commitment_id').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+    db.from('profiles').select('timezone').eq('user_id', userId).maybeSingle(),
   ])
 
   let mainFocusTitle: string | null = null
@@ -134,11 +136,13 @@ async function buildMorningBriefing(db: any, userId: string, name: string): Prom
     mainFocusTitle = commitment?.title ?? null
   }
 
-  const greeting = name ? `👋 Morning, ${name.split(' ')[0]}.` : '👋 Morning.'
+  const firstName = name ? name.split(' ')[0] : 'there'
+  const timezone = profileRes.data?.timezone ?? 'UTC'
+  const greeting = getTimeOfDayGreeting(firstName, timezone)
 
   const focusLine = mainFocusTitle
     ? `🎯 FOCUS TODAY\n${mainFocusTitle}`
-    : `🎯 FOCUS TODAY\nNo focus set — open SoloChief to plan your day.`
+    : `🎯 FOCUS TODAY\nNo focus set. Open SoloChief to plan your day.`
 
   const followups = (followupsRes.data ?? []) as any[]
   const followupLines = followups.length > 0

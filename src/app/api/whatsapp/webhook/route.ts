@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { twimlResponse, twimlEmpty, sendInteractiveMessage, sendWhatsApp } from '@/lib/whatsapp/twilio'
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
 import { handleOnboardingReply, startOnboarding } from '@/lib/whatsapp/onboarding'
-import { expiredTokenMessage, alreadyConnectedMessage, helpText } from '@/lib/whatsapp/templates'
+import { expiredTokenMessage, alreadyConnectedMessage, helpText, getTimeOfDayGreeting } from '@/lib/whatsapp/templates'
 import type { OnboardingStep } from '@/lib/whatsapp/onboarding'
 
 // Twilio webhook — URL must exactly match what is configured in the Twilio console.
@@ -397,11 +397,12 @@ export async function POST(request: NextRequest) {
 async function handleBriefing(db: any, userId: string, name: string): Promise<string> {
   const today = new Date().toISOString().split('T')[0]
 
-  const [focusRes, followupsRes, planRes, commitmentsRes] = await Promise.all([
+  const [focusRes, followupsRes, planRes, commitmentsRes, profileRes] = await Promise.all([
     db.from('daily_logs').select('status, commitment_id').eq('user_id', userId).eq('log_date', today).maybeSingle(),
     db.from('followups').select('title, due_date').eq('user_id', userId).is('deleted_at', null).in('status', ['open', 'waiting']).lte('due_date', today).order('due_date').limit(5),
     db.from('weekly_plans').select('main_focus_commitment_id').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     db.from('commitments').select('title').eq('user_id', userId).is('deleted_at', null).in('stage', ['main_focus', 'active']).order('priority').limit(5),
+    db.from('profiles').select('timezone').eq('user_id', userId).maybeSingle(),
   ])
 
   let mainFocusTitle: string | null = null
@@ -424,7 +425,11 @@ async function handleBriefing(db: any, userId: string, name: string): Promise<st
     ? `📋 COMMITMENTS\n${commitments.map((c: any) => `• ${c.title}`).join('\n')}`
     : null
 
-  const parts = [`☀️ Morning, ${name}.`, focusLine]
+  const timezone = profileRes.data?.timezone ?? 'UTC'
+  const firstName = name.split(' ')[0]
+  const timeGreeting = getTimeOfDayGreeting(firstName, timezone)
+
+  const parts = [timeGreeting, focusLine]
   if (followupLines) parts.push(followupLines)
   if (commitmentLines) parts.push(commitmentLines)
   parts.push(`Reply *help* for all commands.`)

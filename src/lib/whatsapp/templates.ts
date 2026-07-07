@@ -114,3 +114,33 @@ export function helpText(): string {
 
 👉 Full app: solochief.app`
 }
+
+export function getTimeOfDayGreeting(firstName: string, timezone: string = 'UTC'): string {
+  const now = new Date()
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    hour: '2-digit',
+    hour12: false,
+    timeZone: timezone,
+  })
+  const hourStr = formatter.format(now)
+  const hour = parseInt(hourStr, 10)
+
+  let greeting: string
+  let emoji: string
+
+  if (hour >= 5 && hour < 12) {
+    greeting = `Morning`
+    emoji = `☀️`
+  } else if (hour >= 12 && hour < 17) {
+    greeting = `Afternoon`
+    emoji = `☀️`
+  } else if (hour >= 17 && hour < 21) {
+    greeting = `Evening`
+    emoji = `☀️`
+  } else {
+    greeting = `Hey`
+    emoji = `👋`
+  }
+
+  return `${emoji} ${greeting}, ${firstName}.`
+}
