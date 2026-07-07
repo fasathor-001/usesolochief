@@ -306,15 +306,20 @@ export default function SignupForm({ initialError = '' }: SignupFormProps) {
         }}
       >
         <div style={{ width: '100%', maxWidth: '360px' }}>
-          <p style={{
-            margin: '0 0 40px',
-            fontSize: '14px',
-            fontWeight: 500,
-            color: '#0F1B2D',
-            letterSpacing: '-0.1px',
-          }}>
-            SoloChief <span style={{ color: '#00C2A8' }}>AI</span>
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+            <p style={{
+              margin: 0,
+              fontSize: '14px',
+              fontWeight: 500,
+              color: '#0F1B2D',
+              letterSpacing: '-0.1px',
+            }}>
+              SoloChief <span style={{ color: '#00C2A8' }}>AI</span>
+            </p>
+            <a href="https://usesolochief.com" style={{ fontSize: '12px', color: '#94A3B8', textDecoration: 'none' }}>
+              ← Back to site
+            </a>
+          </div>
 
           <SignupFormInner initialError={initialError} />
         </div>
