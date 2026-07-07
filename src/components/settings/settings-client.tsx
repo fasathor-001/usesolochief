@@ -9,6 +9,7 @@ import {
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
 import { generateWhatsAppConnectLink, getWhatsAppStatus, disconnectWhatsApp, toggleWhatsAppNotifications, startWhatsAppTrial } from '@/lib/actions/whatsapp'
+import { WhatsAppQrConnect } from '@/components/whatsapp/WhatsAppQrConnect'
 import { AgentTrustPanel } from '@/components/mdp/AgentTrustPanel'
 import type { AgentMdpRow } from '@/lib/mdp/types'
 import { createCheckoutSession, createCustomerPortalSession } from '@/lib/actions/billing'
@@ -211,6 +212,13 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
   const [waLoading,      setWaLoading]      = useState(false)
   const [waError,        setWaError]        = useState('')
   const [waNotif,        setWaNotif]        = useState(initWaNotif)
+  // Desktop users cannot open the WhatsApp app directly — show a QR code instead.
+  const [waOnMobile,     setWaOnMobile]     = useState(false)
+  const [waConnectUrl,   setWaConnectUrl]   = useState<string | null>(null)
+
+  useEffect(() => {
+    setWaOnMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))
+  }, [])
 
   // Set up Realtime subscription for WhatsApp connection status + polling fallback
   useEffect(() => {
@@ -1380,8 +1388,9 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                               return
                             }
                             if (linkResult.data) {
+                              setWaConnectUrl(linkResult.data)
                               setWaState('waiting')
-                              window.open(linkResult.data, '_blank')
+                              if (waOnMobile) window.open(linkResult.data, '_blank')
                             }
                           }}
                           disabled={waLoading}
@@ -1426,9 +1435,10 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                               return
                             }
                             if (result.data) {
+                              setWaConnectUrl(result.data)
                               setWaState('waiting')
                               setWaLoading(false)
-                              window.open(result.data, '_blank')
+                              if (waOnMobile) window.open(result.data, '_blank')
                             }
                           }}
                           disabled={waLoading}
@@ -1447,6 +1457,11 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                 {/* WAITING STATE */}
                 {waState === 'waiting' && (
                   <div>
+                    {!waOnMobile && waConnectUrl && (
+                      <div style={{ marginBottom: 16 }}>
+                        <WhatsAppQrConnect waUrl={waConnectUrl} />
+                      </div>
+                    )}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 12 }}>
                       <Loader2 size={16} className="animate-spin" style={{ color: 'var(--sc-accent)' }} />
                       <p style={{ fontSize: 12, color: 'var(--sc-text)' }}>Waiting for WhatsApp connection...</p>

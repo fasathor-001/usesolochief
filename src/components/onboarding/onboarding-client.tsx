@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveOnboarding } from '@/lib/actions/onboarding'
 import { generateWhatsAppConnectLink, getWhatsAppStatus, startWhatsAppTrial } from '@/lib/actions/whatsapp'
+import { WhatsAppQrConnect } from '@/components/whatsapp/WhatsAppQrConnect'
 import { createClient } from '@/lib/supabase/client'
 import { TEMPLATE_DEFAULTS, TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS } from '@/lib/onboarding-data'
 import type { OnboardingTemplate } from '@/types/database'
@@ -51,6 +52,13 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   const [waGenerating, setWaGenerating] = useState(false)
   const [plan, setPlan] = useState<string | null>(null)
   const [whatsappTrialUsed, setWhatsappTrialUsed] = useState(false)
+  // Desktop users cannot open the WhatsApp app directly — show a QR code instead.
+  const [onMobile, setOnMobile] = useState(false)
+  const [connectUrl, setConnectUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    setOnMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent))
+  }, [])
 
   // Set up Realtime subscription for WhatsApp connection status + polling fallback
   useEffect(() => {
@@ -511,8 +519,9 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                         return
                       }
                       if (linkResult.data) {
+                        setConnectUrl(linkResult.data)
                         setWaState('waiting')
-                        window.open(linkResult.data, '_blank')
+                        if (onMobile) window.open(linkResult.data, '_blank')
                       }
                     }}
                     disabled={waGenerating}
@@ -544,9 +553,10 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                           return
                         }
                         if (result.data) {
+                          setConnectUrl(result.data)
                           setWaState('waiting')
                           setWaGenerating(false)
-                          window.open(result.data, '_blank')
+                          if (onMobile) window.open(result.data, '_blank')
                         }
                       } catch (err) {
                         setWaGenerating(false)
@@ -575,15 +585,27 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           {/* WAITING STATE */}
           {waState === 'waiting' && (
             <>
-              <div className="flex flex-col items-center justify-center py-8">
-                <Loader2 size={40} className="animate-spin mb-4" style={{ color: 'var(--sc-accent)' }} />
-                <h2 className="text-lg font-semibold" style={{ color: 'var(--sc-text)' }}>
-                  Waiting for WhatsApp connection...
-                </h2>
-                <p className="text-sm mt-2" style={{ color: 'var(--sc-muted)' }}>
-                  WhatsApp should open automatically. Tap the button again if it did not.
-                </p>
-              </div>
+              {!onMobile && connectUrl ? (
+                <div className="flex flex-col items-center justify-center py-6">
+                  <WhatsAppQrConnect waUrl={connectUrl} />
+                  <div className="flex items-center gap-2 mt-6">
+                    <Loader2 size={16} className="animate-spin" style={{ color: 'var(--sc-accent)' }} />
+                    <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
+                      Waiting for WhatsApp connection...
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <Loader2 size={40} className="animate-spin mb-4" style={{ color: 'var(--sc-accent)' }} />
+                  <h2 className="text-lg font-semibold" style={{ color: 'var(--sc-text)' }}>
+                    Waiting for WhatsApp connection...
+                  </h2>
+                  <p className="text-sm mt-2" style={{ color: 'var(--sc-muted)' }}>
+                    WhatsApp should open automatically. Tap the button again if it did not.
+                  </p>
+                </div>
+              )}
 
               <div className="flex flex-col sm:flex-row gap-3 mt-8">
                 <button
