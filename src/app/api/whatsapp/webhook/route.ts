@@ -160,6 +160,12 @@ export async function POST(request: NextRequest) {
       return twimlResponse(expiredTokenMessage())
     }
 
+    console.log('[Token Handler] Token data:', {
+      token_user_id: tokenRecord?.user_id,
+      token_used: tokenRecord?.used,
+      token_expires: tokenRecord?.expires_at
+    })
+
     const userId = tokenRecord.user_id
 
     // Check for duplicate scenarios - look for ANY profile with this number
@@ -197,17 +203,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if this user already has a different actively connected WhatsApp number
-    const { data: userProfile } = await db
+    const { data: userProfile, error: profileError } = await db
       .from('profiles')
       .select('user_id, whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
       .eq('user_id', userId)
       .single()
 
-    console.log('[Token Handler] Token lookup result:', {
-      token_found: !!tokenRecord,
-      user_id_from_token: tokenRecord?.user_id,
+    console.log('[Token Handler] Profile fetch result:', {
       profile_found: !!userProfile,
-      profile_plan: userProfile?.plan,
+      profile_error: profileError?.message,
+      token_user_id: tokenRecord?.user_id,
       profile_user_id: userProfile?.user_id
     })
 
