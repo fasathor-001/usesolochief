@@ -1,5 +1,5 @@
 export function connectedMessage(name: string): string {
-  return `🎯 Hey ${name}! Chief here.
+  return `🎯 Hey ${name}! Your Personal Chief of Staff here.
 
 Your AI Chief of Staff is now active on WhatsApp. 🚀
 
