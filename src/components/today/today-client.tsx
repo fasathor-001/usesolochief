@@ -198,14 +198,14 @@ export function TodayClient({
 
                 {/* Outcome input */}
                 <div className="sc-field">
-                  <label className="sc-label" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.6px' }}>
-                    Today&apos;s one outcome
+                  <label className="sc-label" style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)', marginBottom: 6 }}>
+                    What will be done by end of day?
                   </label>
                   <input
                     type="text"
                     value={outcome}
                     onChange={(e) => setOutcome(e.target.value)}
-                    placeholder="What will be done by end of day?"
+                    placeholder="Describe your outcome..."
                     className="sc-input"
                     style={{ fontSize: 15, padding: '10px 12px' }}
                   />
