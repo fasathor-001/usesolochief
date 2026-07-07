@@ -78,7 +78,7 @@ export function WhatsAppQrConnect({ waUrl }: { waUrl: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
       <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text, #0D0D0D)', textAlign: 'center' }}>
-        Scan with your phone&apos;s WhatsApp to connect
+        Scan with WhatsApp on your phone
       </p>
 
       <div
@@ -104,7 +104,7 @@ export function WhatsAppQrConnect({ waUrl }: { waUrl: string }) {
 
       <div style={{ width: '100%', maxWidth: 320 }}>
         <p style={{ fontSize: 12, color: 'var(--sc-muted, #94A3B8)', marginBottom: 6, textAlign: 'center' }}>
-          Or open the wa.me link on your phone:
+          Or copy this link to your phone
         </p>
         <div style={{ display: 'flex', gap: 6 }}>
           <input
