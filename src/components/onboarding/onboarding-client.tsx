@@ -65,13 +65,22 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           event: 'UPDATE',
           schema: 'public',
           table: 'profiles',
-          filter: `id=eq.${user.id}`
+          filter: `user_id=eq.${user.id}`
         }, (payload: any) => {
+          console.log('[Onboarding WhatsApp Realtime]', {
+            event: 'UPDATE received',
+            user_id: user.id,
+            payload_new: payload.new,
+            whatsapp_connected: payload.new.whatsapp_connected,
+          })
           if (payload.new.whatsapp_connected === true) {
+            console.log('[Onboarding WhatsApp] Connection confirmed, advancing to next step')
             setWaState('connected')
           }
         })
-        .subscribe()
+        .subscribe((status: any) => {
+          console.log('[Onboarding WhatsApp Realtime] Subscription status:', status)
+        })
 
       // Return cleanup function
       return () => {
