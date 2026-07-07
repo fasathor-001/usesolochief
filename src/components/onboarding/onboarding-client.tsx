@@ -156,6 +156,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
         .single()
 
       if (profile) {
+        console.log('[Onboarding Step 3]', { plan: profile.plan, whatsapp_trial_used: profile.whatsapp_trial_used })
         setPlan(profile.plan)
         setWhatsappTrialUsed(profile.whatsapp_trial_used ?? false)
       }
@@ -423,6 +424,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           {/* DEFAULT STATE */}
           {waState === 'default' && (
             <>
+              {console.log('[Onboarding Step 3 Render]', { plan, whatsappTrialUsed, condition1: plan === 'free' && !whatsappTrialUsed, condition2: plan === 'free' && whatsappTrialUsed })}
               {plan === 'free' && !whatsappTrialUsed ? (
                 <>
                   <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
