@@ -126,21 +126,24 @@
       width: 345px;
       height: 700px;
       transform-style: preserve-3d;
-      transform: rotateY(8deg) rotateX(2deg);
+      transform: rotateY(-8deg) rotateX(2deg);
       z-index: 2;
     }
 
-    .phone-side-left {
+    /* Old left-facing edge disabled — phone now faces slightly right */
+    .phone-side-left { display: none; }
+
+    .phone-side-right {
       position: absolute;
-      left: -13px;
+      right: -13px;
       top: 34px;
       width: 26px;
       height: 630px;
-      border-radius: 36px 0 0 36px;
-      background: linear-gradient(90deg, #07111f 0%, #12243a 45%, #1bc5bd 100%);
+      border-radius: 0 36px 36px 0;
+      background: linear-gradient(90deg, #1bc5bd 0%, #12243a 55%, #07111f 100%);
       transform: translateZ(-18px);
       opacity: 0.85;
-      box-shadow: -18px 0 38px rgba(27, 197, 189, 0.22);
+      box-shadow: 18px 0 38px rgba(27, 197, 189, 0.22);
     }
 
     .phone-frame {
@@ -395,7 +398,7 @@
       .solochief-phone {
         width: 320px;
         height: 650px;
-        transform: rotateY(5deg) rotateX(1deg);
+        transform: rotateY(-5deg) rotateX(1deg);
       }
     }
 
@@ -406,9 +409,9 @@
       .solochief-phone {
         width: 286px;
         height: 582px;
-        transform: rotateY(0deg);
+        transform: rotateY(0deg) rotateX(0deg);
       }
-      .phone-side-left {
+      .phone-side-right {
         display: none;
       }
       .phone-frame {
@@ -514,7 +517,7 @@
       <!-- Right: premium CSS phone mockup -->
       <div class="solochief-phone-stage" aria-label="SoloChief WhatsApp preview">
         <div class="solochief-phone">
-          <div class="phone-side phone-side-left" aria-hidden="true"></div>
+          <div class="phone-side phone-side-right" aria-hidden="true"></div>
           <div class="phone-frame">
             <div class="phone-screen">
               <div class="phone-status">
@@ -629,7 +632,7 @@
     <div class="max-w-[720px] mx-auto px-5 sm:px-6 text-center">
       <p class="label text-teal mb-4">The SoloChief principle</p>
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-        One operating rhythm across web and your pocket.
+        One operating rhythm. Web and pocket.
       </h2>
       <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">
         Use the web Command Center to plan your week. Chief stays with you during the day, checking in, logging updates, and keeping the same context behind both.
@@ -758,10 +761,10 @@
         <p class="mt-4 text-base sm:text-lg text-[#CBD5E1]">Start free. Upgrade when you want Chief in your pocket.</p>
       </div>
 
-      <div class="mt-16 grid md:grid-cols-3 gap-6 items-start">
+      <div class="mt-16 grid md:grid-cols-3 gap-6 items-stretch">
 
         <!-- Free -->
-        <div class="rounded-lg border border-line bg-panel p-7 flex flex-col">
+        <div class="rounded-lg border border-line bg-panel p-7 flex flex-col h-full">
           <h3 class="text-lg font-semibold text-white">Free</h3>
           <p class="text-sm text-muted mt-1">Organise your work on web.</p>
           <p class="mt-5 text-3xl font-bold text-white">$0 <span class="text-sm font-normal text-muted">/ forever</span></p>
@@ -779,7 +782,7 @@
         </div>
 
         <!-- Pro (highlighted) -->
-        <div class="relative rounded-lg border-2 border-teal bg-panelhi p-7 flex flex-col md:-translate-y-4" style="box-shadow: 0 24px 60px rgba(0,194,168,0.12);">
+        <div class="relative rounded-lg border-2 border-teal bg-panelhi p-7 flex flex-col h-full" style="box-shadow: 0 24px 60px rgba(0,194,168,0.12);">
           <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-semibold bg-teal text-bg px-3 py-1 rounded-full">Most popular</span>
           <h3 class="text-lg font-semibold text-white">Pro</h3>
           <p class="text-sm text-muted mt-1">Bring Chief into your daily pocket rhythm.</p>
@@ -793,11 +796,10 @@
             <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher AI usage</li>
           </ul>
           <a href="https://solochief.app/signup" class="mt-7 text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-5 py-3 rounded-md transition-colors">Start free</a>
-          <p class="mt-3 text-center text-xs text-muted">7-day WhatsApp trial included</p>
         </div>
 
         <!-- Operator -->
-        <div class="rounded-lg border border-line bg-panel p-7 flex flex-col">
+        <div class="rounded-lg border border-line bg-panel p-7 flex flex-col h-full">
           <h3 class="text-lg font-semibold text-white">Operator</h3>
           <p class="text-sm text-muted mt-1">For founders managing heavier weekly execution.</p>
           <p class="mt-5 text-3xl font-bold text-white">$24 <span class="text-sm font-normal text-muted">/ month</span></p>
