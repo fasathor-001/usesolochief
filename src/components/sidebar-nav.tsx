@@ -40,32 +40,38 @@ interface NavItem {
 
 const NAV_GROUPS: { label: string | null; items: NavItem[] }[] = [
   {
-    label: null,
+    label: 'Today',
     items: [
-      { href: '/dashboard',            label: 'Command Centre', icon: LayoutDashboard },
-      { href: '/dashboard/today',      label: 'Today Focus',    icon: Target },
-      { href: '/dashboard/commitments',label: 'Commitments',    icon: Layers },
+      { href: '/dashboard',         label: 'Dashboard',   icon: LayoutDashboard },
+      { href: '/dashboard/today',   label: 'Today Focus', icon: Target },
     ],
   },
   {
     label: 'Planning',
     items: [
-      { href: '/dashboard/weekly-plan',      label: 'Weekly Plan',       icon: CalendarDays },
-      { href: '/dashboard/launch-checklists', label: 'Checklists', icon: CheckSquare },
+      { href: '/dashboard/weekly-plan',       label: 'Weekly Plan',      icon: CalendarDays },
+      { href: '/dashboard/commitments',       label: 'Commitments',      icon: Layers },
+      { href: '/dashboard/follow-ups',        label: 'Follow-ups',       icon: Bell },
+      { href: '/dashboard/launch-checklists', label: 'Launch Checklists', icon: CheckSquare },
     ],
   },
   {
     label: 'Capture',
     items: [
       { href: '/dashboard/parking-lot', label: 'Parking Lot', icon: Archive },
-      { href: '/dashboard/follow-ups',  label: 'Follow-ups',  icon: Bell },
+      { href: '/dashboard/chat',        label: 'AI Chat',      icon: MessageCircle },
     ],
   },
   {
     label: 'Review',
     items: [
       { href: '/dashboard/review', label: 'Friday Review', icon: RotateCcw },
-      { href: '/dashboard/chat',   label: 'AI Chat',        icon: MessageCircle },
+    ],
+  },
+  {
+    label: null,
+    items: [
+      { href: '/dashboard/settings', label: 'Settings', icon: Settings },
     ],
   },
 ]
@@ -248,120 +254,6 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
           ))}
         </nav>
 
-        {/* Feedback + Settings + Admin nav links */}
-        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '0.5px solid rgba(255,255,255,0.07)' }}>
-          <Link
-            href="/dashboard/feedback"
-            className={`sc-nav-link${isActive('/dashboard/feedback') ? ' active' : ''}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            <MessageCircle size={16} />
-            <span style={{ flex: 1 }}>Feedback</span>
-          </Link>
-
-          {/* Settings with Agent Trust tooltip */}
-          <div style={{ position: 'relative' }}>
-            <Link
-              href="/dashboard/settings"
-              className={`sc-nav-link${isActive('/dashboard/settings') ? ' active' : ''}`}
-              onClick={() => setMobileOpen(false)}
-              style={{ display: 'flex', alignItems: 'center' }}
-            >
-              <Settings size={16} />
-              <span style={{ flex: 1 }}>Settings</span>
-              {!dismissedTooltips.has('Agent Trust') && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    setActiveTooltip(activeTooltip === 'Agent Trust' ? null : 'Agent Trust')
-                  }}
-                  onMouseEnter={() => setActiveTooltip('Agent Trust')}
-                  onMouseLeave={() => setActiveTooltip(null)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: '4px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginLeft: '4px',
-                    flexShrink: 0,
-                  }}
-                  title={TOOLTIPS['Agent Trust']}
-                >
-                  <HelpCircle size={14} style={{ color: '#00C2A8', opacity: 0.6 }} />
-                </button>
-              )}
-            </Link>
-
-            {/* Agent Trust Tooltip */}
-            {activeTooltip === 'Agent Trust' && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  left: 0,
-                  marginTop: '4px',
-                  backgroundColor: '#1A273A',
-                  border: '0.5px solid rgba(0,194,168,0.3)',
-                  borderRadius: '6px',
-                  padding: '8px 10px',
-                  fontSize: '12px',
-                  color: '#CBD5E1',
-                  maxWidth: '200px',
-                  whiteSpace: 'normal',
-                  zIndex: 1000,
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                }}
-                onMouseEnter={() => setActiveTooltip('Agent Trust')}
-                onMouseLeave={() => setActiveTooltip(null)}
-              >
-                <p style={{ margin: 0, marginBottom: '6px' }}>{TOOLTIPS['Agent Trust']}</p>
-                <button
-                  type="button"
-                  onClick={() => dismissTooltip('Agent Trust')}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    cursor: 'pointer',
-                    fontSize: '11px',
-                    color: '#00C2A8',
-                    fontWeight: 500,
-                  }}
-                >
-                  Got it
-                </button>
-              </div>
-            )}
-          </div>
-
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className="sc-nav-link"
-              onClick={() => setMobileOpen(false)}
-              style={{ marginTop: 2 }}
-            >
-              <ShieldCheck size={16} style={{ color: '#00C2A8' }} />
-              <span style={{ flex: 1 }}>Admin</span>
-              <span style={{
-                fontSize: 9,
-                fontWeight: 700,
-                letterSpacing: '0.06em',
-                padding: '1px 5px',
-                borderRadius: 3,
-                background: 'rgba(0,194,168,0.15)',
-                color: '#00C2A8',
-              }}>
-                INT
-              </span>
-            </Link>
-          )}
-        </div>
-
         {/* Rescue Me */}
         <div style={{ position: 'relative' }}>
           <button
@@ -420,6 +312,31 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
             </div>
           )}
         </div>
+
+        {/* Admin nav links */}
+        {isAdmin && (
+          <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '0.5px solid rgba(255,255,255,0.07)' }}>
+            <Link
+              href="/admin"
+              className="sc-nav-link"
+              onClick={() => setMobileOpen(false)}
+            >
+              <ShieldCheck size={16} style={{ color: '#00C2A8' }} />
+              <span style={{ flex: 1 }}>Admin</span>
+              <span style={{
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+                padding: '1px 5px',
+                borderRadius: 3,
+                background: 'rgba(0,194,168,0.15)',
+                color: '#00C2A8',
+              }}>
+                INT
+              </span>
+            </Link>
+          </div>
+        )}
 
         {/* User row */}
         <div className="sc-sidebar-user">
