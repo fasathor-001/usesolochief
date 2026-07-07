@@ -65,36 +65,45 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
     if (waState !== 'waiting') return
 
     const setupRealtime = async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
 
-      const channel = supabase
-        .channel(`whatsapp-connection-${user.id}`)
-        .on('postgres_changes', {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'profiles',
-          filter: `user_id=eq.${user.id}`
-        }, (payload: any) => {
-          console.log('[Onboarding WhatsApp Realtime]', {
-            event: 'UPDATE received',
-            user_id: user.id,
-            payload_new: payload.new,
-            whatsapp_connected: payload.new.whatsapp_connected,
+        const channel = supabase
+          .channel(`whatsapp-connection-${user.id}`)
+          .on('postgres_changes', {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `user_id=eq.${user.id}`
+          }, (payload: any) => {
+            try {
+              console.log('[Onboarding WhatsApp Realtime]', {
+                event: 'UPDATE received',
+                user_id: user.id,
+                payload_new: payload.new,
+                whatsapp_connected: payload.new.whatsapp_connected,
+              })
+              if (payload.new.whatsapp_connected === true) {
+                console.log('[Onboarding WhatsApp] Connection confirmed via Realtime, advancing to next step')
+                setWaState('connected')
+              }
+            } catch (err) {
+              console.error('[Onboarding WhatsApp Realtime] Error in callback:', err)
+            }
           })
-          if (payload.new.whatsapp_connected === true) {
-            console.log('[Onboarding WhatsApp] Connection confirmed via Realtime, advancing to next step')
-            setWaState('connected')
-          }
-        })
-        .subscribe((status: any) => {
-          console.log('[Onboarding WhatsApp Realtime] Subscription status:', status)
-        })
+          .subscribe((status: any) => {
+            console.log('[Onboarding WhatsApp Realtime] Subscription status:', status)
+          })
 
-      // Return cleanup function
-      return () => {
-        channel.unsubscribe()
+        // Return cleanup function
+        return () => {
+          channel.unsubscribe()
+        }
+      } catch (err) {
+        console.error('[Onboarding WhatsApp] Error setting up Realtime:', err)
+        return undefined
       }
     }
 
@@ -116,13 +125,17 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           return
         }
 
-        const status = await getWhatsAppStatus()
-        console.log(`[Onboarding WhatsApp] Poll attempt ${pollAttempts}: connected=${status.data?.connected}`)
-        if (status.data?.connected === true) {
-          console.log('[Onboarding WhatsApp] Connection confirmed via polling, advancing to next step')
-          setWaState('connected')
-          clearInterval(pollInterval)
-          return
+        try {
+          const status = await getWhatsAppStatus()
+          console.log(`[Onboarding WhatsApp] Poll attempt ${pollAttempts}: connected=${status.data?.connected}`)
+          if (status.data?.connected === true) {
+            console.log('[Onboarding WhatsApp] Connection confirmed via polling, advancing to next step')
+            setWaState('connected')
+            clearInterval(pollInterval)
+            return
+          }
+        } catch (err) {
+          console.error('[Onboarding WhatsApp] Error during polling:', err)
         }
       }, 3000)
 
