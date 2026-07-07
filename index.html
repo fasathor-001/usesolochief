@@ -147,7 +147,7 @@
       position: relative;
       margin: 0 auto;
       width: 330px;
-      height: 670px;
+      height: 640px;
       transform-style: preserve-3d;
       transform: translateX(-12px) translateY(10px) rotateY(-7deg) rotateX(2deg);
       z-index: 2;
@@ -161,7 +161,7 @@
       right: -13px;
       top: 34px;
       width: 26px;
-      height: 630px;
+      height: 572px;
       border-radius: 0 36px 36px 0;
       background: linear-gradient(90deg, #1bc5bd 0%, #12243a 55%, #07111f 100%);
       transform: translateZ(-18px);
@@ -299,18 +299,19 @@
       position: relative;
       z-index: 2;
       height: calc(100% - 178px);
-      padding: 18px 18px 10px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      overflow-y: auto;
     }
 
     .message {
       max-width: 82%;
       padding: 11px 13px;
       border-radius: 16px;
-      font-size: 13px;
-      line-height: 1.42;
+      font-size: 12px;
+      line-height: 1.4;
       box-shadow:
         0 10px 24px rgba(0, 0, 0, 0.22),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -329,6 +330,7 @@
 
     .message.chief {
       align-self: flex-start;
+      max-width: 80%;
       background: linear-gradient(145deg, rgba(28, 43, 60, 0.96), rgba(18, 33, 49, 0.96));
       color: #edf7ff;
       border: 1px solid rgba(148, 163, 184, 0.12);
@@ -336,6 +338,7 @@
 
     .message.user {
       align-self: flex-end;
+      max-width: 70%;
       background: linear-gradient(145deg, #006f75, #005b63);
       color: #ffffff;
       border: 1px solid rgba(27, 197, 189, 0.26);
@@ -422,7 +425,7 @@
       }
       .solochief-phone {
         width: 320px;
-        height: 650px;
+        height: 640px;
         transform: translateX(0) translateY(0) rotateY(0deg) rotateX(0deg);
       }
       .phone-side-right { display: none; }
@@ -435,7 +438,7 @@
       }
       .solochief-phone {
         width: 280px;
-        height: 568px;
+        height: 660px;
         transform: translateX(0) rotateY(0deg) rotateX(0deg);
       }
       .phone-side-right {
@@ -573,33 +576,27 @@
                   <span>9:00 AM</span>
                 </div>
 
-                <div class="message chief wide">
+                <div class="message chief">
                   <p class="message-label">Today's focus:</p>
-                  <p class="message-main">Finish RevenueLoop launch page</p>
+                  <p class="message-main">Finish RevenueLoop launch page.</p>
                   <span>9:00 AM</span>
                 </div>
 
-                <div class="message chief wide">
+                <div class="message chief">
                   <p class="message-label">Top 3:</p>
                   <p>1. Send Paystack follow-up</p>
                   <p>2. Review SoloChief onboarding</p>
-                  <p>3. Park new product ideas until Friday</p>
-                  <span>9:00 AM</span>
-                </div>
-
-                <div class="message chief wide">
-                  <p class="message-main">Reply done, blocked, slipped, or park.</p>
+                  <p>3. Park new ideas until Friday</p>
                   <span>9:00 AM</span>
                 </div>
 
                 <div class="message user">
-                  <p class="message-main">done proposal</p>
+                  <p class="message-main">Done on Paystack.</p>
                   <span>9:02 AM &#10003;&#10003;</span>
                 </div>
 
-                <div class="message chief wide">
-                  <p class="message-label">Logged. Next up:</p>
-                  <p class="message-main">review SoloChief onboarding.</p>
+                <div class="message chief">
+                  <p class="message-main">Logged. 2 items remaining.</p>
                   <span>9:02 AM</span>
                 </div>
               </div>
