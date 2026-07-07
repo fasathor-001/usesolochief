@@ -50,7 +50,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   const [waState, setWaState] = useState<WaState>('default')
   const [waGenerating, setWaGenerating] = useState(false)
 
-  // Set up Realtime subscription for WhatsApp connection status
+  // Set up Realtime subscription for WhatsApp connection status + polling fallback
   useEffect(() => {
     if (waState !== 'waiting') return
 
@@ -74,7 +74,7 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
             whatsapp_connected: payload.new.whatsapp_connected,
           })
           if (payload.new.whatsapp_connected === true) {
-            console.log('[Onboarding WhatsApp] Connection confirmed, advancing to next step')
+            console.log('[Onboarding WhatsApp] Connection confirmed via Realtime, advancing to next step')
             setWaState('connected')
           }
         })
@@ -89,12 +89,46 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
     }
 
     let cleanup: (() => void) | undefined
+    let pollTimeout: NodeJS.Timeout | undefined
+    let pollAttempts = 0
+    const maxPollAttempts = 10
+
+    // Polling fallback: every 3 seconds, check connection status
+    // This handles cases where Realtime doesn't fire for service-role updates
+    const startPolling = () => {
+      console.log('[Onboarding WhatsApp] Starting polling fallback (max 10 attempts, 3s interval)')
+      pollAttempts = 0
+      const pollInterval = setInterval(async () => {
+        pollAttempts++
+        if (pollAttempts > maxPollAttempts) {
+          console.log('[Onboarding WhatsApp] Polling stopped: max attempts reached')
+          clearInterval(pollInterval)
+          return
+        }
+
+        const status = await getWhatsAppStatus()
+        console.log(`[Onboarding WhatsApp] Poll attempt ${pollAttempts}: connected=${status.data?.connected}`)
+        if (status.data?.connected === true) {
+          console.log('[Onboarding WhatsApp] Connection confirmed via polling, advancing to next step')
+          setWaState('connected')
+          clearInterval(pollInterval)
+          return
+        }
+      }, 3000)
+
+      return () => clearInterval(pollInterval)
+    }
+
     setupRealtime().then((cleanupFn) => {
       cleanup = cleanupFn
     })
 
+    // Start polling fallback immediately
+    const stopPolling = startPolling()
+
     return () => {
       if (cleanup) cleanup()
+      if (stopPolling) stopPolling()
     }
   }, [waState])
 

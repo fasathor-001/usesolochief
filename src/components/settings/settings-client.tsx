@@ -210,7 +210,7 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
   const [waError,        setWaError]        = useState('')
   const [waNotif,        setWaNotif]        = useState(initWaNotif)
 
-  // Set up Realtime subscription for WhatsApp connection status
+  // Set up Realtime subscription for WhatsApp connection status + polling fallback
   useEffect(() => {
     if (activeSection !== 'whatsapp' || waState !== 'waiting') return
 
@@ -235,7 +235,7 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
             whatsapp_number: payload.new.whatsapp_number,
           })
           if (payload.new.whatsapp_connected === true) {
-            console.log('[Settings WhatsApp] Connection confirmed, updating UI')
+            console.log('[Settings WhatsApp] Connection confirmed via Realtime, updating UI')
             setWaState('connected')
             setWaPhone(payload.new.whatsapp_number || '')
           }
@@ -251,12 +251,47 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
     }
 
     let cleanup: (() => void) | undefined
+    let pollTimeout: NodeJS.Timeout | undefined
+    let pollAttempts = 0
+    const maxPollAttempts = 10
+
+    // Polling fallback: every 3 seconds, check connection status
+    // This handles cases where Realtime doesn't fire for service-role updates
+    const startPolling = () => {
+      console.log('[Settings WhatsApp] Starting polling fallback (max 10 attempts, 3s interval)')
+      pollAttempts = 0
+      const pollInterval = setInterval(async () => {
+        pollAttempts++
+        if (pollAttempts > maxPollAttempts) {
+          console.log('[Settings WhatsApp] Polling stopped: max attempts reached')
+          clearInterval(pollInterval)
+          return
+        }
+
+        const status = await getWhatsAppStatus()
+        console.log(`[Settings WhatsApp] Poll attempt ${pollAttempts}: connected=${status.data?.connected}`)
+        if (status.data?.connected === true) {
+          console.log('[Settings WhatsApp] Connection confirmed via polling, updating UI')
+          setWaState('connected')
+          setWaPhone(status.data.number || '')
+          clearInterval(pollInterval)
+          return
+        }
+      }, 3000)
+
+      return () => clearInterval(pollInterval)
+    }
+
     setupRealtime().then((cleanupFn) => {
       cleanup = cleanupFn
     })
 
+    // Start polling fallback immediately
+    const stopPolling = startPolling()
+
     return () => {
       if (cleanup) cleanup()
+      if (stopPolling) stopPolling()
     }
   }, [activeSection, waState])
 
