@@ -282,33 +282,14 @@ export async function POST(request: NextRequest) {
 
     // Check if this is a new connection or reconnection
     if (!userProfile?.whatsapp_number) {
-      // New connection: send welcome message with fallback, then start consent flow
+      // New connection: send welcome message card
       console.log('[whatsapp/webhook] New connection - sending welcome message')
-      try {
-        // Try to send interactive welcome message if ContentSid is available
-        if (process.env.TWILIO_CONTENT_CONNECTED_SID) {
-          await sendInteractiveMessage(rawFrom, process.env.TWILIO_CONTENT_CONNECTED_SID, { '1': firstName })
-          console.log('[whatsapp/webhook] Welcome sent via interactive template')
-        } else {
-          throw new Error('ContentSid not configured')
-        }
-      } catch (err) {
-        // Always fall back to plain text - never send nothing
-        console.log('[whatsapp/webhook] Interactive template failed or not configured, sending text fallback:', err instanceof Error ? err.message : 'unknown')
-        await sendWhatsApp(
-          rawFrom,
-          `🎯 Hey ${firstName}! Your Personal Chief of Staff is now active on WhatsApp. 🚀\n\n` +
-          `Here's what I do:\n\n` +
-          `📋 Send your morning brief every day\n` +
-          `⚡ Let you log updates with a quick reply\n` +
-          `🔁 Check in when things go quiet\n` +
-          `💬 Answer anything you throw at me\n\n` +
-          `Ready to set up your daily rhythm?`
-        )
-        console.log('[whatsapp/webhook] Welcome text message sent')
+      if (!process.env.TWILIO_CONTENT_CONNECTED_SID) {
+        console.log('[whatsapp/webhook] ContentSid not configured, cannot send welcome')
+        return twimlResponse('Welcome configuration incomplete. Please contact support.')
       }
-
-      // Welcome message sent - user will tap "Get started 🚀" button to continue
+      await sendInteractiveMessage(rawFrom, process.env.TWILIO_CONTENT_CONNECTED_SID, { '1': firstName })
+      console.log('[whatsapp/webhook] Welcome sent via interactive template')
       return twimlResponse('Welcome message sent. Tap the "Get started" button to continue.')
     } else {
       // Reconnection: send connected confirmation
