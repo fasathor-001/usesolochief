@@ -6,11 +6,11 @@
 
   <!-- Primary meta -->
   <title>SoloChief AI — Your Personal Chief of Staff</title>
-  <meta name="description" content="SoloChief helps solo founders plan the week, protect today's focus, track follow-ups, and receive a morning brief on WhatsApp. Command Center on web. Chief of Staff on WhatsApp.">
+  <meta name="description" content="SoloChief helps solo founders plan the week, protect today's focus, track follow-ups, and receive a morning brief. Command Center on web. Chief of Staff in your pocket.">
 
   <!-- Open Graph -->
   <meta property="og:title"       content="SoloChief AI — Your Personal Chief of Staff">
-  <meta property="og:description" content="Plan the week, protect today's focus, and get a morning brief on WhatsApp. One brain behind web and WhatsApp.">
+  <meta property="og:description" content="Plan the week, protect today's focus, and get a morning brief. Command Center on web. Chief of Staff in your pocket.">
   <meta property="og:image"       content="/og-image.png">
   <meta property="og:url"         content="https://usesolochief.com">
   <meta property="og:type"        content="website">
@@ -19,7 +19,7 @@
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:site"        content="@solochiefai">
   <meta name="twitter:title"       content="SoloChief AI — Your Personal Chief of Staff">
-  <meta name="twitter:description" content="Plan the week, protect today's focus, and get a morning brief on WhatsApp.">
+  <meta name="twitter:description" content="Plan the week, protect today's focus, and get a morning brief. Command Center on web. Chief of Staff in your pocket.">
   <meta name="twitter:image"       content="/og-image.png">
 
   <!-- Favicons -->
@@ -66,7 +66,6 @@
       line-height: 1;
     }
 
-    /* Anchor offset for fixed nav */
     section[id] { scroll-margin-top: 84px; }
 
     .label {
@@ -76,37 +75,63 @@
       text-transform: uppercase;
     }
 
-    /* Soft teal glow used sparingly behind the hero */
-    .bg-glow {
+    /* Pulsing badge dot */
+    .pulse-dot {
+      position: relative;
+      width: 0.5rem; height: 0.5rem;
+      border-radius: 50%;
+      background: #00C2A8;
+      flex-shrink: 0;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: #00C2A8;
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(1);   opacity: 0.6; }
+      100% { transform: scale(3);   opacity: 0; }
+    }
+
+    /* ── Hero glows ────────────────────────────────────────────── */
+    .glow-teal {
       position: absolute;
-      top: -120px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 900px;
-      height: 560px;
-      max-width: 100%;
-      background: radial-gradient(circle at center, rgba(0,194,168,0.12) 0%, rgba(15,27,45,0) 68%);
+      width: 460px; height: 460px;
+      right: -40px; top: 40px;
+      background: radial-gradient(circle at center, rgba(0,194,168,0.16) 0%, rgba(15,27,45,0) 68%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-amber {
+      position: absolute;
+      width: 360px; height: 360px;
+      left: -60px; top: -40px;
+      background: radial-gradient(circle at center, rgba(245,180,90,0.07) 0%, rgba(15,27,45,0) 70%);
       pointer-events: none;
       z-index: 0;
     }
 
     /* ── Phone mockup ──────────────────────────────────────────── */
+    .phone-wrap { position: relative; z-index: 10; width: fit-content; margin: 0 auto; }
     .phone {
       position: relative;
       width: 300px;
-      max-width: 100%;
+      max-width: 84vw;
       aspect-ratio: 9 / 19;
       background: #010f1f;
-      border-radius: 44px;
-      padding: 12px;
-      border: 1px solid #22303f;
+      border-radius: 3rem;
+      padding: 8px;
+      border: 8px solid #0a1826;
       box-shadow: 0 40px 90px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
     }
+    @media (max-width: 640px) { .phone { width: 280px; } }
     .phone-notch {
       position: absolute;
-      top: 16px; left: 50%;
+      top: 8px; left: 50%;
       transform: translateX(-50%);
-      width: 120px; height: 22px;
+      width: 120px; height: 20px;
       background: #010f1f;
       border-radius: 0 0 14px 14px;
       z-index: 5;
@@ -114,7 +139,7 @@
     .phone-screen {
       width: 100%; height: 100%;
       background: #0a1622;
-      border-radius: 34px;
+      border-radius: 2.4rem;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -126,16 +151,16 @@
       border-bottom: 1px solid #1c2b3c;
     }
     .wa-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
+      width: 36px; height: 36px; border-radius: 50%;
       background: rgba(0,194,168,0.15);
       border: 1px solid rgba(0,194,168,0.4);
       color: #00C2A8;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.9rem;
+      font-weight: 700; font-size: 0.95rem;
       flex-shrink: 0;
     }
-    .wa-title { font-size: 0.85rem; font-weight: 600; color: #fff; }
-    .wa-status { font-size: 0.68rem; color: #00C2A8; }
+    .wa-title { font-size: 0.9rem; font-weight: 700; color: #00C2A8; white-space: nowrap; }
+    .wa-sub { font-size: 0.62rem; color: #94A3B8; white-space: nowrap; }
     .wa-body {
       flex: 1;
       padding: 14px 12px;
@@ -143,17 +168,16 @@
       flex-direction: column;
       gap: 10px;
       overflow: hidden;
-      background:
-        linear-gradient(rgba(3,12,22,0.6), rgba(3,12,22,0.6));
+      background: linear-gradient(rgba(3,12,22,0.6), rgba(3,12,22,0.6));
     }
     .msg { display: flex; }
     .msg.chief { justify-content: flex-start; }
     .msg.user  { justify-content: flex-end; }
     .bubble {
-      max-width: 82%;
-      padding: 9px 11px 16px;
+      max-width: 84%;
+      padding: 9px 11px 18px;
       border-radius: 12px;
-      font-size: 0.74rem;
+      font-size: 0.73rem;
       line-height: 1.5;
       position: relative;
       color: #E7EEF5;
@@ -165,9 +189,11 @@
     .bubble .time {
       position: absolute;
       bottom: 4px; right: 10px;
-      font-size: 0.56rem;
-      color: rgba(148,163,184,0.7);
+      font-size: 0.6rem;
+      color: rgba(148,163,184,0.75);
+      display: inline-flex; align-items: center; gap: 3px;
     }
+    .bubble .time .tick { color: #00C2A8; letter-spacing: -2px; }
     .wa-input {
       display: flex; align-items: center; gap: 8px;
       padding: 8px 12px 14px;
@@ -183,41 +209,46 @@
       font-size: 0.7rem;
       color: #64748B;
     }
-    .wa-input .send {
-      width: 30px; height: 30px; border-radius: 50%;
+    .wa-input .mic {
+      width: 32px; height: 32px; border-radius: 50%;
       background: #00C2A8; color: #0F1B2D;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .wa-input .send .material-symbols-outlined { font-size: 18px; }
+    .wa-input .mic .material-symbols-outlined { font-size: 18px; }
 
     .brief-pill {
+      position: absolute;
+      bottom: 28px; left: -18px;
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(0,194,168,0.08);
-      border: 1px solid rgba(0,194,168,0.3);
+      background: #0d1c2b;
+      border: 1px solid rgba(0,194,168,0.35);
       color: #C6F3EC;
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-size: 0.78rem;
+      border-radius: 12px;
+      padding: 9px 14px;
+      font-size: 0.74rem;
       font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+      z-index: 20;
     }
+    @media (max-width: 400px) { .brief-pill { left: -6px; font-size: 0.68rem; } }
 
     /* Dashed connectors for How it works */
     .step-connector {
       position: absolute;
       top: 20px;
-      left: calc(50% + 26px);
-      right: calc(-50% + 26px);
+      left: calc(50% + 28px);
+      right: calc(-50% + 28px);
       border-top: 1px dashed #24384c;
     }
 
-    /* Mobile menu */
     #mobileMenu { display: none; }
     #mobileMenu.open { display: block; }
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
+      .pulse-dot::after { animation: none; }
     }
   </style>
 </head>
@@ -255,22 +286,21 @@
 
   <!-- ── HERO ───────────────────────────────────────────────────────────── -->
   <section class="relative overflow-hidden">
-    <div class="bg-glow" aria-hidden="true"></div>
     <div class="relative z-10 max-w-site mx-auto px-5 sm:px-6 py-16 lg:py-24 grid lg:grid-cols-2 gap-14 items-center">
 
       <!-- Left -->
       <div>
-        <div class="inline-flex items-start gap-2 rounded-full border border-teal/30 bg-teal/5 px-3.5 py-1.5 mb-6">
-          <span class="w-1.5 h-1.5 rounded-full bg-teal mt-1.5 flex-shrink-0"></span>
-          <span class="text-xs font-medium text-teal leading-relaxed">Command Center on web. Chief of Staff on WhatsApp. One brain behind both.</span>
+        <div class="inline-flex items-start gap-2.5 rounded-full border border-teal/30 bg-teal/5 px-3.5 py-1.5 mb-6">
+          <span class="pulse-dot mt-1.5" aria-hidden="true"></span>
+          <span class="text-xs font-medium text-teal leading-relaxed">Command Center on web. Chief of Staff in your pocket. One brain behind both.</span>
         </div>
 
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-light leading-[1.08] tracking-tight text-white">
-          Your personal Chief of Staff, on web and WhatsApp.
+          Your personal Chief of Staff, on web and in your pocket.
         </h1>
 
-        <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed max-w-xl">
-          SoloChief helps solo founders plan the week, protect today's focus, track follow-ups, and receive a morning brief on WhatsApp.
+        <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed" style="max-width: 480px;">
+          SoloChief helps solo founders plan the week, protect today's focus, track follow-ups, and receive a morning brief, right where they already work.
         </p>
 
         <div class="mt-8 flex flex-wrap items-center gap-4">
@@ -285,58 +315,63 @@
         <p class="mt-5 text-xs text-muted">No credit card required. 7-day WhatsApp trial included on Pro.</p>
       </div>
 
-      <!-- Right: phone mockup -->
-      <div class="flex flex-col items-center lg:items-end gap-5">
-        <div class="phone" role="img" aria-label="WhatsApp chat showing a SoloChief morning brief">
-          <div class="phone-notch" aria-hidden="true"></div>
-          <div class="phone-screen">
-            <div class="wa-header">
-              <span class="material-symbols-outlined text-muted" style="font-size:20px;" aria-hidden="true">arrow_back_ios_new</span>
-              <div class="wa-avatar">C</div>
-              <div style="min-width:0;">
-                <div class="wa-title" style="white-space:nowrap;">SoloChief</div>
-                <div class="wa-status" style="white-space:nowrap;">Chief, online</div>
-              </div>
-            </div>
+      <!-- Right: phone mockup with glows -->
+      <div class="relative">
+        <div class="glow-teal" aria-hidden="true"></div>
+        <div class="glow-amber" aria-hidden="true"></div>
 
-            <div class="wa-body">
-              <div class="msg chief">
-                <div class="bubble">
-                  <p>&#9728;&#65039; Morning, Frankie.</p>
-                  <p class="lbl">Today's focus:</p>
-                  <p>Finish RevenueLoop launch page.</p>
-                  <p class="lbl">Top 3:</p>
-                  <p>1. Send Paystack follow-up<br>2. Review SoloChief onboarding<br>3. Park new product ideas until Friday</p>
-                  <p class="hint">Reply done, blocked, slipped, or park.</p>
-                  <span class="time">7:00 AM</span>
+        <div class="phone-wrap">
+          <div class="phone" role="img" aria-label="WhatsApp chat showing a SoloChief morning brief">
+            <div class="phone-notch" aria-hidden="true"></div>
+            <div class="phone-screen">
+              <div class="wa-header">
+                <span class="material-symbols-outlined text-muted" style="font-size:20px;" aria-hidden="true">arrow_back_ios_new</span>
+                <div class="wa-avatar">S</div>
+                <div style="min-width:0;">
+                  <div class="wa-title">SoloChief</div>
+                  <div class="wa-sub">+1 (350) 207-0295 &middot; Business Account</div>
                 </div>
               </div>
 
-              <div class="msg user">
-                <div class="bubble">
-                  Done on the Paystack follow-up.
-                  <span class="time">7:12 AM</span>
+              <div class="wa-body">
+                <div class="msg chief">
+                  <div class="bubble">
+                    <p>&#9728;&#65039; Morning, Frankie.</p>
+                    <p class="lbl">Today's focus:</p>
+                    <p>Finish RevenueLoop launch page.</p>
+                    <p class="lbl">Top 3:</p>
+                    <p>1. Send Paystack follow-up<br>2. Review SoloChief onboarding<br>3. Park new product ideas until Friday</p>
+                    <p class="hint">Reply done, blocked, slipped, or park.</p>
+                    <span class="time">07:00 AM <span class="tick">&#10003;&#10003;</span></span>
+                  </div>
+                </div>
+
+                <div class="msg user">
+                  <div class="bubble">
+                    Done on the Paystack follow-up.
+                    <span class="time">09:15 AM <span class="tick">&#10003;&#10003;</span></span>
+                  </div>
+                </div>
+
+                <div class="msg chief">
+                  <div class="bubble">
+                    Logged. Paystack follow-up marked complete.<br>2 items remaining today.
+                    <span class="time">09:15 AM</span>
+                  </div>
                 </div>
               </div>
 
-              <div class="msg chief">
-                <div class="bubble">
-                  Logged. Paystack follow-up marked complete.<br>2 items remaining today.
-                  <span class="time">7:12 AM</span>
-                </div>
+              <div class="wa-input">
+                <div class="field">Message</div>
+                <div class="mic" aria-hidden="true"><span class="material-symbols-outlined">mic</span></div>
               </div>
-            </div>
-
-            <div class="wa-input">
-              <div class="field">Message Chief</div>
-              <div class="send" aria-hidden="true"><span class="material-symbols-outlined">send</span></div>
             </div>
           </div>
-        </div>
 
-        <div class="brief-pill">
-          <span aria-hidden="true">&#9728;&#65039;</span>
-          Brief delivered at 7:00 AM &middot; 3 items today
+          <div class="brief-pill">
+            <span aria-hidden="true">&#9728;&#65039;</span>
+            Brief delivered at 7:00 AM &middot; 3 items today
+          </div>
         </div>
       </div>
 
@@ -369,7 +404,7 @@
 
         <div class="rounded-lg border border-line bg-panel p-7">
           <div class="w-11 h-11 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center mb-5">
-            <span class="material-symbols-outlined text-teal">schedule</span>
+            <span class="material-symbols-outlined text-teal">hourglass_empty</span>
           </div>
           <h3 class="text-lg font-semibold text-white mb-2">Follow-ups go cold</h3>
           <p class="text-sm text-muted leading-relaxed">Important people, payments, reviews, and decisions wait too long because everything lives in your head.</p>
@@ -380,13 +415,13 @@
 
   <!-- ── PRODUCT PROMISE ────────────────────────────────────────────────── -->
   <section class="bg-bg py-20 sm:py-24">
-    <div class="max-w-3xl mx-auto px-5 sm:px-6 text-center">
-      <p class="label text-teal mb-4">One operating rhythm</p>
+    <div class="max-w-[720px] mx-auto px-5 sm:px-6 text-center">
+      <p class="label text-teal mb-4">The SoloChief principle</p>
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-        One operating rhythm across web and WhatsApp.
+        One operating rhythm across web and your pocket.
       </h2>
       <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">
-        Use the web Command Center to plan your week. Use WhatsApp to stay accountable during the day. Chief keeps the same context behind both.
+        Use the web Command Center to plan your week. Chief stays with you during the day, checking in, logging updates, and keeping the same context behind both.
       </p>
     </div>
   </section>
@@ -399,32 +434,28 @@
       </h2>
 
       <div class="mt-14 grid md:grid-cols-4 gap-8 md:gap-6">
-        <!-- Step 1 -->
         <div class="relative">
           <div class="hidden md:block step-connector" aria-hidden="true"></div>
-          <div class="w-10 h-10 rounded-lg bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">1</div>
+          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">1</div>
           <h3 class="mt-4 text-base font-semibold text-white">Plan the week</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Set your focus, outcomes, follow-ups, and stop list.</p>
+          <p class="mt-2 text-sm text-muted leading-relaxed">Set your focus, outcomes, follow-ups, and stop list before the week takes over.</p>
         </div>
-        <!-- Step 2 -->
         <div class="relative">
           <div class="hidden md:block step-connector" aria-hidden="true"></div>
-          <div class="w-10 h-10 rounded-lg bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">2</div>
+          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">2</div>
           <h3 class="mt-4 text-base font-semibold text-white">Get your morning brief</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Chief sends the day's focus and top priorities to WhatsApp.</p>
+          <p class="mt-2 text-sm text-muted leading-relaxed">Chief sends the day's focus and top priorities, right where you already are.</p>
         </div>
-        <!-- Step 3 -->
         <div class="relative">
           <div class="hidden md:block step-connector" aria-hidden="true"></div>
-          <div class="w-10 h-10 rounded-lg bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">3</div>
+          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">3</div>
           <h3 class="mt-4 text-base font-semibold text-white">Operate during the day</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Reply with done, blocked, slipped, switched, or park.</p>
+          <p class="mt-2 text-sm text-muted leading-relaxed">Reply with done, blocked, slipped, switched, or park. Chief logs everything in real time.</p>
         </div>
-        <!-- Step 4 -->
         <div class="relative">
-          <div class="w-10 h-10 rounded-lg bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">4</div>
+          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">4</div>
           <h3 class="mt-4 text-base font-semibold text-white">Review and adjust</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Close the week with what happened, what slipped, and what needs attention next.</p>
+          <p class="mt-2 text-sm text-muted leading-relaxed">Close the week knowing what happened, what slipped, and what needs attention next.</p>
         </div>
       </div>
     </div>
@@ -444,12 +475,30 @@
             <h3 class="text-xl font-semibold text-white">Web Command Center</h3>
           </div>
           <ul class="space-y-5">
-            <li><p class="text-sm font-semibold text-white">Today Focus</p><p class="text-sm text-muted mt-0.5">Start each day with one clear focus and outcome.</p></li>
-            <li><p class="text-sm font-semibold text-white">Weekly Plan</p><p class="text-sm text-muted mt-0.5">Set your priorities and outcomes before the week takes over.</p></li>
-            <li><p class="text-sm font-semibold text-white">Commitments</p><p class="text-sm text-muted mt-0.5">Every yes you say gets logged. Nothing falls through.</p></li>
-            <li><p class="text-sm font-semibold text-white">Follow-ups</p><p class="text-sm text-muted mt-0.5">Track open loops and get reminded when things go cold.</p></li>
-            <li><p class="text-sm font-semibold text-white">Parking Lot</p><p class="text-sm text-muted mt-0.5">Park ideas and distractions instantly without losing them.</p></li>
-            <li><p class="text-sm font-semibold text-white">Friday Review</p><p class="text-sm text-muted mt-0.5">Close the week knowing what happened and what to fix.</p></li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+              <div><p class="text-sm font-semibold text-white">Today Focus</p><p class="text-sm text-muted mt-0.5">Start each day with one clear focus and outcome.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">list_alt</span>
+              <div><p class="text-sm font-semibold text-white">Weekly Plan</p><p class="text-sm text-muted mt-0.5">Set your priorities and outcomes before the week takes over.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">task_alt</span>
+              <div><p class="text-sm font-semibold text-white">Commitments</p><p class="text-sm text-muted mt-0.5">Every yes you say gets logged. Nothing falls through.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">pending_actions</span>
+              <div><p class="text-sm font-semibold text-white">Follow-ups</p><p class="text-sm text-muted mt-0.5">Track open loops and get reminded when things go cold.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">lightbulb</span>
+              <div><p class="text-sm font-semibold text-white">Parking Lot</p><p class="text-sm text-muted mt-0.5">Park ideas and distractions instantly without losing them.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">analytics</span>
+              <div><p class="text-sm font-semibold text-white">Friday Review</p><p class="text-sm text-muted mt-0.5">Close the week knowing what happened and what to fix.</p></div>
+            </li>
           </ul>
         </div>
 
@@ -463,11 +512,26 @@
             <h3 class="text-xl font-semibold text-white">WhatsApp Chief</h3>
           </div>
           <ul class="space-y-5">
-            <li><p class="text-sm font-semibold text-white">Morning Brief</p><p class="text-sm text-muted mt-0.5">Your focus and top priorities delivered to WhatsApp at your chosen time.</p></li>
-            <li><p class="text-sm font-semibold text-white">Quick commands</p><p class="text-sm text-muted mt-0.5">Reply to mark tasks done, log updates, or park ideas without opening the app.</p></li>
-            <li><p class="text-sm font-semibold text-white">Talk to Chief</p><p class="text-sm text-muted mt-0.5">Ask Chief about your work, priorities, and next move. Chief knows your context.</p></li>
-            <li><p class="text-sm font-semibold text-white">Follow-up reminders</p><p class="text-sm text-muted mt-0.5">Chief checks in when things go quiet or when follow-ups go cold.</p></li>
-            <li><p class="text-sm font-semibold text-white">End-of-day check-ins</p><p class="text-sm text-muted mt-0.5">A quick summary of what you logged and what is still open.</p></li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">sunny</span>
+              <div><p class="text-sm font-semibold text-white">Morning Brief</p><p class="text-sm text-muted mt-0.5">Your focus and top priorities delivered at your chosen time every morning.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">bolt</span>
+              <div><p class="text-sm font-semibold text-white">Quick commands</p><p class="text-sm text-muted mt-0.5">Reply to mark tasks done, log updates, or park ideas without opening the app.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">smart_toy</span>
+              <div><p class="text-sm font-semibold text-white">Talk to Chief</p><p class="text-sm text-muted mt-0.5">Ask Chief about your work, priorities, and next move. Chief knows your context.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">notifications_active</span>
+              <div><p class="text-sm font-semibold text-white">Follow-up reminders</p><p class="text-sm text-muted mt-0.5">Chief checks in when things go quiet or when follow-ups go cold.</p></div>
+            </li>
+            <li class="flex gap-3.5">
+              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">nightlight</span>
+              <div><p class="text-sm font-semibold text-white">End-of-day check-ins</p><p class="text-sm text-muted mt-0.5">A quick summary of what you logged and what is still open.</p></div>
+            </li>
           </ul>
         </div>
 
@@ -480,10 +544,10 @@
     <div class="max-w-site mx-auto px-5 sm:px-6">
       <div class="text-center max-w-2xl mx-auto">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">Simple, transparent pricing.</h2>
-        <p class="mt-4 text-base sm:text-lg text-[#CBD5E1]">Start free. Upgrade when you want Chief on WhatsApp.</p>
+        <p class="mt-4 text-base sm:text-lg text-[#CBD5E1]">Start free. Upgrade when you want Chief in your pocket.</p>
       </div>
 
-      <div class="mt-14 grid md:grid-cols-3 gap-6 items-start">
+      <div class="mt-16 grid md:grid-cols-3 gap-6 items-start">
 
         <!-- Free -->
         <div class="rounded-lg border border-line bg-panel p-7 flex flex-col">
@@ -491,31 +555,31 @@
           <p class="text-sm text-muted mt-1">Organise your work on web.</p>
           <p class="mt-5 text-3xl font-bold text-white">$0 <span class="text-sm font-normal text-muted">/ forever</span></p>
           <ul class="mt-6 space-y-3 flex-1">
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Today Focus</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Commitments</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Follow-ups</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Weekly Plan</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Parking Lot</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Friday Review</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Limited web AI chat</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Today Focus</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Commitments</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Follow-ups</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Weekly Plan</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Parking Lot</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Friday Review</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Limited web AI chat</li>
             <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-slate2" style="font-size:18px;">close</span>No WhatsApp</li>
           </ul>
           <a href="https://solochief.app/signup" class="mt-7 text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Start free</a>
         </div>
 
         <!-- Pro (highlighted) -->
-        <div class="relative rounded-lg border-2 border-teal bg-panelhi p-7 flex flex-col md:-translate-y-4" style="box-shadow: 0 24px 60px rgba(0,194,168,0.1);">
+        <div class="relative rounded-lg border-2 border-teal bg-panelhi p-7 flex flex-col md:-translate-y-4" style="box-shadow: 0 24px 60px rgba(0,194,168,0.12);">
           <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-semibold bg-teal text-bg px-3 py-1 rounded-full">Most popular</span>
           <h3 class="text-lg font-semibold text-white">Pro</h3>
-          <p class="text-sm text-muted mt-1">Bring Chief into your daily WhatsApp rhythm.</p>
+          <p class="text-sm text-muted mt-1">Bring Chief into your daily pocket rhythm.</p>
           <p class="mt-5 text-3xl font-bold text-white">$15 <span class="text-sm font-normal text-muted">/ month</span></p>
           <ul class="mt-6 space-y-3 flex-1">
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Everything in Free</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>7-day WhatsApp trial</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>WhatsApp morning brief</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>WhatsApp commands</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Talk to Chief about your work, priorities, and next move</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher AI usage</li>
+            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Everything in Free</li>
+            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>7-day WhatsApp trial</li>
+            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Morning brief delivered daily</li>
+            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>WhatsApp commands and quick logging</li>
+            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Talk to Chief about your work, priorities, and next move</li>
+            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher AI usage</li>
           </ul>
           <a href="https://solochief.app/signup" class="mt-7 text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-5 py-3 rounded-md transition-colors">Start free</a>
           <p class="mt-3 text-center text-xs text-muted">7-day WhatsApp trial included</p>
@@ -527,11 +591,11 @@
           <p class="text-sm text-muted mt-1">For founders managing heavier weekly execution.</p>
           <p class="mt-5 text-3xl font-bold text-white">$24 <span class="text-sm font-normal text-muted">/ month</span></p>
           <ul class="mt-6 space-y-3 flex-1">
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Everything in Pro</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher usage limits</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Advanced weekly reviews</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Priority support</li>
-            <li class="flex items-start gap-2.5 text-sm text-[#CBD5E1]"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Future capacity and pattern insights</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Everything in Pro</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher usage limits</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Advanced weekly reviews</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Priority support</li>
+            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Future capacity and pattern insights</li>
           </ul>
           <a href="https://solochief.app/signup" class="mt-7 text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Get started</a>
         </div>
@@ -542,7 +606,7 @@
 
   <!-- ── TRUST ──────────────────────────────────────────────────────────── -->
   <section class="bg-bg py-20 sm:py-24">
-    <div class="max-w-2xl mx-auto px-5 sm:px-6 text-center">
+    <div class="max-w-[640px] mx-auto px-5 sm:px-6 text-center">
       <p class="label text-teal mb-5">Private beta</p>
       <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
         Built with founders who run too many open loops.
@@ -556,13 +620,13 @@
   <!-- ── FINAL CTA ──────────────────────────────────────────────────────── -->
   <section class="bg-deep py-20 sm:py-24">
     <div class="max-w-site mx-auto px-5 sm:px-6">
-      <div class="rounded-2xl border border-teal/10 bg-panel/60 px-6 py-14 sm:px-12 sm:py-16 text-center">
+      <div class="rounded-[2rem] border border-teal/10 px-6 py-14 sm:px-12 sm:py-16 text-center" style="background: #1E2D43;">
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white max-w-3xl mx-auto leading-snug">
-          Start with the web Command Center. Upgrade when you want Chief on WhatsApp.
+          Start with the web Command Center. Upgrade when you want Chief in your pocket.
         </h2>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
           <a href="https://solochief.app/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-3.5 rounded-md transition-colors">Start free</a>
-          <a href="#pricing" class="inline-flex items-center gap-1.5 text-[#CBD5E1] hover:text-white font-medium transition-colors">See pricing</a>
+          <a href="#pricing" class="inline-flex items-center gap-1.5 text-muted hover:text-white font-medium transition-colors">See pricing</a>
         </div>
       </div>
     </div>
@@ -574,9 +638,9 @@
 <footer class="bg-bg border-t border-line">
   <div class="max-w-site mx-auto px-5 sm:px-6 py-14 grid gap-10 md:grid-cols-2">
     <div>
-      <a href="#top" class="text-lg font-extrabold tracking-tight text-teal">SoloChief</a>
+      <a href="#top" class="text-xl font-extrabold tracking-tight text-teal">SoloChief</a>
       <p class="mt-3 text-sm text-muted">Built by Astor Stack Technologies</p>
-      <p class="mt-1 text-sm text-muted">&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
+      <p class="mt-1 text-xs text-muted">&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
     </div>
 
     <div class="grid grid-cols-3 gap-8 md:justify-items-end">
@@ -606,7 +670,6 @@
 </footer>
 
 <script>
-  // Mobile menu toggle
   (function () {
     var btn = document.getElementById('menuBtn');
     var menu = document.getElementById('mobileMenu');
