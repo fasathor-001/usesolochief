@@ -1438,7 +1438,7 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                       }} />
                       <div style={{ flex: 1 }}>
                         <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--sc-text)' }}>
-                          Connected — {waPhone.slice(0, 3)} *** {waPhone.slice(-4)}
+                          Connected: {waPhone.slice(0, 3)} *** {waPhone.slice(-4)}
                         </p>
                         <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginTop: 1 }}>
                           Briefings and commands are active.
@@ -1449,11 +1449,12 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                     <label style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', marginBottom: 18 }}>
                       <input
                         type="checkbox"
-                        checked={waNotif}
+                        checked={!waNotif}
                         onChange={async e => {
-                          const val = e.target.checked
-                          setWaNotif(val)
-                          await toggleWhatsAppNotifications(val)
+                          const isPaused = e.target.checked
+                          const notificationsEnabled = !isPaused
+                          setWaNotif(notificationsEnabled)
+                          await toggleWhatsAppNotifications(notificationsEnabled)
                         }}
                         style={{ width: 15, height: 15, accentColor: 'var(--sc-teal)', cursor: 'pointer' }}
                       />
