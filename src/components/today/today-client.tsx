@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X } from 'lucide-react'
+import { CheckCircle, Circle, AlertCircle, RefreshCw, Plus, X, Clock, Ban, Calendar } from 'lucide-react'
 import { upsertDailyLog, addNotTodayItem, removeNotTodayItem, completeFollowup } from '@/lib/actions/today'
 import { SwitchChallengeModal } from '@/components/today/switch-challenge-modal'
 import { ContextPanel, ContextBlock } from '@/components/ui/solochief/ContextPanel'
@@ -21,12 +21,12 @@ interface TodayClientProps {
   allCommitments: Commitment[]
 }
 
-const STATUS_OPTIONS: { value: DailyLogStatus; label: string; colour: string }[] = [
-  { value: 'in_progress', label: 'In progress', colour: '#3B82F6' },
-  { value: 'done',        label: 'Done',        colour: '#00C2A8' },
-  { value: 'partial',     label: 'Partial',     colour: '#F59E0B' },
-  { value: 'blocked',     label: 'Blocked',     colour: '#EF4444' },
-  { value: 'slipped',     label: 'Slipped',     colour: '#64748B' },
+const STATUS_OPTIONS: { value: DailyLogStatus; label: string; colour: string; icon: React.ElementType }[] = [
+  { value: 'in_progress', label: 'In progress', colour: '#3B82F6', icon: Clock },
+  { value: 'done',        label: 'Done',        colour: '#00C2A8', icon: CheckCircle },
+  { value: 'partial',     label: 'Partial',     colour: '#F59E0B', icon: Circle },
+  { value: 'blocked',     label: 'Blocked',     colour: '#EF4444', icon: Ban },
+  { value: 'slipped',     label: 'Slipped',     colour: '#64748B', icon: Calendar },
 ]
 
 function todayLabel(): string {
@@ -215,23 +215,30 @@ export function TodayClient({
                 <div style={{ marginBottom: 16 }}>
                   <p className="sc-label">Status</p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {STATUS_OPTIONS.map((opt) => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => setStatus(opt.value)}
-                        className="sc-badge"
-                        style={{
-                          cursor: 'pointer',
-                          border: `0.5px solid ${status === opt.value ? opt.colour : 'var(--sc-border)'}`,
-                          backgroundColor: status === opt.value ? `${opt.colour}1A` : 'transparent',
-                          color: status === opt.value ? opt.colour : 'var(--sc-muted)',
-                          padding: '5px 12px',
-                        }}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
+                    {STATUS_OPTIONS.map((opt) => {
+                      const Icon = opt.icon
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setStatus(opt.value)}
+                          className="sc-badge"
+                          style={{
+                            cursor: 'pointer',
+                            border: `0.5px solid ${status === opt.value ? opt.colour : 'var(--sc-border)'}`,
+                            backgroundColor: status === opt.value ? `${opt.colour}1A` : 'transparent',
+                            color: status === opt.value ? opt.colour : 'var(--sc-muted)',
+                            padding: '5px 12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <Icon size={14} />
+                          {opt.label}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
 
