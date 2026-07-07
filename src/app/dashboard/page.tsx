@@ -194,9 +194,22 @@ export default async function CommandCentrePage({
                   )}
                 </>
               ) : (
-                <Link href="/dashboard/weekly-plan" style={{ fontSize: 13, color: 'var(--sc-teal)' }}>
-                  No focus set — set one now →
-                </Link>
+                <>
+                  <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                    Start here. What is the one thing that matters today?
+                  </p>
+                  <Link
+                    href="/dashboard/today"
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 500,
+                      color: 'var(--sc-teal)',
+                      display: 'inline-block',
+                    }}
+                  >
+                    Set your focus →
+                  </Link>
+                </>
               )}
             </div>
 
@@ -238,6 +251,48 @@ export default async function CommandCentrePage({
               )}
             </div>
 
+            {/* Commitments empty state */}
+            {commitments.length === 0 && (
+              <div className="sc-card" style={{ marginBottom: 14 }}>
+                <p className="sc-card-label" style={{ color: 'var(--sc-teal)' }}>Commitments</p>
+                <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                  What have you said yes to this week?
+                </p>
+                <Link
+                  href="/dashboard/commitments"
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: 'var(--sc-teal)',
+                    display: 'inline-block',
+                  }}
+                >
+                  Add a commitment →
+                </Link>
+              </div>
+            )}
+
+            {/* Follow-ups empty state */}
+            {followups.length === 0 && (
+              <div className="sc-card" style={{ marginBottom: 14 }}>
+                <p className="sc-card-label" style={{ color: 'var(--sc-teal)' }}>Follow-ups</p>
+                <p style={{ fontSize: 13, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                  Anyone waiting on you?
+                </p>
+                <Link
+                  href="/dashboard/follow-ups"
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: 'var(--sc-teal)',
+                    display: 'inline-block',
+                  }}
+                >
+                  Add a follow-up →
+                </Link>
+              </div>
+            )}
+
             {/* Quick actions */}
             <div style={{ marginBottom: 14 }}>
               <p className="sc-section-label" style={{ marginTop: 0 }}>Quick actions</p>
@@ -275,26 +330,28 @@ export default async function CommandCentrePage({
 
           {/* ── Right column — context panel ────────────────── */}
           <ContextPanel>
-            {/* Week at a glance */}
-            <ContextBlock title="Week at a glance">
-              <MetricRow
-                label="Outcomes"
-                value={`${outcomesComplete} / ${outcomes.length || 3}`}
-              />
-              <MetricRow
-                label="Overdue"
-                value={overdueFollowups.length}
-                variant={overdueFollowups.length > 0 ? 'danger' : 'default'}
-              />
-              <MetricRow
-                label="Due today"
-                value={dueToday.length}
-              />
-              <MetricRow
-                label="Parked"
-                value={parkingItems.length}
-              />
-            </ContextBlock>
+            {/* Week at a glance — only show if user has started tracking */}
+            {(outcomes.length > 0 || followups.length > 0 || parkingItems.length > 0) && (
+              <ContextBlock title="Week at a glance">
+                <MetricRow
+                  label="Outcomes"
+                  value={`${outcomesComplete} / ${outcomes.length || 3}`}
+                />
+                <MetricRow
+                  label="Overdue"
+                  value={overdueFollowups.length}
+                  variant={overdueFollowups.length > 0 ? 'danger' : 'default'}
+                />
+                <MetricRow
+                  label="Due today"
+                  value={dueToday.length}
+                />
+                <MetricRow
+                  label="Parked"
+                  value={parkingItems.length}
+                />
+              </ContextBlock>
+            )}
 
             {/* This week outcomes */}
             {outcomes.length > 0 && (
