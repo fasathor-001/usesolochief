@@ -421,8 +421,20 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
       {/* Step 3 — WhatsApp Connection */}
       {step === 3 && (
         <div>
+          {/* LOADING STATE — show spinner while plan is being fetched */}
+          {plan === null && waState === 'default' && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="flex items-center gap-3 mb-6">
+                <Loader2 size={24} className="animate-spin" style={{ color: 'var(--sc-accent)' }} />
+              </div>
+              <p className="text-sm" style={{ color: 'var(--sc-muted)' }}>
+                Loading WhatsApp options...
+              </p>
+            </div>
+          )}
+
           {/* DEFAULT STATE */}
-          {waState === 'default' && (
+          {plan !== null && waState === 'default' && (
             <>
               {console.log('[Onboarding Step 3 Render]', { plan, whatsappTrialUsed, condition1: plan === 'free' && !whatsappTrialUsed, condition2: plan === 'free' && whatsappTrialUsed })}
               {plan === 'free' && !whatsappTrialUsed ? (
