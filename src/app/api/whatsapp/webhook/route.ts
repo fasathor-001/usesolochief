@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
     // Check if this user already has a different actively connected WhatsApp number
     const { data: userProfile, error: profileError } = await db
       .from('profiles')
-      .select('user_id, whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
+      .select('id, whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, whatsapp_notifications_enabled')
       .eq('id', userId)
       .single()
 
@@ -213,12 +213,12 @@ export async function POST(request: NextRequest) {
       profile_found: !!userProfile,
       profile_error: profileError?.message,
       token_user_id: tokenRecord?.user_id,
-      profile_user_id: userProfile?.user_id
+      profile_id: userProfile?.id
     })
 
     // Check WhatsApp access before allowing connection
     console.log('[Webhook] Profile passed to hasWhatsAppAccess (token handler):', {
-      user_id: userProfile?.user_id,
+      id: userProfile?.id,
       plan: userProfile?.plan,
       trial_ends_at: userProfile?.whatsapp_trial_ends_at,
       raw_profile: JSON.stringify(userProfile)
