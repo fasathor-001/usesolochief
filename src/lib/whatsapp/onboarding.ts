@@ -14,27 +14,36 @@ import {
 
 // Interactive message helpers
 async function sendConsentMessage(userId: string, userPhone: string, firstName: string): Promise<void> {
+  // Ensure firstName is always valid (fallback to 'there' if empty)
+  const displayName = firstName && firstName.trim() ? firstName : 'there'
+  console.log('[Interactive] sendConsentMessage with variables:', { '1': displayName })
   const contentSid = process.env.TWILIO_CONTENT_CONSENT_SID
   if (contentSid) {
-    await sendInteractiveMessage(userPhone, contentSid, { '1': firstName })
+    await sendInteractiveMessage(userPhone, contentSid, { '1': displayName })
   } else {
     await sendWhatsApp(userPhone, consentMessage())
   }
 }
 
 async function sendQuietHoursMessage(userPhone: string, firstName: string): Promise<void> {
+  // Ensure firstName is always valid (fallback to 'there' if empty)
+  const displayName = firstName && firstName.trim() ? firstName : 'there'
+  console.log('[Interactive] sendQuietHoursMessage with variables:', { '1': displayName })
   const contentSid = process.env.TWILIO_CONTENT_QUIET_HOURS_SID
   if (contentSid) {
-    await sendInteractiveMessage(userPhone, contentSid, { '1': firstName })
+    await sendInteractiveMessage(userPhone, contentSid, { '1': displayName })
   } else {
     await sendWhatsApp(userPhone, quietHoursMessage())
   }
 }
 
 async function sendBriefingTimeMessage(userPhone: string, firstName: string): Promise<void> {
+  // Ensure firstName is always valid (fallback to 'there' if empty)
+  const displayName = firstName && firstName.trim() ? firstName : 'there'
+  console.log('[Interactive] sendBriefingTimeMessage with variables:', { '1': displayName })
   const contentSid = process.env.TWILIO_CONTENT_BRIEFING_TIME_SID
   if (contentSid) {
-    await sendInteractiveMessage(userPhone, contentSid, { '1': firstName })
+    await sendInteractiveMessage(userPhone, contentSid, { '1': displayName })
   } else {
     await sendWhatsApp(userPhone, briefingTimeMessage())
   }

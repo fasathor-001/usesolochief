@@ -45,10 +45,77 @@ export async function POST(request: NextRequest) {
   // ── 2. Parse message ─────────────────────────────────────────────────────
   const rawFrom   = (params['From'] ?? '').replace('whatsapp:', '')
   const bodyText  = (params['Body'] ?? '').trim()
+  const buttonPayload = params['ButtonPayload'] ?? params['ButtonText'] ?? ''
 
   if (!rawFrom || !bodyText) return twimlEmpty()
 
   const db = createAdminClient()
+
+  // Log incoming request for button payload debugging
+  console.log('[whatsapp/webhook] Incoming message:', {
+    from: rawFrom,
+    body: bodyText,
+    buttonPayload: buttonPayload,
+    allParams: params,
+  })
+
+  // ── 2.4. Handle interactive button replies ─────────────────────────────────
+  // Check for button payloads BEFORE processing other message types
+  if (buttonPayload || ['Get started 🚀', 'Yes, let\'s go', 'No thanks'].includes(bodyText)) {
+    console.log('[whatsapp/webhook] Button reply detected:', buttonPayload || bodyText)
+
+    // Get user info
+    const { data: profile } = await db
+      .from('profiles')
+      .select('user_id, full_name, whatsapp_onboarding_step')
+      .eq('whatsapp_number', rawFrom)
+      .maybeSingle()
+
+    if (!profile) {
+      console.log('[whatsapp/webhook] No profile found for button reply')
+      return twimlResponse('Please connect WhatsApp first.')
+    }
+
+    const userId = profile.user_id
+    const firstName = profile.full_name ? profile.full_name.split(' ')[0] : 'there'
+
+    // Route button actions
+    if (buttonPayload.includes('get_started') || bodyText === 'Get started 🚀') {
+      console.log('[whatsapp/webhook] Get Started button → starting onboarding')
+      const consentMessage = await startOnboarding(userId, rawFrom)
+      return twimlResponse(consentMessage)
+    }
+
+    if (buttonPayload.includes('consent_yes') || bodyText === 'Yes, let\'s go') {
+      console.log('[whatsapp/webhook] Consent Yes button')
+      const reply = await handleOnboardingReply(userId, 'consent', '1', rawFrom)
+      return twimlResponse(reply)
+    }
+
+    if (buttonPayload.includes('consent_no') || bodyText === 'No thanks') {
+      console.log('[whatsapp/webhook] Consent No button')
+      const reply = await handleOnboardingReply(userId, 'consent', '2', rawFrom)
+      return twimlResponse(reply)
+    }
+
+    // Quiet hours button routing
+    for (let i = 1; i <= 4; i++) {
+      if (buttonPayload.includes(`quiet_${i}`)) {
+        console.log(`[whatsapp/webhook] Quiet hours option ${i} button`)
+        const reply = await handleOnboardingReply(userId, 'quiet_hours', String(i), rawFrom)
+        return twimlResponse(reply)
+      }
+    }
+
+    // Briefing time button routing
+    for (let i = 1; i <= 4; i++) {
+      if (buttonPayload.includes(`brief_${i}`)) {
+        console.log(`[whatsapp/webhook] Briefing time option ${i} button`)
+        const reply = await handleOnboardingReply(userId, 'briefing_time', String(i), rawFrom)
+        return twimlResponse(reply)
+      }
+    }
+  }
 
   // ── 2.5. Handle connection token flow ────────────────────────────────────
   if (bodyText.startsWith('Hey Chief ')) {
