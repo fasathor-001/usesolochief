@@ -166,12 +166,19 @@ function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
     setEmailLinkLoading(true)
     setAuthError('')
     const supabase = createClient()
+    console.log('[Auth] Sending magic link for email:', email.trim())
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback` },
     })
     setEmailLinkLoading(false)
     if (otpError) {
+      console.error('[Auth] Magic link send failed:', {
+        error: otpError,
+        message: otpError.message,
+        status: otpError.status,
+        email: email.trim(),
+      })
       const otpMsg = typeof otpError.message === 'string' ? otpError.message : ''
       if (otpMsg.toLowerCase().includes('rate limit')) {
         // Still show code entry — a previous email was likely sent
@@ -184,6 +191,7 @@ function SigninFormInner({ initialError = '' }: SigninFormInnerProps) {
         setAuthError('We could not send a sign-in email. Please try again.')
       }
     } else {
+      console.log('[Auth] Magic link sent successfully to:', email.trim())
       setEmailLinkSent(true)
       setCode('')
       setResendSent(false)
