@@ -74,7 +74,16 @@ export async function POST(request: NextRequest) {
 
     if (!profile) {
       console.log('[whatsapp/webhook] No profile found for button reply')
-      return twimlResponse('Please connect WhatsApp first.')
+      return twimlResponse(
+        'Hey. I\'m Chief, your personal Chief of Staff.\n\n' +
+        'I help you:\n\n' +
+        '✅ Plan the week before it takes over\n' +
+        '✅ Protect today\'s focus\n' +
+        '✅ Track commitments and follow-ups\n' +
+        '✅ Start every morning with clarity\n\n' +
+        'To get started, sign up at solochief.app and connect your WhatsApp from Settings.\n\n' +
+        'Takes 30 seconds.'
+      )
     }
 
     const userId = profile.user_id
@@ -308,7 +317,14 @@ export async function POST(request: NextRequest) {
 
   if (!profile || !profile.whatsapp_connected) {
     return twimlResponse(
-      'This number is not linked to a SoloChief account. Visit solochief.app/dashboard/settings → WhatsApp to connect.',
+      'Hey. I\'m Chief, your personal Chief of Staff.\n\n' +
+      'I help you:\n\n' +
+      '✅ Plan the week before it takes over\n' +
+      '✅ Protect today\'s focus\n' +
+      '✅ Track commitments and follow-ups\n' +
+      '✅ Start every morning with clarity\n\n' +
+      'To get started, sign up at solochief.app and connect your WhatsApp from Settings.\n\n' +
+      'Takes 30 seconds.'
     )
   }
 
