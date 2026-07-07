@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
 
 Your Pocket Chief of Staff is now active on WhatsApp.
 
-Send 'help' to see what I can do.`)
+Send *help* to see what I can do.`)
     }
   }
 
@@ -390,7 +390,7 @@ async function handlePlan(db: any, userId: string): Promise<string> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleCapture(db: any, userId: string, workspaceId: string, item: string): Promise<string> {
-  if (!item.trim()) return `Send 'capture [item]' to save something to your parking lot. Example: capture Review the contract with Alex`
+  if (!item.trim()) return `Send *capture* [item] to save something. Example: capture Review the contract with Alex`
 
   const today = new Date().toISOString().split('T')[0]
 
@@ -411,7 +411,7 @@ async function handleCapture(db: any, userId: string, workspaceId: string, item:
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleDone(db: any, userId: string, query: string): Promise<string> {
-  if (!query.trim()) return `Send 'done [follow-up name]' to mark a follow-up complete. Example: done Call with Alex`
+  if (!query.trim()) return `Send *done* [name] to mark complete. Example: done Call with Alex`
 
   const { data: followups } = await db
     .from('followups')
@@ -446,16 +446,16 @@ async function handleDone(db: any, userId: string, query: string): Promise<strin
 function helpText(): string {
   return [
     'SOLOCHIEF COMMANDS',
-    'hi / briefing: Morning briefing',
-    'focus: Today\'s focus',
-    'follow-ups: Due follow-ups',
-    'commitments: Active commitments',
-    'plan: This week\'s plan',
-    'capture [item]: Save to parking lot',
-    'done [name]: Mark follow-up complete',
-    'help: This message',
+    '*briefing* or *hi* - your morning summary',
+    '*focus* - what to work on now',
+    '*follow-ups* - what\'s due',
+    '*commitments* - active items',
+    '*plan* - your week',
+    '*capture* [item] - save to parking lot',
+    '*done* [name] - mark complete',
+    '*help* - this message',
     '',
-    'Any other message gets an AI response.',
-    'Full app: solochief.app',
+    'Other messages get an AI response.',
+    'Open app: solochief.app',
   ].join('\n')
 }

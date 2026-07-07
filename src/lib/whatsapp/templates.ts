@@ -1,17 +1,17 @@
 export function consentMessage(): string {
   return `Welcome to SoloChief.
 
-I'm your Chief of Staff on WhatsApp. I can send you a morning briefing, nudge you on follow-ups, and help you close the week.
+I'm your Chief of Staff on WhatsApp. I'll send your morning briefing, flag follow-ups that need attention, and help you keep the week on track.
 
-I'll only message you about your own commitments and follow-ups. No spam.
+Just your commitments and follow-ups. No spam. No distractions.
 
-Reply:
+Ready to set up?
 1. Yes, set me up
 2. Not now`
 }
 
 export function quietHoursMessage(): string {
-  return `Good. When should I stay quiet?
+  return `When should I stay quiet?
 
 I won't send anything during your quiet hours.
 
@@ -29,7 +29,7 @@ Reply with a number:
 1. 6am
 2. 7am
 3. 8am
-4. No morning briefing`
+4. Skip for now`
 }
 
 export function completeMessage(name: string): string {
@@ -37,17 +37,17 @@ export function completeMessage(name: string): string {
 
 Here's what I can do. Just reply with any of these:
 
-briefing — your morning summary
-focus — what to work on now
-follow-ups — what's open
-plan — your week
-capture [something] — save a note
-done [something] — mark it done
-help — see this again
+*briefing* - your morning summary
+*focus* - what to work on now
+*follow-ups* - what's open
+*plan* - your week
+*capture* [something] - save a note
+*done* [something] - mark it done
+*help* - see this again
 
-I'll send your first briefing tomorrow morning.`
+Your first briefing starts tomorrow morning.`
 }
 
 export function skippedMessage(): string {
-  return `No problem. You can set up anytime by replying 'setup'.`
+  return `No problem. You can set up anytime by replying *setup*.`
 }
