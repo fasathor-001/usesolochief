@@ -196,10 +196,11 @@ async function getCompleteMessage(userId: string): Promise<string> {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name')
+    .select('full_name, whatsapp_briefing_hour')
     .eq('user_id', userId)
     .maybeSingle()
 
   const name = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
-  return completeMessage(name)
+  const briefingHour = profile?.whatsapp_briefing_hour ?? null
+  return completeMessage(name, briefingHour)
 }

@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { twimlResponse, twimlEmpty } from '@/lib/whatsapp/twilio'
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
 import { handleOnboardingReply, startOnboarding } from '@/lib/whatsapp/onboarding'
+import { expiredTokenMessage, alreadyConnectedMessage, helpText } from '@/lib/whatsapp/templates'
 import type { OnboardingStep } from '@/lib/whatsapp/onboarding'
 
 // Twilio webhook — URL must exactly match what is configured in the Twilio console.
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (!tokenRecord) {
-      return twimlResponse('That connection link has expired. Go back to SoloChief and tap Connect WhatsApp again.')
+      return twimlResponse(expiredTokenMessage())
     }
 
     if (new Date(tokenRecord.expires_at) < new Date()) {
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
         .from('whatsapp_connect_tokens')
         .update({ failed_attempts: tokenRecord.failed_attempts + 1, last_attempt_at: new Date().toISOString() })
         .eq('token_hash', tokenHash)
-      return twimlResponse('That connection link has expired. Go back to SoloChief and tap Connect WhatsApp again.')
+      return twimlResponse(expiredTokenMessage())
     }
 
     const userId = tokenRecord.user_id
@@ -133,12 +134,14 @@ export async function POST(request: NextRequest) {
       const consentMessage = await startOnboarding(userId)
       return twimlResponse(consentMessage)
     } else {
-      // Already had a number, just send connected confirmation
-      return twimlResponse(`✅ SoloChief connected.
-
-Your Pocket Chief of Staff is now active on WhatsApp.
-
-Send *help* to see what I can do.`)
+      // Already had a number, send connected confirmation with user's name
+      const { data: profile } = await db
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', userId)
+        .maybeSingle()
+      const name = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+      return twimlResponse(alreadyConnectedMessage())
     }
   }
 
@@ -443,19 +446,3 @@ async function handleDone(db: any, userId: string, query: string): Promise<strin
   return `Done: "${match.title}" — marked complete.`
 }
 
-function helpText(): string {
-  return [
-    'SOLOCHIEF COMMANDS',
-    '*briefing* or *hi* - your morning summary',
-    '*focus* - what to work on now',
-    '*follow-ups* - what\'s due',
-    '*commitments* - active items',
-    '*plan* - your week',
-    '*capture* [item] - save to parking lot',
-    '*done* [name] - mark complete',
-    '*help* - this message',
-    '',
-    'Other messages get an AI response.',
-    'Open app: solochief.app',
-  ].join('\n')
-}
