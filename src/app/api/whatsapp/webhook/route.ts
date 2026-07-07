@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     // Check WhatsApp access before allowing connection
-    if (!hasWhatsAppAccess(userProfile)) {
+    if (!userProfile || !hasWhatsAppAccess(userProfile)) {
       console.log('[whatsapp/webhook] User lacks WhatsApp access - blocking connection')
       await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
       await db.from('whatsapp_upgrade_prompts').insert({ user_id: userId, prompt_location: 'webhook_token' }).then()
