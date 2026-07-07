@@ -106,7 +106,7 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
     const dedupeKey = `whatsapp_morning:${user_id}:${today}`
     if (await alreadySent(db, dedupeKey)) { result.skipped++; continue }
 
-    const briefing = await buildMorningBriefing(db, user_id, full_name ?? '')
+    const briefing = await buildMorningBriefing(db, user_id, full_name ?? '', profile.plan, profile.whatsapp_trial_ends_at)
     const sendRes  = await sendWhatsApp(whatsapp_number, briefing)
 
     if (sendRes.error && sendRes.error !== 'not_configured') {
@@ -124,7 +124,7 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function buildMorningBriefing(db: any, userId: string, name: string): Promise<string> {
+async function buildMorningBriefing(db: any, userId: string, name: string, planType: string, trialEndsAt: string | null): Promise<string> {
   const today = toDateStr(new Date())
 
   const [focusRes, followupsRes, planRes, profileRes] = await Promise.all([
@@ -156,6 +156,22 @@ async function buildMorningBriefing(db: any, userId: string, name: string): Prom
   const parts = [greeting, focusLine]
   if (followupLines) parts.push(followupLines)
   parts.push(`Reply 'help' for all commands.`)
+
+  // Add trial-ending warning if free user's trial ends within 24 hours
+  if (planType === 'free' && trialEndsAt) {
+    const now = new Date()
+    const trialEndDate = new Date(trialEndsAt)
+    const hoursUntilExpiry = (trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60)
+
+    if (hoursUntilExpiry > 0 && hoursUntilExpiry <= 24) {
+      parts.push(`Trial note:
+This is your final trial day.
+
+Upgrade to Pro to keep your morning brief and WhatsApp access.
+
+solochief.app/pricing`)
+    }
+  }
 
   return parts.join('\n\n')
 }
@@ -280,4 +296,71 @@ If asked something outside your scope, redirect to what is useful for their day.
   } catch {
     return "Something went wrong. Open SoloChief at solochief.app for assistance."
   }
+}
+
+// ── Trial expiry handler ───────────────────────────────────────────────────────
+
+export async function handleTrialExpiry(): Promise<WhatsAppResult> {
+  const db      = createAdminClient()
+  const now     = new Date()
+  const result: WhatsAppResult = { sent: 0, skipped: 0, failed: 0 }
+
+  // Find free users with expired trials
+  const { data: expiredProfiles } = await db
+    .from('profiles')
+    .select('user_id, whatsapp_number, whatsapp_trial_ends_at')
+    .eq('plan', 'free')
+    .eq('whatsapp_connected', true)
+    .not('whatsapp_number', 'is', null)
+    .not('whatsapp_trial_ends_at', 'is', null)
+    .lt('whatsapp_trial_ends_at', now.toISOString())
+
+  if (!expiredProfiles || expiredProfiles.length === 0) return result
+
+  for (const profile of expiredProfiles) {
+    const { user_id, whatsapp_number } = profile
+    if (!whatsapp_number) { result.skipped++; continue }
+
+    const expiryMessage = `☀️ Your 7-day Chief trial has ended.
+
+Upgrade to Pro to keep your morning brief and WhatsApp access.
+
+solochief.app/pricing`
+
+    const sendRes = await sendWhatsApp(whatsapp_number, expiryMessage)
+
+    if (sendRes.error && sendRes.error !== 'not_configured') {
+      await db.from('whatsapp_logs').insert({
+        user_id,
+        phone: whatsapp_number,
+        direction: 'outbound',
+        type: 'trial_expiry_notification',
+        status: 'failed',
+        error: sendRes.error,
+      }).then()
+      result.failed++
+    } else if (sendRes.error === 'not_configured') {
+      result.skipped++
+    } else {
+      // Disconnect after sending expiry message
+      await db
+        .from('profiles')
+        .update({
+          whatsapp_connected: false,
+          whatsapp_disconnected_at: now.toISOString(),
+        })
+        .eq('user_id', user_id)
+
+      await db.from('whatsapp_logs').insert({
+        user_id,
+        phone: whatsapp_number,
+        direction: 'outbound',
+        type: 'trial_expiry_notification',
+        status: 'sent',
+      }).then()
+      result.sent++
+    }
+  }
+
+  return result
 }

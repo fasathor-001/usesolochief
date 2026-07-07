@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { validateEvent, WebhookVerificationError } from '@polar-sh/sdk/webhooks'
+import { sendWhatsApp } from '@/lib/whatsapp/twilio'
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -105,12 +106,33 @@ export async function POST(request: Request) {
         const userId = sub.metadata?.user_id ?? sub.customerExternalId
         if (!userId) break
 
+        // Fetch current WhatsApp status
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('whatsapp_connected, whatsapp_number')
+          .eq('user_id', userId)
+          .single()
+
+        // Disconnect WhatsApp if currently connected
+        if (profile?.whatsapp_connected && profile?.whatsapp_number) {
+          const disconnectMessage = `Your SoloChief Pro plan has ended.
+WhatsApp briefings are paused.
+
+Reactivate at solochief.app/pricing`
+
+          await sendWhatsApp(profile.whatsapp_number, disconnectMessage).catch((err) => {
+            console.error(`Failed to send WhatsApp disconnect message to user ${userId}:`, err)
+          })
+        }
+
         await supabase
           .from('profiles')
           .update({
             plan: 'free',
             polar_subscription_id: null,
             plan_expires_at: null,
+            whatsapp_connected: false,
+            whatsapp_disconnected_at: new Date().toISOString(),
           })
           .eq('user_id', userId)
 

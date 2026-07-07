@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SoloChief | Your Pocket Chief of Staff</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#d4e4fa",
+                    "tertiary-container": "#ff8d69",
+                    "on-primary-fixed": "#00201b",
+                    "on-tertiary-fixed-variant": "#7e2c0f",
+                    "inverse-on-surface": "#233143",
+                    "inverse-primary": "#006b5c",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "surface-container": "#122131",
+                    "on-primary": "#00382f",
+                    "surface-container-high": "#1c2b3c",
+                    "surface-container-lowest": "#010f1f",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "on-secondary": "#253144",
+                    "primary": "#42dec3",
+                    "surface-variant": "#273647",
+                    "on-background": "#d4e4fa",
+                    "on-primary-fixed-variant": "#005045",
+                    "secondary-fixed": "#d7e3fc",
+                    "surface-container-low": "#0d1c2d",
+                    "outline": "#85948f",
+                    "on-tertiary": "#5e1700",
+                    "secondary-container": "#3e495e",
+                    "secondary-fixed-dim": "#bbc7df",
+                    "primary-container": "#00c2a8",
+                    "surface-tint": "#41ddc2",
+                    "on-secondary-fixed-variant": "#3c475b",
+                    "primary-fixed": "#65fade",
+                    "on-primary-container": "#00493e",
+                    "secondary": "#bbc7df",
+                    "inverse-surface": "#d4e4fa",
+                    "on-error": "#690005",
+                    "surface": "#051424",
+                    "tertiary-fixed": "#ffdbd0",
+                    "background": "#051424",
+                    "surface-dim": "#051424",
+                    "error-container": "#93000a",
+                    "surface-container-highest": "#273647",
+                    "tertiary": "#ffb6a0",
+                    "primary-fixed-dim": "#41ddc2",
+                    "on-secondary-container": "#adb9d1",
+                    "on-surface-variant": "#bbcac4",
+                    "error": "#ffb4ab",
+                    "surface-bright": "#2c3a4c",
+                    "on-error-container": "#ffdad6",
+                    "outline-variant": "#3c4a46",
+                    "on-tertiary-container": "#752509",
+                    "on-secondary-fixed": "#101c2e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "margin-mobile": "20px",
+                    "margin-desktop": "64px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-xl": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-sm": ["14px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #051424; /* surface from theme config */
+            color: #d4e4fa; /* on-surface from theme config */
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .whatsapp-bubble {
+            position: relative;
+            background: #1c2b3c;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            max-width: 85%;
+        }
+        .whatsapp-bubble::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 10px;
+            border-width: 8px 8px 8px 0;
+            border-style: solid;
+            border-color: transparent #1c2b3c transparent transparent;
+        }
+        .card-border {
+            border: 1px solid #1E293B;
+        }
+        .pro-glow {
+            box-shadow: 0 0 20px rgba(66, 222, 195, 0.15);
+        }
+        .teal-accent {
+            color: #42dec3;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar Shell -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="text-headline-md font-bold text-primary">SoloChief</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#features">Features</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#pricing">Pricing</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">About</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="#">Contact</a>
+</div>
+<div class="flex items-center space-x-4">
+<a class="bg-primary-container text-on-primary-container px-6 py-2 rounded font-label-sm text-label-sm active:scale-95 transition-transform" href="https://solochief.app/signup">Get Started</a>
+</div>
+</div>
+</nav>
+<!-- HERO SECTION -->
+<section class="pt-32 pb-24 md:pt-48 md:pb-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div class="space-y-8">
+<h1 class="font-headline-xl text-headline-xl text-on-surface leading-tight">
+                    Your Pocket <span class="text-primary">Chief of Staff</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+                    SoloChief keeps your day on track with a morning brief, WhatsApp check-ins, and an AI that knows your work.
+                </p>
+<div class="flex flex-col sm:flex-row items-center gap-6">
+<a class="w-full sm:w-auto text-center bg-primary text-on-primary-fixed font-label-sm text-label-sm px-8 py-4 rounded-lg hover:brightness-110 transition-all" href="https://solochief.app/signup">
+                        Start for free
+                    </a>
+<a class="font-label-sm text-label-sm text-on-surface flex items-center gap-2 hover:text-primary transition-colors" href="#how-it-works">
+                        See how it works
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Phone Mockup -->
+<div class="relative mx-auto md:ml-auto md:mr-0 w-full max-w-[320px]">
+<div class="bg-[#010f1f] border-8 border-surface-container-high rounded-[3rem] aspect-[9/19] shadow-2xl overflow-hidden relative p-4 flex flex-col">
+<!-- Status Bar -->
+<div class="flex justify-between items-center px-4 pt-2 pb-6">
+<span class="text-[10px] font-bold">9:41</span>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-[12px]">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-[12px]">wifi</span>
+<span class="material-symbols-outlined text-[12px]">battery_full</span>
+</div>
+</div>
+<!-- Chat UI -->
+<div class="flex-1 overflow-y-auto space-y-4 pt-4">
+<div class="whatsapp-bubble">
+<p class="text-[12px] font-bold text-primary mb-1">SoloChief</p>
+<p class="text-[13px] leading-snug">Good morning! Here are your top 3 for today:</p>
+<p class="text-[13px] leading-snug mt-2">1. Sign off Astor Stack proposal<br/>2. Interview with lead designer<br/>3. Batch content for Twitter</p>
+<p class="text-[10px] text-on-surface-variant text-right mt-1">08:00 AM</p>
+</div>
+<div class="whatsapp-bubble ml-auto !bg-primary-container/20 !border-primary-container/30 before:hidden after:content-[''] after:absolute after:right-[-8px] after:top-[10px] after:border-t-[8px] after:border-t-transparent after:border-b-[8px] after:border-b-transparent after:border-l-[8px] after:border-l-primary-container/20">
+<p class="text-[13px] leading-snug">Thanks Chief. Just finished the proposal.</p>
+<p class="text-[10px] text-on-surface-variant text-right mt-1">09:15 AM</p>
+</div>
+<div class="whatsapp-bubble">
+<p class="text-[13px] leading-snug">Logged. I've updated your Commitments. Want me to remind you about the interview in 45 mins?</p>
+<p class="text-[10px] text-on-surface-variant text-right mt-1">09:16 AM</p>
+</div>
+</div>
+<!-- Input area -->
+<div class="mt-auto py-4">
+<div class="bg-surface-container-high rounded-full px-4 py-2 flex items-center justify-between">
+<span class="text-[12px] text-on-surface-variant">Message...</span>
+<span class="material-symbols-outlined text-primary text-[18px]">mic</span>
+</div>
+</div>
+</div>
+<!-- Decorative Elements -->
+<div class="absolute -z-10 -bottom-10 -right-10 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+<div class="absolute -z-10 -top-10 -left-10 w-64 h-64 bg-tertiary/10 blur-[100px] rounded-full"></div>
+</div>
+</div>
+</section>
+<!-- PROBLEM SECTION -->
+<section class="py-24 bg-surface-container-low">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<h2 class="font-headline-lg text-headline-lg text-center mb-16">Most founders run their day from memory</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="card-border p-8 rounded-lg bg-surface">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">warning</span>
+<h3 class="font-headline-md text-headline-md mb-4">Commitments slip</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Promises made in DMs, meetings, and calls vanish into thin air because you were too busy to open a Jira ticket.</p>
+</div>
+<div class="card-border p-8 rounded-lg bg-surface">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">visibility_off</span>
+<h3 class="font-headline-md text-headline-md mb-4">No morning clarity</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Starting your day by reacting to notifications instead of executing your highest leverage tasks.</p>
+</div>
+<div class="card-border p-8 rounded-lg bg-surface">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">psychology</span>
+<h3 class="font-headline-md text-headline-md mb-4">Context lives in your head</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Your brain is busy storing "todo" lists instead of solving the hard problems that scale your business.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- HOW IT WORKS -->
+<section class="py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto" id="how-it-works">
+<div class="text-center mb-24">
+<h2 class="font-headline-lg text-headline-xl mb-4">Three steps to a sharper day</h2>
+<p class="text-on-surface-variant font-body-lg">Operational discipline shouldn't feel like a chore.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="relative text-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+<span class="text-primary font-bold text-2xl">1</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Connect</h3>
+<p class="text-on-surface-variant font-body-md">Link your WhatsApp to SoloChief in under 30 seconds. No apps to download.</p>
+<!-- Connector line -->
+<div class="hidden md:block absolute top-8 left-[calc(50%+4rem)] w-[calc(100%-8rem)] border-t border-dashed border-outline-variant"></div>
+</div>
+<div class="relative text-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+<span class="text-primary font-bold text-2xl">2</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Brief</h3>
+<p class="text-on-surface-variant font-body-md">Wake up to a morning briefing of your open loops and today's top priorities.</p>
+<!-- Connector line -->
+<div class="hidden md:block absolute top-8 left-[calc(50%+4rem)] w-[calc(100%-8rem)] border-t border-dashed border-outline-variant"></div>
+</div>
+<div class="text-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-8">
+<span class="text-primary font-bold text-2xl">3</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-4">Operate</h3>
+<p class="text-on-surface-variant font-body-md">Log updates and offload tasks throughout the day simply by chatting with the Chief.</p>
+</div>
+</div>
+</section>
+<!-- FEATURES -->
+<section class="py-24 bg-surface-container-low" id="features">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- Web Dashboard Column -->
+<div class="card-border p-10 rounded-xl bg-surface">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary text-3xl">desktop_windows</span>
+<h2 class="font-headline-md text-headline-md">Web Dashboard</h2>
+</div>
+<ul class="space-y-8">
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<div>
+<strong class="block text-on-surface mb-1">Focus Management</strong>
+<span class="text-on-surface-variant text-body-md">A clean space to define your quarterly and weekly targets.</span>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">list_alt</span>
+<div>
+<strong class="block text-on-surface mb-1">Commitments Tracking</strong>
+<span class="text-on-surface-variant text-body-md">Centralized list of every "Yes" you've said to colleagues or clients.</span>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">calendar_view_week</span>
+<div>
+<strong class="block text-on-surface mb-1">Weekly Plan</strong>
+<span class="text-on-surface-variant text-body-md">Drag and drop your top priorities for the week ahead.</span>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<div>
+<strong class="block text-on-surface mb-1">Weekly Review</strong>
+<span class="text-on-surface-variant text-body-md">Reflect on your performance and calibrate for the next cycle.</span>
+</div>
+</li>
+</ul>
+</div>
+<!-- WhatsApp Chief Column (Pro Highlighted) -->
+<div class="card-border p-10 rounded-xl bg-surface-container-high border-primary/30 pro-glow relative overflow-hidden">
+<div class="absolute top-4 right-4 bg-primary/20 text-primary px-3 py-1 rounded text-[10px] font-bold tracking-widest uppercase">PRO FEATURE</div>
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary text-3xl">chat</span>
+<h2 class="font-headline-md text-headline-md">WhatsApp Chief</h2>
+</div>
+<ul class="space-y-8">
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">sunny</span>
+<div>
+<strong class="block text-on-surface mb-1">Morning Brief</strong>
+<span class="text-on-surface-variant text-body-md">Get your agenda pushed to you at 8:00 AM every single morning.</span>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">bolt</span>
+<div>
+<strong class="block text-on-surface mb-1">Quick-reply Logging</strong>
+<span class="text-on-surface-variant text-body-md">Reply to the brief to mark tasks as done or deferred instantly.</span>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">smart_toy</span>
+<div>
+<strong class="block text-on-surface mb-1">Talk to Chief</strong>
+<span class="text-on-surface-variant text-body-md">Ask "What did I promise Steve?" or "Add 'Renew AWS' to my list".</span>
+</div>
+</li>
+<li class="flex gap-4">
+<span class="material-symbols-outlined text-primary">history</span>
+<div>
+<strong class="block text-on-surface mb-1">Daily Log Export</strong>
+<span class="text-on-surface-variant text-body-md">AI-summarized logs of your day, ready for your CRM or notes.</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- PRICING -->
+<section class="py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto" id="pricing">
+<div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-xl mb-4">Simple, transparent pricing</h2>
+<p class="text-on-surface-variant font-body-lg">Invest in your focus. Reclaim your mental bandwidth.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Free -->
+<div class="card-border p-10 rounded-xl bg-surface flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-2">Free</h3>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="text-3xl font-bold">$0</span>
+<span class="text-on-surface-variant font-label-sm">/ forever</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Basic Web Dashboard
+                    </li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Commitments List (up to 10)
+                    </li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Weekly Planning tool
+                    </li>
+</ul>
+<a class="block w-full text-center border border-outline-variant py-3 rounded hover:bg-surface-container transition-colors font-label-sm" href="#">Get started</a>
+</div>
+<!-- Pro -->
+<div class="card-border p-10 rounded-xl bg-surface-container border-primary relative pro-glow flex flex-col transform md:-translate-y-4">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary-fixed px-4 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase">MOST POPULAR</div>
+<h3 class="font-headline-md text-headline-md mb-2">Pro</h3>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="text-3xl font-bold">$15</span>
+<span class="text-on-surface-variant font-label-sm">/ mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Everything in Free
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        WhatsApp Morning Brief
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Unlimited Commitments
+                    </li>
+<li class="flex items-center gap-3 text-body-md">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        24/7 AI Interaction
+                    </li>
+</ul>
+<a class="block w-full text-center bg-primary text-on-primary-fixed py-3 rounded hover:brightness-110 transition-all font-label-sm" href="#">Go Pro</a>
+</div>
+<!-- Operator -->
+<div class="card-border p-10 rounded-xl bg-surface flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-2">Operator</h3>
+<div class="flex items-baseline gap-1 mb-8">
+<span class="text-3xl font-bold">$24</span>
+<span class="text-on-surface-variant font-label-sm">/ mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-1">
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Everything in Pro
+                    </li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        CRM &amp; Calendar Sync
+                    </li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Custom Voice Logging
+                    </li>
+<li class="flex items-center gap-3 text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-lg">check</span>
+                        Priority AI responses
+                    </li>
+</ul>
+<a class="block w-full text-center border border-outline-variant py-3 rounded hover:bg-surface-container transition-colors font-label-sm" href="#">Get Operator</a>
+</div>
+</div>
+</section>
+<!-- SOCIAL PROOF -->
+<section class="py-24 bg-surface-container-low border-y border-outline-variant">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<h2 class="font-headline-md text-headline-md text-center mb-16 text-on-surface-variant">Built for founders who mean business</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-surface p-8 rounded-lg card-border italic">
+<p class="text-body-md mb-6 leading-relaxed">"The morning brief has completely replaced my messy notes app. I actually start work knowing what needs to be done instead of hunting for it."</p>
+<div class="flex items-center gap-3 not-italic">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a confident male tech founder in his mid-30s with short hair, wearing a clean charcoal t-shirt against a dark navy background. The lighting is dramatic and high-contrast, fitting a premium minimalist aesthetic. The subject has a slight, knowing smile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkpLsFEmWp1aHZEXzkSrqcJ5r26AS55fpMksx3L0WF2gQOZZXbIfhSYONirDuQ391BdOukvgy43gxhZ2RYCrY5HApbInNK_JToOecblHTOLNPiyWrhzShiIJznkFKVk1lsTrBlmhdY06m3dFWIRU0d9gBBG7LAYMhzKNJIKKOpkjk5ZRLgngmn60Bcn5SR0a6pxM2z48_PqIIeIJG4NPqUi7G8Wg_iRg6Bf38hqsNfGZJY2_cPJDzspw"/>
+</div>
+<div>
+<p class="text-label-sm">David M.</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Lagos, Nigeria</p>
+</div>
+</div>
+</div>
+<div class="bg-surface p-8 rounded-lg card-border italic">
+<p class="text-body-md mb-6 leading-relaxed">"SoloChief caught 3 major client promises I would have definitely missed last week. For $15, it's the highest ROI tool in my stack."</p>
+<div class="flex items-center gap-3 not-italic">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional close-up photograph of a woman in business attire, looking directly at the camera with a sharp, focused expression. The setting is a modern, dimly lit office with subtle teal lighting accents in the background. The overall style is high-end, professional, and minimalist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUzSaCNkFa_Pntvrfs_EZHc16Ji4YHy3XtDYueTXz-ee8rF-ErK6OPXxQkXUfZrlgdDTuIlyulh4l6cmf8R7w9GZDfuEzwgrq53JiTTvpbLcVAPTaba2Dnvy2Edm9d0Uk7UjqveG8jVXYUDPmGdaCuDjDYK8jfUMKeyojjBWyiiygHgDFCt2n0x9tDbBYgcxm1gGzi0mjtYcJ87ztMKelkKT6AG6AXw9EIg77NL_FX3nreqpIAEVeqwg"/>
+</div>
+<div>
+<p class="text-label-sm">Sarah J.</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Cape Town, SA</p>
+</div>
+</div>
+</div>
+<div class="bg-surface p-8 rounded-lg card-border italic">
+<p class="text-body-md mb-6 leading-relaxed">"I just talk to the AI while I'm stuck in traffic and my entire task list is updated by the time I reach the office. It's like having a real EA."</p>
+<div class="flex items-center gap-3 not-italic">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-fidelity portrait of a young male entrepreneur with a clean-shaven look and modern eyewear, posing in a high-tech workspace. Dark-themed aesthetics with sharp outlines and electric teal glowing elements in the blurred background. Professional, high-authority atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrHkbh-sV8zQ3r4Os4CYeWKUFVZPERxEqcUoSWQswY92sZLsDMSPphO7ZILegxn983xnYi7A2q5QhKgIwl4yARSWbOsSFAwOHius3fiN7-NuUX1Y2oZePcjWLArEhDZon0Tze-wdhH-rHLvLDDkmAejbmi6OlhzhMArLfK_YRGMHyOJ5fsz2A3VEWtvlpUTcnlLUGAScEGdqayUVqW5ynZotvycGAEClihzcRbU4HmTBvK7t37jSZDgg"/>
+</div>
+<div>
+<p class="text-label-sm">Tunde K.</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Johannesburg, SA</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FINAL CTA -->
+<section class="py-32 bg-surface">
+<div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto text-center border border-primary/20 rounded-[2rem] py-24 bg-surface-container-lowest">
+<h2 class="font-headline-xl text-headline-xl mb-8">Start running your day with clarity</h2>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+<a class="w-full sm:w-auto text-center bg-primary text-on-primary-fixed font-label-sm text-label-sm px-12 py-4 rounded-lg hover:scale-105 transition-all" href="https://solochief.app/signup">
+                    Get started free
+                </a>
+<a class="font-label-sm text-label-sm text-on-surface border-b border-on-surface hover:text-primary hover:border-primary transition-all" href="#">
+                    Sign in to your account
+                </a>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="w-full py-12 border-t border-outline-variant bg-surface">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto space-y-8 md:space-y-0">
+<div class="space-y-4 text-center md:text-left">
+<div class="text-headline-md font-bold text-primary">SoloChief</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Built by Astor Stack Technologies</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-50">© 2026 Astor Stack Technologies. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-x-12 gap-y-4">
+<div class="flex flex-col gap-2">
+<p class="font-label-sm text-label-sm text-on-surface font-bold">Product</p>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#features">Features</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#pricing">Pricing</a>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-label-sm text-label-sm text-on-surface font-bold">Account</p>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Sign in</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Sign up</a>
+</div>
+<div class="flex flex-col gap-2">
+<p class="font-label-sm text-label-sm text-on-surface font-bold">Legal</p>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors text-label-sm font-label-sm" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Minimal interaction: Mobile menu toggle placeholder
+        // In a high-fidelity mock, we'd handle the menu expansion here.
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('SoloChief UI Initialized');
+        });
+    </script>
+</body></html>

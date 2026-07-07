@@ -12,7 +12,7 @@ export default async function SettingsPage() {
     getPreferences(),
     supabase
       .from('profiles')
-      .select('full_name, created_at, plan_expires_at, plan_cancelled_at, whatsapp_number, whatsapp_connected, whatsapp_notifications_enabled')
+      .select('full_name, created_at, plan_expires_at, plan_cancelled_at, whatsapp_number, whatsapp_connected, whatsapp_notifications_enabled, plan, whatsapp_trial_used')
       .eq('user_id', user!.id)
       .single(),
     getCurrentPlan(),
@@ -35,6 +35,8 @@ export default async function SettingsPage() {
       whatsappNumber={profileRes.data?.whatsapp_number ?? null}
       whatsappConnected={profileRes.data?.whatsapp_connected ?? false}
       whatsappNotificationsEnabled={profileRes.data?.whatsapp_notifications_enabled ?? true}
+      plan={profileRes.data?.plan ?? 'free'}
+      whatsappTrialUsed={profileRes.data?.whatsapp_trial_used ?? false}
       agentStates={agentStates}
     />
   )

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/solochief/PageHeader'
 import { upsertPreferences, upsertProfile } from '@/lib/actions/preferences'
-import { generateWhatsAppConnectLink, getWhatsAppStatus, disconnectWhatsApp, toggleWhatsAppNotifications } from '@/lib/actions/whatsapp'
+import { generateWhatsAppConnectLink, getWhatsAppStatus, disconnectWhatsApp, toggleWhatsAppNotifications, startWhatsAppTrial } from '@/lib/actions/whatsapp'
 import { AgentTrustPanel } from '@/components/mdp/AgentTrustPanel'
 import type { AgentMdpRow } from '@/lib/mdp/types'
 import { createCheckoutSession, createCustomerPortalSession } from '@/lib/actions/billing'
@@ -132,10 +132,12 @@ interface SettingsClientProps {
   whatsappNumber: string | null
   whatsappConnected: boolean
   whatsappNotificationsEnabled: boolean
+  plan: string
+  whatsappTrialUsed: boolean
   agentStates: AgentMdpRow[]
 }
 
-export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider, whatsappNumber, whatsappConnected, whatsappNotificationsEnabled: initWaNotif, agentStates }: SettingsClientProps) {
+export function SettingsClient({ preferences, userEmail, profile, currentPlan, hasPasswordProvider, whatsappNumber, whatsappConnected, whatsappNotificationsEnabled: initWaNotif, plan, whatsappTrialUsed, agentStates }: SettingsClientProps) {
   const [activeSection, setActiveSection] = useState<Section>('communication')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [saving, setSaving] = useState<string | null>(null)
@@ -1343,38 +1345,98 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
               <div className="sc-settings-card">
                 <div className="sc-settings-card-header">
                   <p className="sc-settings-card-title">WhatsApp</p>
-                  <p className="sc-settings-card-subtitle">Receive briefings and reply to SoloChief via WhatsApp.</p>
+                  <p className="sc-settings-card-subtitle">
+                    {plan === 'free' && !whatsappTrialUsed
+                      ? 'Try Chief on WhatsApp. Free for 7 days.'
+                      : 'Receive briefings and reply to SoloChief via WhatsApp.'}
+                  </p>
                 </div>
 
                 {/* DISCONNECTED STATE */}
                 {waState === 'disconnected' && (
                   <div>
-                    <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
-                      Connect WhatsApp to receive your morning brief and log updates on the go.
-                    </p>
-
-                    <button
-                      type="button"
-                      className="sc-btn sc-btn-secondary sc-btn-sm"
-                      onClick={async () => {
-                        setWaLoading(true)
-                        setWaError('')
-                        const result = await generateWhatsAppConnectLink()
-                        if (result.error) {
-                          setWaError(result.error)
-                          setWaLoading(false)
-                          return
-                        }
-                        if (result.data) {
-                          setWaState('waiting')
-                          setWaLoading(false)
-                          window.open(result.data, '_blank')
-                        }
-                      }}
-                      disabled={waLoading}
-                    >
-                      {waLoading ? 'Generating link…' : 'Connect WhatsApp'}
-                    </button>
+                    {plan === 'free' && !whatsappTrialUsed ? (
+                      <>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                          Experience your morning brief and talk to Chief on WhatsApp. Free for 7 days. No credit card needed.
+                        </p>
+                        <button
+                          type="button"
+                          className="sc-btn sc-btn-secondary sc-btn-sm"
+                          onClick={async () => {
+                            setWaLoading(true)
+                            setWaError('')
+                            const result = await startWhatsAppTrial()
+                            if (result.error) {
+                              setWaError(result.error)
+                              setWaLoading(false)
+                              return
+                            }
+                            setWaLoading(false)
+                            // Show Connect WhatsApp after trial starts
+                            const linkResult = await generateWhatsAppConnectLink()
+                            if (linkResult.error) {
+                              setWaError(linkResult.error)
+                              return
+                            }
+                            if (linkResult.data) {
+                              setWaState('waiting')
+                              window.open(linkResult.data, '_blank')
+                            }
+                          }}
+                          disabled={waLoading}
+                        >
+                          {waLoading ? 'Starting…' : 'Start free trial'}
+                        </button>
+                      </>
+                    ) : plan === 'free' && whatsappTrialUsed ? (
+                      <>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                          WhatsApp is available on SoloChief Pro. Upgrade to receive your morning brief and talk to Chief on WhatsApp.
+                        </p>
+                        <button
+                          type="button"
+                          className="sc-btn sc-btn-secondary sc-btn-sm"
+                          onClick={async () => {
+                            await fetch('/api/whatsapp/upgrade-prompt', {
+                              method: 'POST',
+                              body: JSON.stringify({ location: 'settings' }),
+                            }).catch(() => {})
+                            window.location.href = '/dashboard/billing'
+                          }}
+                        >
+                          Upgrade to Pro
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p style={{ fontSize: 12, color: 'var(--sc-muted)', marginBottom: 12 }}>
+                          Connect WhatsApp to receive your morning brief and log updates on the go.
+                        </p>
+                        <button
+                          type="button"
+                          className="sc-btn sc-btn-secondary sc-btn-sm"
+                          onClick={async () => {
+                            setWaLoading(true)
+                            setWaError('')
+                            const result = await generateWhatsAppConnectLink()
+                            if (result.error) {
+                              setWaError(result.error)
+                              setWaLoading(false)
+                              return
+                            }
+                            if (result.data) {
+                              setWaState('waiting')
+                              setWaLoading(false)
+                              window.open(result.data, '_blank')
+                            }
+                          }}
+                          disabled={waLoading}
+                        >
+                          {waLoading ? 'Generating link…' : 'Connect WhatsApp'}
+                        </button>
+                      </>
+                    )}
 
                     {waError && (
                       <p style={{ fontSize: 12, color: 'var(--sc-error, #EF4444)', marginTop: 10 }}>{waError}</p>
