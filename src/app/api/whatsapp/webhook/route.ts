@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import twilio from 'twilio'
 import { createHash } from 'crypto'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { twimlResponse, twimlEmpty } from '@/lib/whatsapp/twilio'
+import { twimlResponse, twimlEmpty, sendInteractiveMessage, sendWhatsApp } from '@/lib/whatsapp/twilio'
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
 import { handleOnboardingReply, startOnboarding } from '@/lib/whatsapp/onboarding'
 import { expiredTokenMessage, alreadyConnectedMessage, helpText } from '@/lib/whatsapp/templates'
@@ -133,20 +133,49 @@ export async function POST(request: NextRequest) {
     // Mark token as used
     await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
 
-    // Check if onboarding needs to be started
-    const onboardingStep = userProfile?.whatsapp_number ? null : undefined
+    // Get user's first name for welcome message
+    const { data: userProfile2 } = await db
+      .from('profiles')
+      .select('full_name')
+      .eq('user_id', userId)
+      .maybeSingle()
+    const firstName = userProfile2?.full_name ? userProfile2.full_name.split(' ')[0] : 'there'
+
+    // Check if this is a new connection or reconnection
     if (!userProfile?.whatsapp_number) {
-      // New connection, start onboarding
+      // New connection: send welcome message with fallback, then start consent flow
+      console.log('[whatsapp/webhook] New connection - sending welcome message')
+      try {
+        // Try to send interactive welcome message if ContentSid is available
+        if (process.env.TWILIO_CONTENT_CONNECTED_SID) {
+          await sendInteractiveMessage(rawFrom, process.env.TWILIO_CONTENT_CONNECTED_SID, { '1': firstName })
+          console.log('[whatsapp/webhook] Welcome sent via interactive template')
+        } else {
+          throw new Error('ContentSid not configured')
+        }
+      } catch (err) {
+        // Always fall back to plain text - never send nothing
+        console.log('[whatsapp/webhook] Interactive template failed or not configured, sending text fallback:', err instanceof Error ? err.message : 'unknown')
+        await sendWhatsApp(
+          rawFrom,
+          `🎯 Hey ${firstName}! Your Personal Chief of Staff is now active on WhatsApp. 🚀\n\n` +
+          `Here's what I do:\n\n` +
+          `📋 Send your morning brief every day\n` +
+          `⚡ Let you log updates with a quick reply\n` +
+          `🔁 Check in when things go quiet\n` +
+          `💬 Answer anything you throw at me\n\n` +
+          `Ready to set up your daily rhythm?`
+        )
+        console.log('[whatsapp/webhook] Welcome text message sent')
+      }
+
+      // Then immediately trigger D-111 consent flow
+      console.log('[whatsapp/webhook] Starting onboarding consent flow')
       const consentMessage = await startOnboarding(userId, rawFrom)
       return twimlResponse(consentMessage)
     } else {
-      // Already had a number, send connected confirmation with user's name
-      const { data: profile } = await db
-        .from('profiles')
-        .select('full_name')
-        .eq('user_id', userId)
-        .maybeSingle()
-      const name = profile?.full_name ? profile.full_name.split(' ')[0] : 'there'
+      // Reconnection: send connected confirmation
+      console.log('[whatsapp/webhook] Reconnection - sending connected confirmation')
       return twimlResponse(alreadyConnectedMessage())
     }
   }
