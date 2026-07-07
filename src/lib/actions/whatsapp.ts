@@ -142,3 +142,47 @@ export async function toggleWhatsAppNotifications(enabled: boolean): Promise<Act
   if (error) return { data: null, error: 'Failed to update preference.' }
   return { data: undefined, error: null }
 }
+
+// ── Start WhatsApp trial ──────────────────────────────────────────────────────
+
+export async function startWhatsAppTrial(): Promise<ActionResult<void>> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { data: null, error: 'Not authenticated' }
+
+  const profileRes = await supabase
+    .from('profiles')
+    .select('plan, whatsapp_trial_used')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!profileRes.data) {
+    return { data: null, error: 'Profile not found' }
+  }
+
+  if (profileRes.data.plan !== 'free') {
+    return { data: null, error: 'not_applicable' }
+  }
+
+  if (profileRes.data.whatsapp_trial_used) {
+    return { data: null, error: 'trial_already_used' }
+  }
+
+  const now = new Date()
+  const trialEndsAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({
+      whatsapp_trial_used: true,
+      whatsapp_trial_started_at: now.toISOString(),
+      whatsapp_trial_ends_at: trialEndsAt,
+    })
+    .eq('user_id', user.id)
+
+  if (error) {
+    return { data: null, error: 'Failed to start trial' }
+  }
+
+  return { data: undefined, error: null }
+}

@@ -6,6 +6,7 @@ import { twimlResponse, twimlEmpty, sendInteractiveMessage, sendWhatsApp } from 
 import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
 import { handleOnboardingReply, startOnboarding } from '@/lib/whatsapp/onboarding'
 import { expiredTokenMessage, alreadyConnectedMessage, helpText, getTimeOfDayGreeting } from '@/lib/whatsapp/templates'
+import { hasWhatsAppAccess } from '@/lib/whatsapp/access'
 import type { OnboardingStep } from '@/lib/whatsapp/onboarding'
 
 // Twilio webhook — URL must exactly match what is configured in the Twilio console.
@@ -189,9 +190,27 @@ export async function POST(request: NextRequest) {
     // Check if this user already has a different actively connected WhatsApp number
     const { data: userProfile } = await db
       .from('profiles')
-      .select('whatsapp_number, whatsapp_connected')
+      .select('whatsapp_number, whatsapp_connected, plan, whatsapp_trial_ends_at, current_plan_id')
       .eq('user_id', userId)
       .single()
+
+    // Check WhatsApp access before allowing connection
+    if (!hasWhatsAppAccess(userProfile)) {
+      console.log('[whatsapp/webhook] User lacks WhatsApp access - blocking connection')
+      await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
+      await db.from('whatsapp_upgrade_prompts').insert({ user_id: userId, prompt_location: 'webhook_token' }).then()
+      return twimlResponse('WhatsApp is available on SoloChief Pro. Upgrade at solochief.app/pricing to connect.')
+    }
+
+    // Handle existing free users with WhatsApp connected - give them grace period
+    if (userProfile?.plan === 'free' && userProfile.whatsapp_connected === true && !userProfile.whatsapp_trial_ends_at) {
+      console.log('[whatsapp/webhook] Free user with WhatsApp connected but no trial - giving 7-day grace period')
+      const trialEndsAt = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      await db
+        .from('profiles')
+        .update({ whatsapp_trial_ends_at: trialEndsAt, whatsapp_trial_used: true })
+        .eq('user_id', userId)
+    }
 
     if (userProfile?.whatsapp_connected === true && userProfile.whatsapp_number && userProfile.whatsapp_number !== rawFrom) {
       // Replace currently connected number with new one
@@ -274,7 +293,7 @@ export async function POST(request: NextRequest) {
 
   const { data: profile } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_connected, whatsapp_onboarding_step')
+    .select('user_id, full_name, whatsapp_connected, whatsapp_onboarding_step, plan, whatsapp_trial_ends_at')
     .eq('whatsapp_number', rawFrom)
     .maybeSingle()
 
@@ -378,14 +397,28 @@ export async function POST(request: NextRequest) {
     return twimlResponse(helpText())
   }
 
-  // AI fallback
+  // AI fallback - check access first
+  if (!hasWhatsAppAccess(profile)) {
+    console.log('[whatsapp/webhook] User lacks WhatsApp access - blocking AI reply')
+    await db.from('whatsapp_upgrade_prompts').insert({ user_id: userId, prompt_location: 'ai_fallback' }).then()
+    const upgradeMessage = `💬 WhatsApp chat with Chief is available on Pro.\n\nUpgrade at solochief.app/pricing to unlock your personal Chief of Staff on WhatsApp.`
+    await db.from('whatsapp_logs').insert({
+      user_id: userId,
+      phone: rawFrom,
+      direction: 'outbound',
+      type: 'upgrade_prompt',
+      status: 'sent',
+    }).then()
+    return twimlResponse(upgradeMessage)
+  }
+
   const aiReply = await buildAiReply(userId, workspaceId, bodyText)
   await db.from('whatsapp_logs').insert({
     user_id:   userId,
     phone:     rawFrom,
     direction: 'outbound',
-    type:      'ai_reply',
-    status:    'sent',
+    type:     'ai_reply',
+    status:   'sent',
   }).then()
 
   return twimlResponse(aiReply)

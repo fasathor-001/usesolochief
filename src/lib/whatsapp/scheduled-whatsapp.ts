@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendWhatsApp } from '@/lib/whatsapp/twilio'
 import { getTimeOfDayGreeting } from '@/lib/whatsapp/templates'
+import { hasWhatsAppAccess } from '@/lib/whatsapp/access'
 import Anthropic from '@anthropic-ai/sdk'
 
 export interface WhatsAppResult {
@@ -67,7 +68,7 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
   // Fetch all verified, opted-in users who have completed onboarding
   const { data: profiles } = await db
     .from('profiles')
-    .select('user_id, full_name, whatsapp_number, whatsapp_connected, whatsapp_onboarded_at, whatsapp_briefing_hour, whatsapp_quiet_start, whatsapp_quiet_end')
+    .select('user_id, full_name, whatsapp_number, whatsapp_connected, whatsapp_onboarded_at, whatsapp_briefing_hour, whatsapp_quiet_start, whatsapp_quiet_end, plan, whatsapp_trial_ends_at')
     .eq('whatsapp_connected', true)
     .not('whatsapp_number', 'is', null)
     .not('whatsapp_onboarded_at', 'is', null)
@@ -89,6 +90,9 @@ export async function sendMorningBriefings(): Promise<WhatsAppResult> {
     const { user_id, full_name, whatsapp_number, whatsapp_briefing_hour } = profile
     if (!whatsapp_number) { result.skipped++; continue }
     if (optedOut.has(user_id)) { result.skipped++; continue }
+
+    // Skip if user lacks WhatsApp access (free without active trial)
+    if (!hasWhatsAppAccess(profile)) { result.skipped++; continue }
 
     // Check if briefing hour matches current hour
     if (whatsapp_briefing_hour !== null && whatsapp_briefing_hour !== now.getHours()) {
@@ -243,11 +247,22 @@ export async function buildAiReply(
   const commitments = (commitmentsRes.data ?? []).map((c: any) => `${c.title} [${c.stage}]`).join(', ') || 'none'
   const overdue     = (followupsRes.data ?? []).map((f: any) => f.title).join(', ') || 'none'
 
-  const systemPrompt = `You are SoloChief AI, responding via WhatsApp. The user is ${name}.
+  const systemPrompt = `You are Chief, a personal Chief of Staff for founders and operators.
+
+Help the user with their work, priorities, decisions, follow-ups, planning, and productivity.
+
+The user is ${name}.
 Active commitments: ${commitments}.
 Overdue follow-ups: ${overdue}.
-Keep your reply to 2–3 sentences maximum. Be calm, direct, and specific. UK spelling.
-CRITICAL: Never use em dashes (—) in any response. Use a comma, full stop, or new line instead.`
+
+Use their SoloChief context when available to provide practical, work-focused advice.
+
+Keep your reply to 2–3 sentences maximum. Be calm, direct, and specific.
+UK spelling. Never use em dashes.
+
+You are not a general chatbot. You are their Chief of Staff.
+Do not answer general knowledge questions unrelated to their work.
+If asked something outside your scope, redirect to what is useful for their day.`
 
   if (!process.env.ANTHROPIC_API_KEY) return "I'm not able to answer that right now — open SoloChief at solochief.app for assistance."
 

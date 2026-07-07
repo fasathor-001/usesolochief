@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { saveOnboarding } from '@/lib/actions/onboarding'
-import { generateWhatsAppConnectLink, getWhatsAppStatus } from '@/lib/actions/whatsapp'
+import { generateWhatsAppConnectLink, getWhatsAppStatus, startWhatsAppTrial } from '@/lib/actions/whatsapp'
 import { createClient } from '@/lib/supabase/client'
 import { TEMPLATE_DEFAULTS, TEMPLATE_LABELS, TEMPLATE_DESCRIPTIONS } from '@/lib/onboarding-data'
 import type { OnboardingTemplate } from '@/types/database'
@@ -49,6 +49,8 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
   type WaState = 'default' | 'waiting' | 'connected'
   const [waState, setWaState] = useState<WaState>('default')
   const [waGenerating, setWaGenerating] = useState(false)
+  const [plan, setPlan] = useState<string | null>(null)
+  const [whatsappTrialUsed, setWhatsappTrialUsed] = useState(false)
 
   // Set up Realtime subscription for WhatsApp connection status + polling fallback
   useEffect(() => {
@@ -131,6 +133,28 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
       if (stopPolling) stopPolling()
     }
   }, [waState])
+
+  // Fetch user plan and trial status
+  useEffect(() => {
+    const fetchPlanAndTrial = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('plan, whatsapp_trial_used')
+        .eq('user_id', user.id)
+        .single()
+
+      if (profile) {
+        setPlan(profile.plan)
+        setWhatsappTrialUsed(profile.whatsapp_trial_used ?? false)
+      }
+    }
+
+    fetchPlanAndTrial()
+  }, [])
 
   function selectTemplate(t: OnboardingTemplate) {
     setTemplate(t)
@@ -391,12 +415,34 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
           {/* DEFAULT STATE */}
           {waState === 'default' && (
             <>
-              <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
-                Connect WhatsApp
-              </h2>
-              <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
-                Connect your WhatsApp to receive your daily brief and log updates on the go.
-              </p>
+              {plan === 'free' && !whatsappTrialUsed ? (
+                <>
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
+                    Try Chief on WhatsApp
+                  </h2>
+                  <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
+                    Experience your morning brief and talk to Chief on WhatsApp. Free for 7 days. No credit card needed.
+                  </p>
+                </>
+              ) : plan === 'free' && whatsappTrialUsed ? (
+                <>
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
+                    Upgrade to Pro
+                  </h2>
+                  <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
+                    WhatsApp is available on Pro. Upgrade to keep your morning brief and talk to Chief on WhatsApp.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--sc-text)' }}>
+                    Connect WhatsApp
+                  </h2>
+                  <p className="text-sm mb-6" style={{ color: 'var(--sc-muted)' }}>
+                    Connect your WhatsApp to receive your daily brief and log updates on the go.
+                  </p>
+                </>
+              )}
 
               {/* Info box */}
               <div
@@ -445,34 +491,75 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
                 >
                   Back
                 </button>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    setError(null)
-                    setWaGenerating(true)
-                    try {
-                      const result = await generateWhatsAppConnectLink()
+                {plan === 'free' && !whatsappTrialUsed ? (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setError(null)
+                      setWaGenerating(true)
+                      const result = await startWhatsAppTrial()
                       if (result.error) {
                         setError(result.error)
                         setWaGenerating(false)
                         return
                       }
-                      if (result.data) {
-                        setWaState('waiting')
-                        setWaGenerating(false)
-                        window.open(result.data, '_blank')
-                      }
-                    } catch (err) {
                       setWaGenerating(false)
-                      setError(err instanceof Error ? err.message : 'Failed to generate link')
-                    }
-                  }}
-                  disabled={waGenerating}
-                  className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
-                  style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
-                >
-                  {waGenerating ? 'Generating…' : 'Connect WhatsApp'}
-                </button>
+                      // Show Connect WhatsApp after trial starts
+                      const linkResult = await generateWhatsAppConnectLink()
+                      if (linkResult.error) {
+                        setError(linkResult.error)
+                        return
+                      }
+                      if (linkResult.data) {
+                        setWaState('waiting')
+                        window.open(linkResult.data, '_blank')
+                      }
+                    }}
+                    disabled={waGenerating}
+                    className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
+                    style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+                  >
+                    {waGenerating ? 'Starting…' : 'Start free trial'}
+                  </button>
+                ) : plan === 'free' && whatsappTrialUsed ? (
+                  <button
+                    type="button"
+                    onClick={() => window.location.href = '/dashboard/billing'}
+                    className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
+                    style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+                  >
+                    Upgrade to Pro
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setError(null)
+                      setWaGenerating(true)
+                      try {
+                        const result = await generateWhatsAppConnectLink()
+                        if (result.error) {
+                          setError(result.error)
+                          setWaGenerating(false)
+                          return
+                        }
+                        if (result.data) {
+                          setWaState('waiting')
+                          setWaGenerating(false)
+                          window.open(result.data, '_blank')
+                        }
+                      } catch (err) {
+                        setWaGenerating(false)
+                        setError(err instanceof Error ? err.message : 'Failed to generate link')
+                      }
+                    }}
+                    disabled={waGenerating}
+                    className="flex-1 py-2.5 rounded-lg font-medium text-sm transition-colors"
+                    style={{ backgroundColor: 'var(--sc-accent)', color: '#fff' }}
+                  >
+                    {waGenerating ? 'Generating…' : 'Connect WhatsApp'}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => setStep(4)}
