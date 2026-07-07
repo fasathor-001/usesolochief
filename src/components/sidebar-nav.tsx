@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -18,9 +18,19 @@ import {
   LifeBuoy,
   Menu,
   ShieldCheck,
+  HelpCircle,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { RescueMeModal } from '@/components/rescue-me/rescue-me-modal'
+
+// Tooltip definitions
+const TOOLTIPS: Record<string, string> = {
+  'Commitments': 'Things you have said yes to',
+  'Parking Lot': 'Ideas you are not acting on yet',
+  'Checklists': 'Steps to ship something',
+  'Agent Trust': 'Control what Chief can see and do',
+  'Rescue Me': 'Help when you feel overwhelmed',
+}
 
 interface NavItem {
   href: string
@@ -73,6 +83,24 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
   const router = useRouter()
   const [rescueOpen, setRescueOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [dismissedTooltips, setDismissedTooltips] = useState<Set<string>>(new Set())
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Load dismissed tooltips from localStorage
+    const stored = localStorage.getItem('sc-dismissed-tooltips')
+    if (stored) {
+      setDismissedTooltips(new Set(JSON.parse(stored)))
+    }
+  }, [])
+
+  function dismissTooltip(label: string) {
+    const updated = new Set(dismissedTooltips)
+    updated.add(label)
+    setDismissedTooltips(updated)
+    localStorage.setItem('sc-dismissed-tooltips', JSON.stringify(Array.from(updated)))
+    setActiveTooltip(null)
+  }
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -126,21 +154,94 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
               {group.items.map(({ href, label, icon: Icon }) => {
                 const active = isActive(href)
                 const isFollowUps = href === '/dashboard/follow-ups'
+                const hasTooltip = TOOLTIPS[label]
+                const tooltipSeen = dismissedTooltips.has(label)
+                const showTooltipIndicator = hasTooltip && !tooltipSeen
+                const isTooltipActive = activeTooltip === label
+
                 return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`sc-nav-link${active ? ' active' : ''}`}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <Icon />
-                    <span style={{ flex: 1 }}>{label}</span>
-                    {isFollowUps && overdueFollowupsCount > 0 && (
-                      <span className="sc-nav-badge">
-                        {overdueFollowupsCount > 9 ? '9+' : overdueFollowupsCount}
-                      </span>
+                  <div key={href} style={{ position: 'relative' }}>
+                    <Link
+                      href={href}
+                      className={`sc-nav-link${active ? ' active' : ''}`}
+                      onClick={() => setMobileOpen(false)}
+                      style={{ display: 'flex', alignItems: 'center' }}
+                    >
+                      <Icon />
+                      <span style={{ flex: 1 }}>{label}</span>
+                      {isFollowUps && overdueFollowupsCount > 0 && (
+                        <span className="sc-nav-badge">
+                          {overdueFollowupsCount > 9 ? '9+' : overdueFollowupsCount}
+                        </span>
+                      )}
+                      {showTooltipIndicator && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            setActiveTooltip(isTooltipActive ? null : label)
+                          }}
+                          onMouseEnter={() => setActiveTooltip(label)}
+                          onMouseLeave={() => setActiveTooltip(null)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '4px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginLeft: '4px',
+                            flexShrink: 0,
+                          }}
+                          title={TOOLTIPS[label]}
+                        >
+                          <HelpCircle size={14} style={{ color: '#00C2A8', opacity: 0.6 }} />
+                        </button>
+                      )}
+                    </Link>
+
+                    {/* Tooltip */}
+                    {isTooltipActive && hasTooltip && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          marginTop: '4px',
+                          backgroundColor: '#1A273A',
+                          border: '0.5px solid rgba(0,194,168,0.3)',
+                          borderRadius: '6px',
+                          padding: '8px 10px',
+                          fontSize: '12px',
+                          color: '#CBD5E1',
+                          maxWidth: '200px',
+                          whiteSpace: 'normal',
+                          zIndex: 1000,
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        }}
+                        onMouseEnter={() => setActiveTooltip(label)}
+                        onMouseLeave={() => setActiveTooltip(null)}
+                      >
+                        <p style={{ margin: 0, marginBottom: '6px' }}>{TOOLTIPS[label]}</p>
+                        <button
+                          type="button"
+                          onClick={() => dismissTooltip(label)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            color: '#00C2A8',
+                            fontWeight: 500,
+                          }}
+                        >
+                          Got it
+                        </button>
+                      </div>
                     )}
-                  </Link>
+                  </div>
                 )
               })}
             </div>
@@ -157,14 +258,85 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
             <MessageCircle size={16} />
             <span style={{ flex: 1 }}>Feedback</span>
           </Link>
-          <Link
-            href="/dashboard/settings"
-            className={`sc-nav-link${isActive('/dashboard/settings') ? ' active' : ''}`}
-            onClick={() => setMobileOpen(false)}
-          >
-            <Settings size={16} />
-            <span style={{ flex: 1 }}>Settings</span>
-          </Link>
+
+          {/* Settings with Agent Trust tooltip */}
+          <div style={{ position: 'relative' }}>
+            <Link
+              href="/dashboard/settings"
+              className={`sc-nav-link${isActive('/dashboard/settings') ? ' active' : ''}`}
+              onClick={() => setMobileOpen(false)}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              <Settings size={16} />
+              <span style={{ flex: 1 }}>Settings</span>
+              {!dismissedTooltips.has('Agent Trust') && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setActiveTooltip(activeTooltip === 'Agent Trust' ? null : 'Agent Trust')
+                  }}
+                  onMouseEnter={() => setActiveTooltip('Agent Trust')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: '4px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginLeft: '4px',
+                    flexShrink: 0,
+                  }}
+                  title={TOOLTIPS['Agent Trust']}
+                >
+                  <HelpCircle size={14} style={{ color: '#00C2A8', opacity: 0.6 }} />
+                </button>
+              )}
+            </Link>
+
+            {/* Agent Trust Tooltip */}
+            {activeTooltip === 'Agent Trust' && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  marginTop: '4px',
+                  backgroundColor: '#1A273A',
+                  border: '0.5px solid rgba(0,194,168,0.3)',
+                  borderRadius: '6px',
+                  padding: '8px 10px',
+                  fontSize: '12px',
+                  color: '#CBD5E1',
+                  maxWidth: '200px',
+                  whiteSpace: 'normal',
+                  zIndex: 1000,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                }}
+                onMouseEnter={() => setActiveTooltip('Agent Trust')}
+                onMouseLeave={() => setActiveTooltip(null)}
+              >
+                <p style={{ margin: 0, marginBottom: '6px' }}>{TOOLTIPS['Agent Trust']}</p>
+                <button
+                  type="button"
+                  onClick={() => dismissTooltip('Agent Trust')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    color: '#00C2A8',
+                    fontWeight: 500,
+                  }}
+                >
+                  Got it
+                </button>
+              </div>
+            )}
+          </div>
 
           {isAdmin && (
             <Link
@@ -191,14 +363,63 @@ export function SidebarNav({ userEmail, userName, avatarUrl, overdueFollowupsCou
         </div>
 
         {/* Rescue Me */}
-        <button
-          type="button"
-          onClick={() => setRescueOpen(true)}
-          className="sc-rescue"
-        >
-          <LifeBuoy />
-          Rescue Me
-        </button>
+        <div style={{ position: 'relative' }}>
+          <button
+            type="button"
+            onClick={() => setRescueOpen(true)}
+            className="sc-rescue"
+            onMouseEnter={() => !dismissedTooltips.has('Rescue Me') && setActiveTooltip('Rescue Me')}
+            onMouseLeave={() => setActiveTooltip(null)}
+          >
+            <LifeBuoy />
+            Rescue Me
+            {!dismissedTooltips.has('Rescue Me') && (
+              <span style={{ marginLeft: '6px' }}>
+                <HelpCircle size={14} style={{ color: '#00C2A8', opacity: 0.6, display: 'inline' }} />
+              </span>
+            )}
+          </button>
+
+          {/* Rescue Me Tooltip */}
+          {activeTooltip === 'Rescue Me' && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 'calc(100% + 4px)',
+                left: 0,
+                backgroundColor: '#1A273A',
+                border: '0.5px solid rgba(0,194,168,0.3)',
+                borderRadius: '6px',
+                padding: '8px 10px',
+                fontSize: '12px',
+                color: '#CBD5E1',
+                maxWidth: '200px',
+                whiteSpace: 'normal',
+                zIndex: 1000,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              }}
+              onMouseEnter={() => setActiveTooltip('Rescue Me')}
+              onMouseLeave={() => setActiveTooltip(null)}
+            >
+              <p style={{ margin: 0, marginBottom: '6px' }}>{TOOLTIPS['Rescue Me']}</p>
+              <button
+                type="button"
+                onClick={() => dismissTooltip('Rescue Me')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  fontSize: '11px',
+                  color: '#00C2A8',
+                  fontWeight: 500,
+                }}
+              >
+                Got it
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* User row */}
         <div className="sc-sidebar-user">
