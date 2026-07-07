@@ -493,8 +493,8 @@
       <a href="#features"     class="text-sm text-muted hover:text-white transition-colors">Features</a>
       <a href="#how-it-works" class="text-sm text-muted hover:text-white transition-colors">How it works</a>
       <a href="#pricing"      class="text-sm text-muted hover:text-white transition-colors">Pricing</a>
-      <a href="https://solochief.app/auth/login" class="text-sm text-muted hover:text-white transition-colors">Sign in</a>
-      <a href="https://solochief.app/auth/signup" class="text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2 rounded-md transition-colors">Get started</a>
+      <a href="https://solochief.app/auth/login" data-cta="signin" class="text-sm text-muted hover:text-white transition-colors">Sign in</a>
+      <a href="https://solochief.app/auth/signup" data-cta="signup" class="text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2 rounded-md transition-colors">Get started</a>
     </div>
 
     <button id="menuBtn" class="md:hidden text-white p-1" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -506,8 +506,8 @@
     <a href="#features"     class="block py-2.5 text-sm text-muted hover:text-white">Features</a>
     <a href="#how-it-works" class="block py-2.5 text-sm text-muted hover:text-white">How it works</a>
     <a href="#pricing"      class="block py-2.5 text-sm text-muted hover:text-white">Pricing</a>
-    <a href="https://solochief.app/auth/login" class="block py-2.5 text-sm text-muted hover:text-white">Sign in</a>
-    <a href="https://solochief.app/auth/signup" class="block mt-2 text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2.5 rounded-md">Get started</a>
+    <a href="https://solochief.app/auth/login" data-cta="signin" class="block py-2.5 text-sm text-muted hover:text-white">Sign in</a>
+    <a href="https://solochief.app/auth/signup" data-cta="signup" class="block mt-2 text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2.5 rounded-md">Get started</a>
   </div>
 </header>
 
@@ -533,7 +533,7 @@
         </p>
 
         <div class="mt-8 flex flex-wrap items-center gap-4">
-          <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center gap-2 bg-teal hover:bg-tealh text-bg font-semibold px-6 py-3.5 rounded-md transition-colors">
+          <a href="https://solochief.app/auth/signup" data-cta="signup" class="inline-flex items-center justify-center gap-2 bg-teal hover:bg-tealh text-bg font-semibold px-6 py-3.5 rounded-md transition-colors">
             Start free
           </a>
           <a href="#how-it-works" class="inline-flex items-center gap-1.5 text-[#CBD5E1] hover:text-white font-medium transition-colors">
@@ -805,7 +805,7 @@
             <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-slate2" style="font-size:18px;">close</span>No WhatsApp</li>
           </ul>
           <div class="mt-auto pt-7">
-            <a href="https://solochief.app/auth/signup" class="block text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Start free</a>
+            <a href="https://solochief.app/auth/signup" data-cta="signup" class="block text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Start free</a>
           </div>
         </div>
 
@@ -824,7 +824,7 @@
             <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher AI usage</li>
           </ul>
           <div class="mt-auto pt-7">
-            <a href="https://solochief.app/auth/signup" class="block text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-5 py-3 rounded-md transition-colors">Start free</a>
+            <a href="https://solochief.app/dashboard/billing" data-cta="pro" class="block text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-5 py-3 rounded-md transition-colors">Start free</a>
           </div>
         </div>
 
@@ -841,7 +841,7 @@
             <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Future capacity and pattern insights</li>
           </ul>
           <div class="mt-auto pt-7">
-            <a href="https://solochief.app/auth/signup" class="block text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Get started</a>
+            <a href="https://solochief.app/auth/signup" data-cta="signup" class="block text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Get started</a>
           </div>
         </div>
 
@@ -870,7 +870,7 @@
           Start with the web Command Center. Upgrade when you want Chief in your pocket.
         </h2>
         <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
-          <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-3.5 rounded-md transition-colors">Start free</a>
+          <a href="https://solochief.app/auth/signup" data-cta="signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-3.5 rounded-md transition-colors">Start free</a>
           <a href="#pricing" class="inline-flex items-center gap-1.5 text-muted hover:text-white font-medium transition-colors">See pricing</a>
         </div>
       </div>
@@ -932,6 +932,39 @@
       });
     });
   })();
+</script>
+
+<script>
+function checkSoloChiefSession() {
+  try {
+    const keys = Object.keys(localStorage);
+    const sessionKey = keys.find(k =>
+      k.includes('supabase') && k.includes('auth-token')
+    );
+    if (sessionKey) {
+      const session = JSON.parse(localStorage.getItem(sessionKey));
+      if (session && session.access_token) return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (checkSoloChiefSession()) {
+    document.querySelectorAll('[data-cta="signup"]').forEach(el => {
+      el.textContent = 'Go to dashboard';
+      el.href = 'https://solochief.app/dashboard';
+    });
+    document.querySelectorAll('[data-cta="pro"]').forEach(el => {
+      el.textContent = 'Go to billing';
+      el.href = 'https://solochief.app/dashboard/billing';
+    });
+    document.querySelectorAll('[data-cta="signin"]').forEach(el => {
+      el.textContent = 'Dashboard';
+      el.href = 'https://solochief.app/dashboard';
+    });
+  }
+});
 </script>
 
 </body>
