@@ -95,6 +95,26 @@
       100% { transform: scale(3);   opacity: 0; }
     }
 
+    /* ── Hero layout ───────────────────────────────────────────── */
+    .hero-section {
+      padding-top: clamp(96px, 10vw, 140px);
+      padding-bottom: clamp(72px, 8vw, 110px);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 460px);
+      align-items: center;
+      gap: clamp(32px, 5vw, 72px);
+    }
+    .hero-copy { max-width: 640px; }
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 620px;
+      width: 100%;
+    }
+
     /* ── Premium phone mockup ──────────────────────────────────── */
     .solochief-phone-stage {
       position: relative;
@@ -103,6 +123,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 0;
+      padding: 0;
       perspective: 1600px;
       overflow: visible;
     }
@@ -123,10 +145,11 @@
 
     .solochief-phone {
       position: relative;
-      width: 345px;
-      height: 700px;
+      margin: 0 auto;
+      width: 330px;
+      height: 670px;
       transform-style: preserve-3d;
-      transform: rotateY(-8deg) rotateX(2deg);
+      transform: translateX(-12px) translateY(10px) rotateY(-7deg) rotateX(2deg);
       z-index: 2;
     }
 
@@ -391,25 +414,29 @@
     }
 
     @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-visual { min-height: 560px; margin-top: 24px; }
       .solochief-phone-stage {
-        min-height: 600px;
-        margin-top: 32px;
+        min-height: 560px;
+        margin-top: 0;
       }
       .solochief-phone {
         width: 320px;
         height: 650px;
-        transform: rotateY(-5deg) rotateX(1deg);
+        transform: translateX(0) translateY(0) rotateY(0deg) rotateX(0deg);
       }
+      .phone-side-right { display: none; }
     }
 
     @media (max-width: 640px) {
+      .hero-visual { min-height: 540px; }
       .solochief-phone-stage {
-        min-height: 560px;
+        min-height: 540px;
       }
       .solochief-phone {
-        width: 286px;
-        height: 582px;
-        transform: rotateY(0deg) rotateX(0deg);
+        width: 280px;
+        height: 568px;
+        transform: translateX(0) rotateY(0deg) rotateX(0deg);
       }
       .phone-side-right {
         display: none;
@@ -484,11 +511,11 @@
 <main id="top" class="pt-16">
 
   <!-- ── HERO ───────────────────────────────────────────────────────────── -->
-  <section class="relative overflow-hidden">
-    <div class="relative z-10 max-w-site mx-auto px-5 sm:px-6 py-16 lg:py-24 grid lg:grid-cols-2 gap-14 items-center">
+  <section class="hero-section relative overflow-hidden">
+    <div class="hero-grid relative z-10 max-w-site mx-auto px-5 sm:px-6">
 
       <!-- Left -->
-      <div>
+      <div class="hero-copy">
         <div class="inline-flex items-start gap-2.5 rounded-full border border-teal/30 bg-teal/5 px-3.5 py-1.5 mb-6">
           <span class="pulse-dot mt-1.5" aria-hidden="true"></span>
           <span class="text-xs font-medium text-teal leading-relaxed">Command Center on web. Chief of Staff in your pocket. One brain behind both.</span>
@@ -515,7 +542,8 @@
       </div>
 
       <!-- Right: premium CSS phone mockup -->
-      <div class="solochief-phone-stage" aria-label="SoloChief WhatsApp preview">
+      <div class="hero-visual">
+        <div class="solochief-phone-stage" aria-label="SoloChief WhatsApp preview">
         <div class="solochief-phone">
           <div class="phone-side phone-side-right" aria-hidden="true"></div>
           <div class="phone-frame">
@@ -587,6 +615,7 @@
             </div>
           </div>
         </div>
+      </div>
       </div>
 
     </div>
