@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
   const db = createAdminClient()
 
   // ── 2.5. Handle connection token flow ────────────────────────────────────
-  if (bodyText.startsWith('connect-')) {
-    const rawToken = bodyText.slice(8).trim()
+  if (bodyText.startsWith('Hey Chief ')) {
+    const rawToken = bodyText.slice(10).trim()
     const tokenHash = createHash('sha256').update(rawToken).digest('hex')
 
     // Look up token

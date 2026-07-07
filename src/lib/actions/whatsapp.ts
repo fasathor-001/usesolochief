@@ -10,7 +10,12 @@ import type { ActionResult } from '@/types/database'
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function generateConnectToken(): string {
-  return randomBytes(12).toString('hex')
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let token = ''
+  for (let i = 0; i < 6; i++) {
+    token += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return token
 }
 
 function hashToken(token: string): string {
@@ -82,7 +87,7 @@ export async function generateWhatsAppConnectLink(): Promise<ActionResult<string
     return { data: null, error: 'WhatsApp configuration not available.' }
   }
 
-  const connectMessage = `connect-${rawToken}`
+  const connectMessage = `Hey Chief ${rawToken}`
   const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(connectMessage)}`
 
   return { data: waUrl, error: null }
