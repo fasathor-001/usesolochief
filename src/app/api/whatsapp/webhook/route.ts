@@ -77,33 +77,39 @@ export async function POST(request: NextRequest) {
 
     const userId = tokenRecord.user_id
 
-    // Check for duplicate scenarios
+    // Check for duplicate scenarios - look for ANY profile with this number
     const { data: existingProfile } = await db
       .from('profiles')
-      .select('user_id, whatsapp_number, whatsapp_onboarding_step')
+      .select('user_id, whatsapp_number, whatsapp_connected')
       .eq('whatsapp_number', rawFrom)
       .maybeSingle()
 
     if (existingProfile) {
       if (existingProfile.user_id === userId) {
-        // Same user, already linked
-        await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
-        return twimlResponse('WhatsApp is already connected.')
-      } else {
-        // Different user has this number
+        // Same user with this number
+        if (existingProfile.whatsapp_connected === true) {
+          // Already actively connected - don't reconnect
+          await db.from('whatsapp_connect_tokens').update({ used: true, used_at: new Date().toISOString() }).eq('token_hash', tokenHash)
+          return twimlResponse('WhatsApp is already connected.')
+        }
+        // Same user but disconnected - allow reconnection (continue below)
+      } else if (existingProfile.whatsapp_connected === true) {
+        // Different user has this number AND it's actively connected - block
         return twimlResponse('This WhatsApp number is connected to another SoloChief account. Please contact support.')
       }
+      // Different user but their connection is disconnected - allow this user to take it
     }
 
-    // Check if user already has a different WhatsApp number
+    // Check if this user already has a different actively connected WhatsApp number
     const { data: userProfile } = await db
       .from('profiles')
-      .select('whatsapp_number')
+      .select('whatsapp_number, whatsapp_connected')
       .eq('user_id', userId)
       .single()
 
-    if (userProfile?.whatsapp_number && userProfile.whatsapp_number !== rawFrom) {
-      // Replace old number with new one
+    if (userProfile?.whatsapp_connected === true && userProfile.whatsapp_number && userProfile.whatsapp_number !== rawFrom) {
+      // Replace currently connected number with new one
+      console.log('[whatsapp/webhook] Replacing old number with new for user:', userId)
       await db
         .from('profiles')
         .update({
@@ -113,7 +119,7 @@ export async function POST(request: NextRequest) {
         })
         .eq('user_id', userId)
     } else {
-      // New connection
+      // New connection or reconnection (whatsapp_connected was false)
       console.log('[whatsapp/webhook] Setting whatsapp_connected=true for user:', userId, 'phone:', rawFrom)
       const { error: updateErr } = await db
         .from('profiles')
