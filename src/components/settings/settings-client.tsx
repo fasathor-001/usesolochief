@@ -225,14 +225,24 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
           event: 'UPDATE',
           schema: 'public',
           table: 'profiles',
-          filter: `id=eq.${user.id}`
+          filter: `user_id=eq.${user.id}`
         }, (payload: any) => {
+          console.log('[Settings WhatsApp Realtime]', {
+            event: 'UPDATE received',
+            user_id: user.id,
+            payload_new: payload.new,
+            whatsapp_connected: payload.new.whatsapp_connected,
+            whatsapp_number: payload.new.whatsapp_number,
+          })
           if (payload.new.whatsapp_connected === true) {
+            console.log('[Settings WhatsApp] Connection confirmed, updating UI')
             setWaState('connected')
             setWaPhone(payload.new.whatsapp_number || '')
           }
         })
-        .subscribe()
+        .subscribe((status: any) => {
+          console.log('[Settings WhatsApp Realtime] Subscription status:', status)
+        })
 
       // Return cleanup function
       return () => {
@@ -1308,29 +1318,6 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                       Connect WhatsApp to receive your morning brief and log updates on the go.
                     </p>
 
-                    {/* Sandbox note */}
-                    {process.env.NEXT_PUBLIC_TWILIO_SANDBOX === 'true' && (
-                      <div
-                        style={{
-                          padding: '12px',
-                          borderRadius: 'var(--sc-r)',
-                          border: '1px solid #D97706',
-                          backgroundColor: '#FEF3C7',
-                          marginBottom: 12,
-                        }}
-                      >
-                        <p style={{ fontSize: 13, fontWeight: 500, color: '#92400E', marginBottom: 6 }}>
-                          ⚠️ Sandbox setup required
-                        </p>
-                        <p style={{ fontSize: 12, color: '#92400E', marginBottom: 4 }}>
-                          Before connecting, open WhatsApp and message +1 415 523 8886 with exactly: <strong>join machine-spin</strong>
-                        </p>
-                        <p style={{ fontSize: 12, color: '#92400E' }}>
-                          Wait for Twilio to confirm, then tap Connect WhatsApp.
-                        </p>
-                      </div>
-                    )}
-
                     <button
                       type="button"
                       className="sc-btn sc-btn-secondary sc-btn-sm"
@@ -1391,7 +1378,7 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                           }
                         }}
                       >
-                        I&apos;ve sent the message — check connection
+                        I&apos;ve sent the message. Check connection.
                       </button>
                     </div>
 
@@ -1479,9 +1466,6 @@ export function SettingsClient({ preferences, userEmail, profile, currentPlan, h
                     </div>
                   ))}
                 </div>
-                <p className="sc-meta" style={{ marginTop: 12 }}>
-                  Sandbox number during testing: +1 415 523 8886. Send <code>join machine-spin</code> to opt in.
-                </p>
               </div>
             </div>
           )}

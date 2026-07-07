@@ -114,7 +114,8 @@ export async function POST(request: NextRequest) {
         .eq('user_id', userId)
     } else {
       // New connection
-      await db
+      console.log('[whatsapp/webhook] Setting whatsapp_connected=true for user:', userId, 'phone:', rawFrom)
+      const { error: updateErr } = await db
         .from('profiles')
         .update({
           whatsapp_number: rawFrom,
@@ -122,6 +123,11 @@ export async function POST(request: NextRequest) {
           whatsapp_connected_at: new Date().toISOString(),
         })
         .eq('user_id', userId)
+      if (updateErr) {
+        console.error('[whatsapp/webhook] Failed to update whatsapp_connected:', updateErr)
+      } else {
+        console.log('[whatsapp/webhook] Successfully updated whatsapp_connected=true')
+      }
     }
 
     // Mark token as used
