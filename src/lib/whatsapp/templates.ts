@@ -79,6 +79,8 @@ Here's what you can do right now:
 *done* [name] ✅ — Close a follow-up
 *help* 🤝 — This list
 
+💬 You can also just talk to me. Ask anything, share an update, or think out loud. I will respond with what is useful.
+
 Full app 👉 solochief.app`
 }
 
@@ -111,6 +113,8 @@ export function helpText(): string {
 💡 *capture* [item]: Park an idea
 ✅ *done* [name]: Close a follow-up
 🤝 *help*: This list
+
+💬 Or just send any message and Chief will respond.
 
 👉 Full app: solochief.app`
 }

@@ -433,6 +433,7 @@ async function handleBriefing(db: any, userId: string, name: string): Promise<st
   if (followupLines) parts.push(followupLines)
   if (commitmentLines) parts.push(commitmentLines)
   parts.push(`Reply *help* for all commands.`)
+  parts.push(`💬 Or just reply with anything on your mind. Chief is here to help.`)
 
   return parts.join('\n\n')
 }
