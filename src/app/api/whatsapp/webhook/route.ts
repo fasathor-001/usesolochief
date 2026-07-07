@@ -203,6 +203,14 @@ export async function POST(request: NextRequest) {
       .eq('user_id', userId)
       .single()
 
+    console.log('[Token Handler] Token lookup result:', {
+      token_found: !!tokenRecord,
+      user_id_from_token: tokenRecord?.user_id,
+      profile_found: !!userProfile,
+      profile_plan: userProfile?.plan,
+      profile_user_id: userProfile?.user_id
+    })
+
     // Check WhatsApp access before allowing connection
     console.log('[Webhook] Profile passed to hasWhatsAppAccess (token handler):', {
       user_id: userProfile?.user_id,
