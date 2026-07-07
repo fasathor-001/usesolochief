@@ -165,6 +165,14 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
     fetchPlanAndTrial()
   }, [])
 
+  // Auto-advance to Step 4 when WhatsApp connection confirmed
+  useEffect(() => {
+    if (waState === 'connected') {
+      const timer = setTimeout(() => setStep(4), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [waState])
+
   function selectTemplate(t: OnboardingTemplate) {
     setTemplate(t)
     const defaults = TEMPLATE_DEFAULTS[t].map((c) => ({ ...c, draftId: makeDraftId() }))
@@ -658,23 +666,15 @@ export function OnboardingClient({ initialStep = 1 }: OnboardingClientProps) {
 
           {/* CONNECTED STATE */}
           {waState === 'connected' && (
-            <>
-              <div className="flex flex-col items-center justify-center py-8">
-                <CheckCircle2 size={40} className="mb-4" style={{ color: 'var(--sc-accent)' }} />
-                <h2 className="text-lg font-semibold" style={{ color: 'var(--sc-text)' }}>
-                  WhatsApp connected.
-                </h2>
-                <p className="text-sm mt-2" style={{ color: 'var(--sc-muted)' }}>
-                  Auto-advancing to the next step in 2 seconds...
-                </p>
-              </div>
-              {useEffect(() => {
-                if (waState === 'connected') {
-                  const timer = setTimeout(() => setStep(4), 2000)
-                  return () => clearTimeout(timer)
-                }
-              }, [waState])}
-            </>
+            <div className="flex flex-col items-center justify-center py-8">
+              <CheckCircle2 size={40} className="mb-4" style={{ color: 'var(--sc-accent)' }} />
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--sc-text)' }}>
+                WhatsApp connected.
+              </h2>
+              <p className="text-sm mt-2" style={{ color: 'var(--sc-muted)' }}>
+                Auto-advancing to the next step in 2 seconds...
+              </p>
+            </div>
           )}
         </div>
       )}
