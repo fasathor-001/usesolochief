@@ -7,6 +7,7 @@ import { buildAiReply } from '@/lib/whatsapp/scheduled-whatsapp'
 import { handleOnboardingReply, startOnboarding } from '@/lib/whatsapp/onboarding'
 import { expiredTokenMessage, alreadyConnectedMessage, helpText, getTimeOfDayGreeting } from '@/lib/whatsapp/templates'
 import { hasWhatsAppAccess } from '@/lib/whatsapp/access'
+import { transcribeVoiceNote } from '@/lib/whatsapp/voice'
 import type { OnboardingStep } from '@/lib/whatsapp/onboarding'
 
 // Twilio webhook — URL must exactly match what is configured in the Twilio console.
@@ -45,10 +46,19 @@ export async function POST(request: NextRequest) {
 
   // ── 2. Parse message ─────────────────────────────────────────────────────
   const rawFrom   = (params['From'] ?? '').replace('whatsapp:', '')
-  const bodyText  = (params['Body'] ?? '').trim()
+  let bodyText  = (params['Body'] ?? '').trim()
   const buttonPayload = params['ButtonPayload'] ?? params['ButtonText'] ?? ''
+  const numMedia = parseInt(params['NumMedia'] ?? '0')
+  const mediaContentType = params['MediaContentType0'] ?? ''
+  const mediaUrl = params['MediaUrl0'] ?? ''
 
-  if (!rawFrom || !bodyText) return twimlEmpty()
+  const isVoiceNote = numMedia > 0 && (
+    mediaContentType.includes('audio') ||
+    mediaContentType.includes('ogg') ||
+    mediaContentType.includes('mpeg')
+  )
+
+  if (!rawFrom || (!bodyText && !isVoiceNote)) return twimlEmpty()
 
   const db = createAdminClient()
 
@@ -57,8 +67,43 @@ export async function POST(request: NextRequest) {
     from: rawFrom,
     body: bodyText,
     buttonPayload: buttonPayload,
+    isVoiceNote: isVoiceNote,
+    mediaContentType: isVoiceNote ? mediaContentType : undefined,
     allParams: params,
   })
+
+  // ── Voice note handling ────────────────────────────────────────────────────
+  if (isVoiceNote) {
+    console.log('[Webhook] Voice note received:', {
+      mediaUrl,
+      mediaContentType,
+      from: rawFrom
+    })
+
+    await sendWhatsApp(rawFrom, '🎤 Got your voice note. Give me a moment...')
+
+    const transcribedText = await transcribeVoiceNote(
+      mediaUrl,
+      process.env.TWILIO_ACCOUNT_SID!,
+      process.env.TWILIO_AUTH_TOKEN!
+    )
+
+    if (!transcribedText) {
+      await sendWhatsApp(
+        rawFrom,
+        "I couldn't catch that. Could you try again or type it instead?"
+      )
+      return twimlResponse('')
+    }
+
+    console.log('[Voice] Processing as text:', transcribedText)
+    await sendWhatsApp(
+      rawFrom,
+      `I heard: "${transcribedText}"\n\nProcessing...`
+    )
+
+    bodyText = transcribedText
+  }
 
   // ── 2.4. Handle interactive button and list replies ────────────────────────
   // Check for button payloads and list selections BEFORE processing other message types
