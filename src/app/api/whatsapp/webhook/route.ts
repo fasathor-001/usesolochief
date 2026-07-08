@@ -80,6 +80,22 @@ export async function POST(request: NextRequest) {
       from: rawFrom
     })
 
+    // Check if user has Operator plan for voice notes
+    const { data: voiceUserProfile } = await db
+      .from('profiles')
+      .select('plan')
+      .eq('whatsapp_number', rawFrom)
+      .maybeSingle()
+
+    if (voiceUserProfile?.plan !== 'operator') {
+      console.log('[Voice] User lacks Operator plan:', { plan: voiceUserProfile?.plan })
+      await sendWhatsApp(
+        rawFrom,
+        "Voice notes are available on SoloChief Operator.\n\nUpgrade at solochief.app/pricing to unlock voice."
+      )
+      return twimlResponse('')
+    }
+
     await sendWhatsApp(rawFrom, '🎤 Got your voice note. Give me a moment...')
 
     const transcribedText = await transcribeVoiceNote(
