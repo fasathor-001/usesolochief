@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chief of Staff for Focus, Follow-ups, and Weekly Planning | SoloChief</title>
+  <meta name="description" content="SoloChief is an AI Chief of Staff that helps you plan the week, protect focus, track follow-ups, and start every morning with clarity.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Astor Stack Technologies">
+  <link rel="canonical" href="https://usesolochief.com/ai-chief-of-staff">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://usesolochief.com/ai-chief-of-staff">
+  <meta property="og:title" content="AI Chief of Staff for Focus, Follow-ups, and Weekly Planning | SoloChief">
+  <meta property="og:description" content="An AI Chief of Staff that helps you plan the week, protect focus, track follow-ups, and start every morning with clarity.">
+  <meta property="og:image" content="https://usesolochief.com/og-image.png">
+  <meta property="og:site_name" content="SoloChief">
+  <meta property="og:locale" content="en_US">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://usesolochief.com/ai-chief-of-staff">
+  <meta property="twitter:title" content="AI Chief of Staff for Focus, Follow-ups, and Weekly Planning | SoloChief">
+  <meta property="twitter:description" content="An AI Chief of Staff that helps you plan the week, protect focus, track follow-ups, and start every morning with clarity.">
+  <meta property="twitter:image" content="https://usesolochief.com/og-image.png">
+
+  <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#0F1B2D', deep: '#0B1422', panel: '#1A273A', panelhi: '#1E2D43',
+            slate2: '#334155', muted: '#94A3B8', line: '#1E293B', teal: '#00C2A8', tealh: '#00A892',
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          maxWidth: { site: '80rem' },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: 'Inter', sans-serif; background: #0F1B2D; color: #F0F4F8; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; line-height: 1; }
+    .label { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+    #mobileMenu { display: none; }
+    #mobileMenu.open { display: block; }
+    .faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; text-align: left; padding: 20px 4px; background: none; border: none; cursor: pointer; color: #ffffff; font-size: 16px; font-weight: 700; font-family: inherit; line-height: 1.4; }
+    .faq-chevron { color: #00C2A8; flex-shrink: 0; transition: transform 0.25s ease; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.28s ease; }
+    .faq-item.open .faq-a-wrap { grid-template-rows: 1fr; }
+    .faq-a-inner { overflow: hidden; }
+    .faq-a-inner p { color: #94A3B8; font-size: 15px; line-height: 1.7; padding: 0 4px 20px; margin: 0; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .faq-a-wrap, .faq-chevron { transition: none; } }
+  </style>
+</head>
+<body class="bg-bg text-[#F0F4F8]">
+
+<header class="fixed top-0 inset-x-0 z-50 border-b border-line" style="background: rgba(15,27,45,0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+  <nav class="max-w-site mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
+    <a href="/" class="text-lg font-extrabold tracking-tight text-teal">SoloChief</a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="/" class="text-sm text-muted hover:text-white transition-colors">Home</a>
+      <a href="/#features" class="text-sm text-muted hover:text-white transition-colors">Features</a>
+      <a href="/#pricing" class="text-sm text-muted hover:text-white transition-colors">Pricing</a>
+      <a href="https://solochief.app/auth/login" class="text-sm text-muted hover:text-white transition-colors">Sign in</a>
+      <a href="https://solochief.app/auth/signup" class="text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2 rounded-md transition-colors">Get started</a>
+    </div>
+    <button id="menuBtn" class="md:hidden text-white p-1" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </nav>
+  <div id="mobileMenu" class="md:hidden border-t border-line px-5 py-4 space-y-1" style="background: rgba(11,20,34,0.98);">
+    <a href="/" class="block py-2.5 text-sm text-muted hover:text-white">Home</a>
+    <a href="/#features" class="block py-2.5 text-sm text-muted hover:text-white">Features</a>
+    <a href="/#pricing" class="block py-2.5 text-sm text-muted hover:text-white">Pricing</a>
+    <a href="https://solochief.app/auth/login" class="block py-2.5 text-sm text-muted hover:text-white">Sign in</a>
+    <a href="https://solochief.app/auth/signup" class="block mt-2 text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2.5 rounded-md">Get started</a>
+  </div>
+</header>
+
+<main class="pt-16">
+  <section class="relative overflow-hidden">
+    <div class="max-w-3xl mx-auto px-5 sm:px-6 py-20 lg:py-28 text-center">
+      <p class="label text-teal mb-5">AI Chief of Staff</p>
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-white leading-[1.1]">AI Chief of Staff for people managing too many open loops</h1>
+      <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed max-w-2xl mx-auto">SoloChief helps you plan the week, protect today&#x27;s focus, track commitments, and keep follow-ups from slipping. It gives you a simple operating rhythm across web and your pocket.</p>
+      <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
+        <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-6 py-3.5 rounded-md transition-colors">Start free</a>
+        <a href="/#pricing" class="inline-flex items-center gap-1.5 text-[#CBD5E1] hover:text-white font-medium transition-colors">See pricing</a>
+      </div>
+    </div>
+  </section>
+  <section class="bg-deep py-16 sm:py-20">
+    <div class="max-w-[760px] mx-auto px-5 sm:px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Why people need an AI Chief of Staff</h2>
+      <p class="mt-5 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">Most people do not need another blank workspace. They need help deciding what matters today, what needs follow-up, and what should wait.</p>
+    </div>
+  </section>
+  <section class="bg-bg py-16 sm:py-20">
+    <div class="max-w-site mx-auto px-5 sm:px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white text-center max-w-3xl mx-auto">What SoloChief helps with</h2>
+      <div class="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="rounded-lg border border-line bg-panel p-6">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+            <div>
+              <p class="text-sm font-semibold text-white">Weekly planning</p>
+              <p class="text-sm text-muted mt-1 leading-relaxed">Set your focus and outcomes before the week takes over.</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-line bg-panel p-6">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+            <div>
+              <p class="text-sm font-semibold text-white">Daily focus</p>
+              <p class="text-sm text-muted mt-1 leading-relaxed">Start each day with one clear focus.</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-line bg-panel p-6">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+            <div>
+              <p class="text-sm font-semibold text-white">Follow-up tracking</p>
+              <p class="text-sm text-muted mt-1 leading-relaxed">Keep open loops from going cold.</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-line bg-panel p-6">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+            <div>
+              <p class="text-sm font-semibold text-white">Commitment tracking</p>
+              <p class="text-sm text-muted mt-1 leading-relaxed">Every yes you say gets logged.</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-line bg-panel p-6">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+            <div>
+              <p class="text-sm font-semibold text-white">Morning brief</p>
+              <p class="text-sm text-muted mt-1 leading-relaxed">Your focus and priorities, ready to start the day.</p>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-lg border border-line bg-panel p-6">
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
+            <div>
+              <p class="text-sm font-semibold text-white">Review and adjustment</p>
+              <p class="text-sm text-muted mt-1 leading-relaxed">Close the week and shape the next.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bg-deep py-16 sm:py-20">
+    <div class="max-w-[760px] mx-auto px-5 sm:px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Not a generic chatbot</h2>
+      <p class="mt-5 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">SoloChief is built around execution. It uses your focus, commitments, follow-ups, weekly plan, and parking lot to help you decide your next move.</p>
+    </div>
+  </section>
+  <section class="bg-bg py-16 sm:py-20">
+    <div class="max-w-site mx-auto px-5 sm:px-6">
+      <div class="rounded-[2rem] border border-teal/10 px-6 py-12 sm:px-12 sm:py-14 text-center" style="background:#1E2D43;">
+        <h2 class="text-2xl sm:text-3xl md:text-[34px] font-bold tracking-tight text-white max-w-3xl mx-auto leading-snug">Start with the web Command Center. Upgrade when you want Chief in your pocket.</h2>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-3.5 rounded-md transition-colors">Start free</a>
+          <a href="/#pricing" class="inline-flex items-center gap-1.5 text-[#CBD5E1] hover:text-white font-medium transition-colors">See pricing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="faq" class="py-16 sm:py-20" style="background:#0B1422;">
+    <div class="max-w-[720px] mx-auto px-5 sm:px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white text-center mb-10">Frequently asked questions</h2>
+      <div class="faq-list border-b border-line">
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>What is an AI Chief of Staff?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>An AI Chief of Staff helps you organise priorities, track commitments, protect focus, and decide what needs attention next.</p>
+          </div></div>
+        </div>
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Is SoloChief a chatbot?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>SoloChief uses AI, but it is not built as a generic chatbot. It is built around execution, planning, follow-ups, and daily clarity.</p>
+          </div></div>
+        </div>
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Who is SoloChief for?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>SoloChief is for founders, operators, builders, freelancers, consultants, small team leads, and anyone managing too many open loops.</p>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-bg border-t border-line">
+  <div class="max-w-site mx-auto px-5 sm:px-6 py-14 grid gap-10 md:grid-cols-2">
+    <div>
+      <a href="/" class="text-xl font-extrabold tracking-tight text-teal">SoloChief</a>
+      <p class="mt-3 text-sm text-muted">Built by Astor Stack Technologies</p>
+      <p class="mt-1 text-xs text-muted">&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 md:justify-items-end">
+      <div>
+        <p class="label text-muted mb-3">Product</p>
+        <ul class="space-y-2.5">
+          <li><a href="/#features" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Features</a></li>
+          <li><a href="/#pricing" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label text-muted mb-3">Use cases</p>
+        <ul class="space-y-2.5">
+          <li><a href="/ai-chief-of-staff" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">AI Chief of Staff</a></li>
+          <li><a href="/morning-brief-app" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Morning Brief App</a></li>
+          <li><a href="/follow-up-tracker" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Follow-up Tracker</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label text-muted mb-3">Account</p>
+        <ul class="space-y-2.5">
+          <li><a href="https://solochief.app/auth/login" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Sign in</a></li>
+          <li><a href="https://solochief.app/auth/signup" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Sign up</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label text-muted mb-3">Legal</p>
+        <ul class="space-y-2.5">
+          <li><a href="https://solochief.app/privacy" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Privacy Policy</a></li>
+          <li><a href="https://solochief.app/terms" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var btn = document.getElementById('menuBtn');
+    var menu = document.getElementById('mobileMenu');
+    if (btn && menu) {
+      btn.addEventListener('click', function () {
+        var open = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.querySelector('.material-symbols-outlined').textContent = open ? 'close' : 'menu';
+      });
+      menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          menu.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.querySelector('.material-symbols-outlined').textContent = 'menu';
+        });
+      });
+    }
+    document.querySelectorAll('.faq-q').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var item = button.closest('.faq-item');
+        var wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function (o) {
+          o.classList.remove('open');
+          var b = o.querySelector('.faq-q');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        if (!wasOpen) { item.classList.add('open'); button.setAttribute('aria-expanded', 'true'); }
+      });
+    });
+  })();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is an AI Chief of Staff?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An AI Chief of Staff helps you organise priorities, track commitments, protect focus, and decide what needs attention next."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is SoloChief a chatbot?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SoloChief uses AI, but it is not built as a generic chatbot. It is built around execution, planning, follow-ups, and daily clarity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who is SoloChief for?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SoloChief is for founders, operators, builders, freelancers, consultants, small team leads, and anyone managing too many open loops."
+      }
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
