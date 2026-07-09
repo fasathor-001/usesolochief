@@ -487,9 +487,49 @@
     #mobileMenu { display: none; }
     #mobileMenu.open { display: block; }
 
+    /* FAQ accordion */
+    .faq-q {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      text-align: left;
+      padding: 20px 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+    .faq-chevron {
+      color: #00C2A8;
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s ease;
+    }
+    .faq-item.open .faq-a-wrap { grid-template-rows: 1fr; }
+    .faq-a-inner { overflow: hidden; }
+    .faq-a-inner p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 0 4px 20px;
+      margin: 0;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       .pulse-dot::after { animation: none; }
+      .faq-a-wrap, .faq-chevron { transition: none; }
     }
   </style>
 </head>
@@ -904,35 +944,112 @@
     </div>
   </section>
 
-  <!-- ── FAQ (SEO) ──────────────────────────────────────────────────────── -->
-  <section id="faq" class="bg-deep py-20 sm:py-24">
-    <div class="max-w-[760px] mx-auto px-5 sm:px-6">
-      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white text-center">SoloChief FAQ</h2>
-      <div class="mt-12 space-y-4">
-        <div class="rounded-lg border border-line bg-panel p-6">
-          <h3 class="text-base font-semibold text-white">What is SoloChief?</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">SoloChief is a personal Chief of Staff that helps you plan the week, protect today's focus, track follow-ups, and start every morning with clarity.</p>
+  <!-- ── FAQ ────────────────────────────────────────────────────────────── -->
+  <section id="faq" class="py-20 sm:py-24" style="background:#0B1422;">
+    <div class="max-w-[720px] mx-auto px-5 sm:px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white text-center mb-10">Frequently asked questions</h2>
+      <div class="faq-list border-b border-line">
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Is SoloChief free to use?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Yes. The web dashboard is free forever. It includes Today Focus, Commitments, Follow-ups, Weekly Plan, Parking Lot, and Friday Review. WhatsApp access is available on Pro at $15 per month, with a one-time 7-day WhatsApp trial.</p>
+          </div></div>
         </div>
-        <div class="rounded-lg border border-line bg-panel p-6">
-          <h3 class="text-base font-semibold text-white">Is SoloChief an AI productivity assistant?</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Yes. SoloChief uses AI to help you think through your work, priorities, follow-ups, and next move. It is built around execution, not generic chat.</p>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>How does the WhatsApp connection work?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Go to Settings, tap Connect WhatsApp, and WhatsApp opens with a short code pre-filled. Send the message and you are connected. No manual setup, no phone number entry.</p>
+          </div></div>
         </div>
-        <div class="rounded-lg border border-line bg-panel p-6">
-          <h3 class="text-base font-semibold text-white">Who is SoloChief for?</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">SoloChief is for founders, operators, freelancers, consultants, builders, small team leads, and anyone managing too many open loops.</p>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>What is the morning brief?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Every morning at your chosen time, Chief sends you a message with your focus for the day, any follow-ups due, and your active commitments. You start the day knowing what matters without opening another app.</p>
+          </div></div>
         </div>
-        <div class="rounded-lg border border-line bg-panel p-6">
-          <h3 class="text-base font-semibold text-white">Does SoloChief work on WhatsApp?</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Yes. SoloChief Pro gives you a Chief of Staff in your pocket with WhatsApp morning briefs, commands, and work-focused conversations.</p>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Do I need WhatsApp to use SoloChief?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>No. The web dashboard works without WhatsApp. WhatsApp is the Pro layer that gives you morning briefs, quick commands, and work-focused conversations from your phone.</p>
+          </div></div>
         </div>
-        <div class="rounded-lg border border-line bg-panel p-6">
-          <h3 class="text-base font-semibold text-white">What is a morning brief?</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">A morning brief is a daily message that shows your focus, top priorities, follow-ups, and anything that needs attention before the day runs away.</p>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>How is SoloChief different from Notion or Obsidian?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Notion and Obsidian wait for you to open them. SoloChief gives you an operating rhythm. Chief can send your brief, track follow-ups, and keep your work moving without requiring you to build and maintain a system from scratch.</p>
+          </div></div>
         </div>
-        <div class="rounded-lg border border-line bg-panel p-6">
-          <h3 class="text-base font-semibold text-white">How is SoloChief different from a task app?</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Most task apps wait for you to manage them. SoloChief gives you an operating rhythm: weekly planning, daily focus, follow-up tracking, morning briefs, and review.</p>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Is SoloChief an AI productivity assistant?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Yes, but it is not a generic chatbot. SoloChief is built around execution: weekly planning, daily focus, follow-up tracking, morning briefs, and practical help with your next move.</p>
+          </div></div>
         </div>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Who is SoloChief for?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>SoloChief is for founders, operators, freelancers, consultants, builders, small team leads, and anyone managing too many open loops.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Is my data secure?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>We take data security seriously. Authentication is handled securely, your data is protected with access controls, and we do not sell your data or use it for advertising.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Can I cancel anytime?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Yes. You can cancel from Settings at any time. Your access continues until the end of your billing period.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item border-t border-line">
+          <button type="button" class="faq-q" aria-expanded="false">
+            <span>Is SoloChief available on mobile?</span>
+            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <div class="faq-a-wrap"><div class="faq-a-inner">
+            <p>Yes. The web app is fully responsive and installable as a PWA on iPhone and Android. You can add it to your home screen from your browser for a native app-like experience.</p>
+          </div></div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -1007,6 +1124,26 @@
       });
     });
   })();
+
+  // FAQ accordion — one open at a time
+  (function () {
+    var buttons = document.querySelectorAll('.faq-q');
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        var item = button.closest('.faq-item');
+        var wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
+          openItem.classList.remove('open');
+          var b = openItem.querySelector('.faq-q');
+          if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        if (!wasOpen) {
+          item.classList.add('open');
+          button.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  })();
 </script>
 
 <!-- ── Structured data (JSON-LD) ────────────────────────────────────────── -->
@@ -1056,12 +1193,16 @@
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "What is SoloChief?", "acceptedAnswer": { "@type": "Answer", "text": "SoloChief is a personal Chief of Staff that helps you plan the week, protect today's focus, track follow-ups, and start every morning with clarity." } },
-    { "@type": "Question", "name": "Is SoloChief an AI productivity assistant?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SoloChief uses AI to help you think through your work, priorities, follow-ups, and next move. It is built around execution, not generic chat." } },
+    { "@type": "Question", "name": "Is SoloChief free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The web dashboard is free forever. It includes Today Focus, Commitments, Follow-ups, Weekly Plan, Parking Lot, and Friday Review. WhatsApp access is available on Pro at $15 per month, with a one-time 7-day WhatsApp trial." } },
+    { "@type": "Question", "name": "How does the WhatsApp connection work?", "acceptedAnswer": { "@type": "Answer", "text": "Go to Settings, tap Connect WhatsApp, and WhatsApp opens with a short code pre-filled. Send the message and you are connected. No manual setup, no phone number entry." } },
+    { "@type": "Question", "name": "What is the morning brief?", "acceptedAnswer": { "@type": "Answer", "text": "Every morning at your chosen time, Chief sends you a message with your focus for the day, any follow-ups due, and your active commitments. You start the day knowing what matters without opening another app." } },
+    { "@type": "Question", "name": "Do I need WhatsApp to use SoloChief?", "acceptedAnswer": { "@type": "Answer", "text": "No. The web dashboard works without WhatsApp. WhatsApp is the Pro layer that gives you morning briefs, quick commands, and work-focused conversations from your phone." } },
+    { "@type": "Question", "name": "How is SoloChief different from Notion or Obsidian?", "acceptedAnswer": { "@type": "Answer", "text": "Notion and Obsidian wait for you to open them. SoloChief gives you an operating rhythm. Chief can send your brief, track follow-ups, and keep your work moving without requiring you to build and maintain a system from scratch." } },
+    { "@type": "Question", "name": "Is SoloChief an AI productivity assistant?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, but it is not a generic chatbot. SoloChief is built around execution: weekly planning, daily focus, follow-up tracking, morning briefs, and practical help with your next move." } },
     { "@type": "Question", "name": "Who is SoloChief for?", "acceptedAnswer": { "@type": "Answer", "text": "SoloChief is for founders, operators, freelancers, consultants, builders, small team leads, and anyone managing too many open loops." } },
-    { "@type": "Question", "name": "Does SoloChief work on WhatsApp?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. SoloChief Pro gives you a Chief of Staff in your pocket with WhatsApp morning briefs, commands, and work-focused conversations." } },
-    { "@type": "Question", "name": "What is a morning brief?", "acceptedAnswer": { "@type": "Answer", "text": "A morning brief is a daily message that shows your focus, top priorities, follow-ups, and anything that needs attention before the day runs away." } },
-    { "@type": "Question", "name": "How is SoloChief different from a task app?", "acceptedAnswer": { "@type": "Answer", "text": "Most task apps wait for you to manage them. SoloChief gives you an operating rhythm: weekly planning, daily focus, follow-up tracking, morning briefs, and review." } }
+    { "@type": "Question", "name": "Is my data secure?", "acceptedAnswer": { "@type": "Answer", "text": "We take data security seriously. Authentication is handled securely, your data is protected with access controls, and we do not sell your data or use it for advertising." } },
+    { "@type": "Question", "name": "Can I cancel anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. You can cancel from Settings at any time. Your access continues until the end of your billing period." } },
+    { "@type": "Question", "name": "Is SoloChief available on mobile?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The web app is fully responsive and installable as a PWA on iPhone and Android. You can add it to your home screen from your browser for a native app-like experience." } }
   ]
 }
 </script>
