@@ -1,1 +1,6 @@
-/* /index.html 200
+# Static marketing site — no SPA routing.
+# Do NOT add a catch-all rewrite (e.g. /* /index.html 200): it turns every
+# unknown URL into a soft-404 (homepage served with HTTP 200) and can shadow
+# static assets. With no rules here, Cloudflare Pages serves index.html at /,
+# serves /sitemap.xml, /robots.txt, /og-image.png, /favicon.png directly with
+# their correct content types, and returns a real 404 for unknown paths.
