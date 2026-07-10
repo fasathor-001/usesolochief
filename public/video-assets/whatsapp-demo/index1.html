@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>SoloChief — WhatsApp Integration Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#00C2A8;
+  --navy:#0F1B2D;
+  --dark:#0A0F1A;
+  --card:#111827;
+  --border:#1E2D40;
+  --white:#F8FAFC;
+  --muted:#64748B;
+}
+html,body{width:1280px;height:720px;overflow:hidden;background:var(--dark);font-family:'Inter',sans-serif;color:var(--white)}
+
+.scene{position:absolute;inset:0;opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+
+/* 60s total — 6 scenes × ~10s each */
+.s1{animation:sf 10s 0s   forwards}
+.s2{animation:sf 10s 10s  forwards}
+.s3{animation:sf 10s 20s  forwards}
+.s4{animation:sf 10s 30s  forwards}
+.s5{animation:sf 10s 40s  forwards}
+.s6{animation:sf 10s 50s  forwards}
+
+@keyframes sf{
+  0%  {opacity:0;transform:translateY(8px)}
+  7%  {opacity:1;transform:translateY(0)}
+  88% {opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(-5px)}
+}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop {from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+@keyframes logopop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+
+.ey{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+.hl{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.022em;line-height:1.08}
+.mu{color:var(--muted)}
+.te{color:var(--teal)}
+
+/* ── shared layout ── */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;width:1160px;z-index:1}
+.split-wide{display:grid;grid-template-columns:420px 1fr;gap:52px;align-items:center;width:1160px;z-index:1}
+
+/* screenshot frame */
+.sframe{border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 0 48px rgba(0,194,168,.1),0 20px 48px rgba(0,0,0,.5)}
+.sframe img{width:100%;display:block}
+
+/* phone frame */
+.phone{border-radius:24px;overflow:hidden;border:2px solid var(--border);box-shadow:0 0 40px rgba(0,194,168,.15),0 20px 40px rgba(0,0,0,.5);width:280px}
+.phone img{width:100%;display:block}
+
+/* label chips */
+.chip{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(0,194,168,.12);border:1px solid rgba(0,194,168,.25);color:var(--teal);margin-bottom:18px}
+
+/* feature list */
+.flist{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.frow{display:flex;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;opacity:0}
+.fdot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px}
+
+/* step list */
+.slist{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+.srow{display:flex;align-items:flex-start;gap:14px;opacity:0}
+.snum{width:26px;height:26px;border-radius:50%;background:var(--teal);color:var(--dark);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.stext strong{display:block;font-size:14px;color:var(--white)}
+.stext span{font-size:12px;color:var(--muted)}
+
+/* ── SCENE 1 — hero ── */
+.s1 .hero-wrap{z-index:1;text-align:center}
+.s1 .hl{font-size:62px;opacity:0;animation:rise .6s ease-out .3s forwards}
+.s1 .sub{margin-top:18px;font-size:19px;color:var(--muted);opacity:0;animation:rise .5s ease-out .8s forwards}
+.s1 .sub span{color:var(--white)}
+.s1 .sframe{margin-top:32px;width:900px;opacity:0;animation:pop .7s ease-out 1s forwards}
+
+/* ── SCENE 2 — onboarding step 1 ── */
+.s2 .hl{font-size:44px;opacity:0;animation:rise .5s ease-out 10.3s forwards}
+.s2 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .5s ease-out 10.7s forwards}
+.s2 .sframe{opacity:0;animation:pop .6s ease-out 10.4s forwards}
+.s2 .frow:nth-child(1){animation:rise .35s ease-out 11.1s forwards}
+.s2 .frow:nth-child(2){animation:rise .35s ease-out 11.4s forwards}
+.s2 .frow:nth-child(3){animation:rise .35s ease-out 11.7s forwards}
+.s2 .frow:nth-child(4){animation:rise .35s ease-out 12s   forwards}
+.s2 .frow:nth-child(5){animation:rise .35s ease-out 12.3s forwards}
+.s2 .frow:nth-child(6){animation:rise .35s ease-out 12.6s forwards}
+.s2 .frow:nth-child(7){animation:rise .35s ease-out 12.9s forwards}
+
+/* ── SCENE 3 — WhatsApp connect ── */
+.s3 .hl{font-size:44px;opacity:0;animation:rise .5s ease-out 20.3s forwards}
+.s3 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .5s ease-out 20.7s forwards}
+.s3 .phone{opacity:0;animation:pop .7s ease-out 20.4s forwards}
+.s3 .srow:nth-child(1){animation:rise .35s ease-out 21.1s forwards}
+.s3 .srow:nth-child(2){animation:rise .35s ease-out 21.5s forwards}
+.s3 .srow:nth-child(3){animation:rise .35s ease-out 21.9s forwards}
+
+/* ── SCENE 4 — dashboard ── */
+.s4 .hl{font-size:44px;opacity:0;animation:rise .5s ease-out 30.3s forwards}
+.s4 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .5s ease-out 30.7s forwards}
+.s4 .sframe{opacity:0;animation:pop .6s ease-out 30.4s forwards}
+.s4 .frow:nth-child(1){animation:rise .35s ease-out 31.1s forwards}
+.s4 .frow:nth-child(2){animation:rise .35s ease-out 31.4s forwards}
+.s4 .frow:nth-child(3){animation:rise .35s ease-out 31.7s forwards}
+.s4 .frow:nth-child(4){animation:rise .35s ease-out 32s   forwards}
+
+/* ── SCENE 5 — weekly + friday ── */
+.s5 .hl{font-size:44px;opacity:0;animation:rise .5s ease-out 40.3s forwards}
+.s5 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .5s ease-out 40.7s forwards}
+.s5 .sf-top{opacity:0;animation:pop .5s ease-out 40.3s forwards}
+.s5 .sf-bot{opacity:0;animation:pop .5s ease-out 40.7s forwards;margin-top:16px}
+.s5 .frow:nth-child(1){animation:rise .35s ease-out 41.1s forwards}
+.s5 .frow:nth-child(2){animation:rise .35s ease-out 41.5s forwards}
+.s5 .frow:nth-child(3){animation:rise .35s ease-out 41.9s forwards}
+
+/* ── SCENE 6 — CTA ── */
+.s6 .cta-wrap{z-index:1;text-align:center}
+.logo-ring{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#00C2A8,#0F9B84);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--dark);margin:0 auto 28px;box-shadow:0 0 40px rgba(0,194,168,.35);opacity:0;animation:logopop .5s cubic-bezier(.34,1.56,.64,1) 50.3s forwards}
+.s6 .hl{font-size:56px;opacity:0;animation:rise .5s ease-out 50.8s forwards}
+.s6 .sub{margin-top:14px;font-size:18px;color:var(--muted);opacity:0;animation:rise .4s ease-out 51.2s forwards}
+.promo{margin-top:28px;display:inline-flex;align-items:center;gap:16px;background:rgba(0,194,168,.08);border:1px solid rgba(0,194,168,.25);border-radius:12px;padding:16px 32px;opacity:0;animation:rise .4s ease-out 51.7s forwards}
+.promo-code{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--teal);letter-spacing:.06em}
+.promo-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+.divider{width:1px;height:40px;background:rgba(0,194,168,.2)}
+.s6-url{margin-top:20px;font-size:15px;color:var(--muted);opacity:0;animation:rise .4s ease-out 52.2s forwards}
+.s6-url span{color:var(--white)}
+</style>
+</head>
+<body
+  data-composition-id="solochief-whatsapp-demo"
+  data-width="1280"
+  data-height="720"
+>
+<script>
+window.__timelines = window.__timelines || {};
+window.__timelines["solochief-whatsapp-demo"] = { duration: 60, fps: 30 };
+</script>
+
+<!-- SCENE 1 — HERO -->
+<div class="scene s1">
+  <div class="hero-wrap">
+    <div class="ey" style="opacity:0;animation:rise .4s ease-out .1s forwards">SoloChief AI — Private Beta</div>
+    <h1 class="hl">Your Chief of Staff.<br>Now on <span class="te">WhatsApp.</span></h1>
+    <p class="sub">Connect once. Get your morning brief, log updates, and <span>talk to Chief</span> — without opening the app.</p>
+    <div class="sframe" style="margin-top:32px;width:900px">
+      <img src="./marketing_hero.png" alt="SoloChief hero"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 2 — ONBOARDING -->
+<div class="scene s2">
+  <div class="split">
+    <div>
+      <div class="chip">Step 1 of 4 — Your setup</div>
+      <h2 class="hl">Tell Chief<br>who you are.</h2>
+      <p class="desc">SoloChief starts with your context — your role, your commitments, your week. No manual config.</p>
+      <div class="flist">
+        <div class="frow"><div class="fdot"></div>Business / Project owner</div>
+        <div class="frow"><div class="fdot"></div>Freelancer / Consultant</div>
+        <div class="frow"><div class="fdot"></div>Creator</div>
+        <div class="frow"><div class="fdot"></div>Professional</div>
+        <div class="frow"><div class="fdot"></div>Student</div>
+        <div class="frow"><div class="fdot"></div>Personal / Family</div>
+        <div class="frow"><div class="fdot"></div>Start from scratch</div>
+      </div>
+    </div>
+    <div class="sframe">
+      <img src="./onboarding_1.png" alt="Onboarding step 1"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 3 — WHATSAPP CONNECTION -->
+<div class="scene s3">
+  <div class="split-wide">
+    <div>
+      <div class="chip">Pocket Chief — Pro</div>
+      <h2 class="hl">Chief in<br>your pocket.</h2>
+      <p class="desc">Send your token once. Chief activates on WhatsApp and starts your morning rhythm immediately.</p>
+      <div class="slist">
+        <div class="srow"><div class="snum">1</div><div class="stext"><strong>Get your token</strong><span>Settings → WhatsApp → Copy token</span></div></div>
+        <div class="srow"><div class="snum">2</div><div class="stext"><strong>Send it to Chief</strong><span>Message the SoloChief WhatsApp number</span></div></div>
+        <div class="srow"><div class="snum">3</div><div class="stext"><strong>Chief confirms</strong><span>Your daily rhythm starts from tomorrow morning</span></div></div>
+      </div>
+    </div>
+    <div class="phone">
+      <img src="./whatsapp.png" alt="WhatsApp connection"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 4 — DASHBOARD -->
+<div class="scene s4">
+  <div class="split">
+    <div>
+      <div class="chip">Command Centre</div>
+      <h2 class="hl">Everything<br>in one view.</h2>
+      <p class="desc">The Command Centre shows exactly what needs attention today — without the noise of a full task manager.</p>
+      <div class="flist">
+        <div class="frow"><div class="fdot"></div>Today's focus and what gets done by end of day</div>
+        <div class="frow"><div class="fdot"></div>Commitments needing attention flagged automatically</div>
+        <div class="frow"><div class="fdot"></div>Follow-ups waiting on someone or something</div>
+        <div class="frow"><div class="fdot"></div>Quick actions — park, log, add follow-up, start review</div>
+      </div>
+    </div>
+    <div class="sframe">
+      <img src="./dashboard.png" alt="Command Centre dashboard"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 5 — WEEKLY + FRIDAY REVIEW -->
+<div class="scene s5">
+  <div class="split">
+    <div>
+      <div class="sf-top sframe"><img src="./weekly_plan.png" alt="Weekly Plan"/></div>
+      <div class="sf-bot sframe"><img src="./friday_review.png" alt="Friday Review"/></div>
+    </div>
+    <div>
+      <div class="chip">The weekly rhythm</div>
+      <h2 class="hl">Plan. Operate.<br>Review. Repeat.</h2>
+      <p class="desc">Chief structures your week so nothing falls through. Monday to Friday, one clear rhythm.</p>
+      <div class="flist">
+        <div class="frow"><div class="fdot"></div><div><strong style="display:block;color:var(--white)">Monday — Weekly Plan</strong>Lock your focus, three outcomes, stop list</div></div>
+        <div class="frow"><div class="fdot"></div><div><strong style="display:block;color:var(--white)">Daily — Today Focus</strong>One outcome. Chief checks you stayed on track.</div></div>
+        <div class="frow"><div class="fdot"></div><div><strong style="display:block;color:var(--white)">Friday — Review</strong>What shipped, what slipped, what's next</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 6 — CTA -->
+<div class="scene s6">
+  <div class="cta-wrap">
+    <div class="logo-ring">S</div>
+    <h2 class="hl">Solo. Not alone.</h2>
+    <p class="sub">SoloChief AI is in private beta. Pro includes WhatsApp.</p>
+    <div class="promo">
+      <div>
+        <div class="promo-label">Use code at signup</div>
+        <div class="promo-code">TAZPRO</div>
+      </div>
+      <div class="divider"></div>
+      <div>
+        <div class="promo-label">What you get</div>
+        <div class="promo-code" style="font-size:16px">30 days Pro free</div>
+      </div>
+    </div>
+    <p class="s6-url">Start at <span>usesolochief.com</span></p>
+  </div>
+</div>
+
+</body>
+</html>

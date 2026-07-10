@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SoloChief AI — Teaser</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+</style>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:   #0A0A0F;
+    --surface: #12121E;
+    --card:    #1A1A2E;
+    --border:  #2A2A4A;
+    --indigo:  #5B5FED;
+    --violet:  #9B5FED;
+    --white:   #F0F0FF;
+    --muted:   #7070A0;
+    --green:   #4ADE80;
+  }
+
+  html, body {
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    background: var(--black);
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+  }
+
+  /* ─── SCENE WRAPPER ─────────────────────────────────── */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Scene timing — total 20 s */
+  /* Scene 1: 0–5s   Scene 2: 5–10s   Scene 3: 10–16s   Scene 4: 16–20s */
+
+  .scene-1 { animation: scene-fade 5s  0s    forwards; }
+  .scene-2 { animation: scene-fade 5s  5s    forwards; }
+  .scene-3 { animation: scene-fade 6s  10s   forwards; }
+  .scene-4 { animation: scene-fade 4s  16s   forwards; }
+
+  @keyframes scene-fade {
+    0%   { opacity: 0; transform: translateY(8px); }
+    8%   { opacity: 1; transform: translateY(0); }
+    85%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-6px); }
+  }
+
+  /* ─── AMBIENT GRID ──────────────────────────────────── */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(91,95,237,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,95,237,0.06) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    animation: grid-pulse 4s ease-in-out infinite;
+  }
+  @keyframes grid-pulse {
+    0%, 100% { opacity: 0.5; }
+    50%       { opacity: 1;   }
+  }
+
+  /* ─── GLOW ORBS ─────────────────────────────────────── */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.25;
+    animation: orb-drift 8s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 420px; height: 420px; background: var(--indigo); top: -100px; left: -80px; }
+  .orb-2 { width: 360px; height: 360px; background: var(--violet); bottom: -80px; right: -60px; animation-delay: -3s; }
+  @keyframes orb-drift {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(30px, 20px) scale(1.08); }
+  }
+
+  /* ─── SCENE 1 — HOOK ────────────────────────────────── */
+  .s1-inner {
+    text-align: center;
+    z-index: 1;
+  }
+
+  .terminal-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .terminal-line .prompt { color: var(--green); }
+  .terminal-line .cmd {
+    color: var(--white);
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--indigo);
+    width: 0;
+    animation: type-cmd 1.2s steps(22, end) 0.3s forwards, blink 0.7s step-end 1.5s 4;
+  }
+  @keyframes type-cmd {
+    from { width: 0; }
+    to   { width: 22ch; }
+  }
+  @keyframes blink {
+    0%, 100% { border-color: var(--indigo); }
+    50%       { border-color: transparent;  }
+  }
+
+  .s1-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--white) 30%, var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: rise-in 0.6s ease-out 1.4s forwards;
+  }
+
+  .s1-sub {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+    opacity: 0;
+    animation: rise-in 0.5s ease-out 1.9s forwards;
+  }
+  .s1-sub span { color: var(--white); font-weight: 500; }
+
+  @keyframes rise-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SCENE 2 — PROBLEM ─────────────────────────────── */
+  .s2-inner {
+    z-index: 1;
+    max-width: 900px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--indigo);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: rise-in 0.4s ease-out 5.3s forwards;
+  }
+
+  .s2-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 52px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    opacity: 0;
+    animation: rise-in 0.5s ease-out 5.6s forwards;
+  }
+  .s2-headline em { color: var(--muted); font-style: normal; }
+
+  .chaos-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 36px;
+  }
+  .tag {
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0;
+  }
+  .tag:nth-child(1) { animation: tag-pop 0.3s ease-out 6.1s forwards; }
+  .tag:nth-child(2) { animation: tag-pop 0.3s ease-out 6.3s forwards; }
+  .tag:nth-child(3) { animation: tag-pop 0.3s ease-out 6.5s forwards; }
+  .tag:nth-child(4) { animation: tag-pop 0.3s ease-out 6.7s forwards; }
+  .tag:nth-child(5) { animation: tag-pop 0.3s ease-out 6.9s forwards; }
+  @keyframes tag-pop {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* ─── SCENE 3 — SOLUTION ────────────────────────────── */
+  .s3-inner {
+    z-index: 1;
+    width: 1100px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .s3-left { }
+
+  .s3-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    opacity: 0;
+    animation: rise-in 0.5s ease-out 10.3s forwards;
+  }
+  .s3-headline .accent {
+    background: linear-gradient(90deg, var(--indigo), var(--violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .s3-desc {
+    margin-top: 20px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+    opacity: 0;
+    animation: rise-in 0.5s ease-out 10.7s forwards;
+  }
+
+  .feature-list {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--white);
+    opacity: 0;
+  }
+  .feature-item:nth-child(1) { animation: rise-in 0.4s ease-out 11.1s forwards; }
+  .feature-item:nth-child(2) { animation: rise-in 0.4s ease-out 11.4s forwards; }
+  .feature-item:nth-child(3) { animation: rise-in 0.4s ease-out 11.7s forwards; }
+  .feature-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    flex-shrink: 0;
+  }
+
+  /* Mock UI panel */
+  .mock-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    opacity: 0;
+    animation: rise-in 0.6s ease-out 10.5s forwards;
+    box-shadow: 0 0 60px rgba(91,95,237,0.15), 0 24px 48px rgba(0,0,0,0.4);
+  }
+  .mock-topbar {
+    background: var(--card);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .mock-dot.r { background: #FF5F57; }
+  .mock-dot.y { background: #FFBD2E; }
+  .mock-dot.g { background: #28CA41; }
+  .mock-title {
+    margin-left: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .mock-body { padding: 20px; }
+  .mock-agent-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .mock-agent-row.active {
+    background: rgba(91,95,237,0.12);
+    border: 1px solid rgba(91,95,237,0.3);
+  }
+  .mock-agent-row.idle {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .agent-badge {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif;
+    flex-shrink: 0;
+  }
+  .agent-badge.dim { background: var(--border); color: var(--muted); }
+  .agent-name { flex: 1; font-family: 'Inter', sans-serif; }
+  .agent-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+  }
+  .agent-status.idle-s { color: var(--muted); }
+  .mock-pulse {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse-dot 1s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* ─── SCENE 4 — CTA ─────────────────────────────────── */
+  .s4-inner {
+    z-index: 1;
+    text-align: center;
+  }
+  .logo-mark {
+    width: 72px; height: 72px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--indigo), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px; font-weight: 700;
+    margin: 0 auto 28px;
+    box-shadow: 0 0 40px rgba(91,95,237,0.4);
+    opacity: 0;
+    animation: logo-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) 16.3s forwards;
+  }
+  @keyframes logo-pop {
+    from { opacity: 0; transform: scale(0.6); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .s4-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 58px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    opacity: 0;
+    animation: rise-in 0.5s ease-out 16.7s forwards;
+  }
+  .s4-sub {
+    margin-top: 16px;
+    font-size: 18px;
+    color: var(--muted);
+    opacity: 0;
+    animation: rise-in 0.4s ease-out 17.1s forwards;
+  }
+  .s4-url {
+    margin-top: 32px;
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--indigo);
+    border: 1px solid rgba(91,95,237,0.4);
+    padding: 12px 32px;
+    border-radius: 8px;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    animation: rise-in 0.4s ease-out 17.6s forwards;
+    background: rgba(91,95,237,0.08);
+  }
+</style>
+</head>
+<body
+  data-composition-id="solochief-teaser"
+  data-width="1280"
+  data-height="720"
+>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  window.__timelines["solochief-teaser"] = {
+    duration: 20,
+    fps: 30
+  };
+</script>
+
+<!-- Ambient background — always visible -->
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- ── SCENE 1: HOOK ── -->
+<div class="scene scene-1">
+  <div class="s1-inner">
+    <div class="terminal-line">
+      <span class="prompt">$</span>
+      <span class="cmd">solochief --start-your-day</span>
+    </div>
+    <h1 class="s1-headline">Your AI<br>Command Center</h1>
+    <p class="s1-sub">Built for <span>solo founders</span> who run everything alone</p>
+  </div>
+</div>
+
+<!-- ── SCENE 2: PROBLEM ── -->
+<div class="scene scene-2">
+  <div class="s2-inner">
+    <div class="eyebrow">The solo founder reality</div>
+    <h2 class="s2-headline">You wear every hat.<br><em>The context-switching kills you.</em></h2>
+    <div class="chaos-tags">
+      <div class="tag">product decisions</div>
+      <div class="tag">customer support</div>
+      <div class="tag">marketing copy</div>
+      <div class="tag">revenue tracking</div>
+      <div class="tag">shipping code</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCENE 3: SOLUTION ── -->
+<div class="scene scene-3">
+  <div class="s3-inner">
+    <div class="s3-left">
+      <div class="eyebrow" style="opacity:0; animation: rise-in 0.4s ease-out 10.2s forwards;">What SoloChief does</div>
+      <h2 class="s3-headline"><span class="accent">Four AI agents.</span><br>One daily rhythm.</h2>
+      <p class="s3-desc">Plan, focus, follow up, review — your MDP state machine runs the day so you run the business.</p>
+      <div class="feature-list">
+        <div class="feature-item"><div class="feature-dot"></div>Morning planning with full context</div>
+        <div class="feature-item"><div class="feature-dot"></div>WhatsApp + web Command Center</div>
+        <div class="feature-item"><div class="feature-dot"></div>End-of-day review that actually sticks</div>
+      </div>
+    </div>
+    <div class="s3-right">
+      <div class="mock-panel">
+        <div class="mock-topbar">
+          <div class="mock-dot r"></div>
+          <div class="mock-dot y"></div>
+          <div class="mock-dot g"></div>
+          <span class="mock-title">solochief.app — Command Center</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-agent-row active">
+            <div class="agent-badge">P</div>
+            <span class="agent-name">Planning Agent</span>
+            <span class="agent-status"><span class="mock-pulse"></span> active</span>
+          </div>
+          <div class="mock-agent-row active">
+            <div class="agent-badge">F</div>
+            <span class="agent-name">Focus Agent</span>
+            <span class="agent-status"><span class="mock-pulse"></span> active</span>
+          </div>
+          <div class="mock-agent-row idle">
+            <div class="agent-badge dim">Fu</div>
+            <span class="agent-name">Follow-up Agent</span>
+            <span class="agent-status idle-s">queued</span>
+          </div>
+          <div class="mock-agent-row idle">
+            <div class="agent-badge dim">R</div>
+            <span class="agent-name">Review Agent</span>
+            <span class="agent-status idle-s">18:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCENE 4: CTA ── -->
+<div class="scene scene-4">
+  <div class="s4-inner">
+    <div class="logo-mark">S</div>
+    <h2 class="s4-headline">Run your day.<br>Not the other way.</h2>
+    <p class="s4-sub">SoloChief AI — now in early access</p>
+    <div class="s4-url">usesolochief.com</div>
+  </div>
+</div>
+
+</body>
+</html>

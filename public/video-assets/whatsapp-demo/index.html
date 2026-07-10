@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>SoloChief — WhatsApp Integration Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#00C2A8;
+  --dark:#0A0F1A;
+  --card:#111827;
+  --border:#1E2D40;
+  --white:#F8FAFC;
+  --muted:#64748B;
+}
+html,body{width:1280px;height:720px;overflow:hidden;background:var(--dark);font-family:'Inter',sans-serif;color:var(--white)}
+
+/* ── SCENE SYSTEM ── */
+.scene{position:absolute;inset:0;opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+
+.s1{animation:sf 10s 0s   forwards}
+.s2{animation:sf 10s 10s  forwards}
+.s3{animation:sf 10s 20s  forwards}
+.s4{animation:sf 10s 30s  forwards}
+.s5{animation:sf 10s 40s  forwards}
+.s6{animation:sf 10s 50s  forwards}
+
+@keyframes sf{
+  0%  {opacity:0}
+  7%  {opacity:1}
+  88% {opacity:1}
+  100%{opacity:0}
+}
+
+/* ── MOTION KEYFRAMES ── */
+@keyframes rise      {from{opacity:0;transform:translateY(18px)}  to{opacity:1;transform:translateY(0)}}
+@keyframes rise-fast {from{opacity:0;transform:translateY(10px)}  to{opacity:1;transform:translateY(0)}}
+@keyframes slide-r   {from{opacity:0;transform:translateX(40px)}  to{opacity:1;transform:translateX(0)}}
+@keyframes slide-l   {from{opacity:0;transform:translateX(-40px)} to{opacity:1;transform:translateX(0)}}
+@keyframes zoomin    {from{opacity:0;transform:scale(.88)}         to{opacity:1;transform:scale(1)}}
+@keyframes logopop   {from{opacity:0;transform:scale(.4) rotate(-8deg)} to{opacity:1;transform:scale(1) rotate(0deg)}}
+
+/* screenshot slow ken-burns */
+@keyframes kb-r {from{transform:scale(1.06) translateX(-12px)} to{transform:scale(1) translateX(0)}}
+@keyframes kb-l {from{transform:scale(1.06) translateX(12px)}  to{transform:scale(1) translateX(0)}}
+@keyframes kb-u {from{transform:scale(1.06) translateY(10px)}  to{transform:scale(1) translateY(0)}}
+
+/* ── SHARED COMPONENTS ── */
+.ey{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;opacity:0}
+.hl{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.022em;line-height:1.08}
+.mu{color:var(--muted)}
+.te{color:var(--teal)}
+.chip{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;background:rgba(0,194,168,.12);border:1px solid rgba(0,194,168,.25);color:var(--teal);margin-bottom:18px;opacity:0}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;width:1160px;z-index:1}
+.split-narrow{display:grid;grid-template-columns:400px 1fr;gap:52px;align-items:center;width:1160px;z-index:1}
+
+/* screenshot frame — overflow hidden so kb-zoom stays clipped */
+.sframe{border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 0 48px rgba(0,194,168,.08),0 20px 48px rgba(0,0,0,.5);opacity:0}
+.sframe img{width:100%;display:block}
+.phone{border-radius:24px;overflow:hidden;border:2px solid var(--border);box-shadow:0 0 40px rgba(0,194,168,.15),0 20px 40px rgba(0,0,0,.5);width:290px;opacity:0}
+.phone img{width:100%;display:block}
+
+.flist{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.frow{display:flex;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;opacity:0}
+.fdot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:5px}
+.slist{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+.srow{display:flex;align-items:flex-start;gap:14px;opacity:0}
+.snum{width:26px;height:26px;border-radius:50%;background:var(--teal);color:var(--dark);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.stext strong{display:block;font-size:14px;color:var(--white)}
+.stext span{font-size:12px;color:var(--muted)}
+
+/* ══════════════════════════════════════════
+   SCENE 1 — HERO
+   0s → 10s
+══════════════════════════════════════════ */
+.s1 .inner{z-index:1;text-align:center}
+.s1 .ey  {animation:rise .5s ease-out .2s  forwards}
+.s1 .hl  {font-size:60px;opacity:0;animation:rise .6s ease-out .5s forwards}
+.s1 .sub {margin-top:16px;font-size:18px;color:var(--muted);opacity:0;animation:rise .5s ease-out .9s forwards}
+.s1 .sub span{color:var(--white)}
+.s1 .sframe{margin-top:28px;width:920px;animation:zoomin .8s ease-out 1.1s forwards}
+.s1 .sframe img{animation:kb-r 10s ease-out 1.1s forwards}
+
+/* ══════════════════════════════════════════
+   SCENE 2 — ONBOARDING
+   10s → 20s
+══════════════════════════════════════════ */
+.s2 .chip {animation:rise-fast .4s ease-out 10.2s forwards}
+.s2 .hl  {font-size:44px;opacity:0;animation:slide-l .5s ease-out 10.4s forwards}
+.s2 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .4s ease-out 10.8s forwards}
+.s2 .sframe{animation:slide-r .6s ease-out 10.3s forwards}
+.s2 .sframe img{animation:kb-u 10s ease-out 10.3s forwards}
+.s2 .frow:nth-child(1){animation:rise-fast .3s ease-out 11.1s forwards}
+.s2 .frow:nth-child(2){animation:rise-fast .3s ease-out 11.4s forwards}
+.s2 .frow:nth-child(3){animation:rise-fast .3s ease-out 11.7s forwards}
+.s2 .frow:nth-child(4){animation:rise-fast .3s ease-out 12.0s forwards}
+.s2 .frow:nth-child(5){animation:rise-fast .3s ease-out 12.3s forwards}
+.s2 .frow:nth-child(6){animation:rise-fast .3s ease-out 12.6s forwards}
+.s2 .frow:nth-child(7){animation:rise-fast .3s ease-out 12.9s forwards}
+
+/* ══════════════════════════════════════════
+   SCENE 3 — WHATSAPP
+   20s → 30s
+══════════════════════════════════════════ */
+.s3 .chip {animation:rise-fast .4s ease-out 20.2s forwards}
+.s3 .hl  {font-size:44px;opacity:0;animation:slide-l .5s ease-out 20.4s forwards}
+.s3 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .4s ease-out 20.8s forwards}
+.s3 .phone{animation:slide-r .7s ease-out 20.3s forwards}
+.s3 .srow:nth-child(1){animation:rise-fast .3s ease-out 21.0s forwards}
+.s3 .srow:nth-child(2){animation:rise-fast .3s ease-out 21.5s forwards}
+.s3 .srow:nth-child(3){animation:rise-fast .3s ease-out 22.0s forwards}
+
+/* ══════════════════════════════════════════
+   SCENE 4 — DASHBOARD
+   30s → 40s
+══════════════════════════════════════════ */
+.s4 .chip {animation:rise-fast .4s ease-out 30.2s forwards}
+.s4 .hl  {font-size:44px;opacity:0;animation:slide-l .5s ease-out 30.4s forwards}
+.s4 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .4s ease-out 30.8s forwards}
+.s4 .sframe{animation:slide-r .6s ease-out 30.3s forwards}
+.s4 .sframe img{animation:kb-l 10s ease-out 30.3s forwards}
+.s4 .frow:nth-child(1){animation:rise-fast .3s ease-out 31.0s forwards}
+.s4 .frow:nth-child(2){animation:rise-fast .3s ease-out 31.4s forwards}
+.s4 .frow:nth-child(3){animation:rise-fast .3s ease-out 31.8s forwards}
+.s4 .frow:nth-child(4){animation:rise-fast .3s ease-out 32.2s forwards}
+
+/* ══════════════════════════════════════════
+   SCENE 5 — WEEKLY + REVIEW
+   40s → 50s
+══════════════════════════════════════════ */
+.s5 .chip {animation:rise-fast .4s ease-out 40.2s forwards}
+.s5 .hl  {font-size:44px;opacity:0;animation:slide-r .5s ease-out 40.4s forwards}
+.s5 .desc{margin-top:14px;font-size:15px;line-height:1.7;color:var(--muted);opacity:0;animation:rise .4s ease-out 40.8s forwards}
+.sf-top{border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;animation:slide-l .5s ease-out 40.3s forwards}
+.sf-top img{width:100%;display:block;animation:kb-u 10s ease-out 40.3s forwards}
+.sf-bot{border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;animation:slide-l .5s ease-out 40.7s forwards;margin-top:14px}
+.sf-bot img{width:100%;display:block}
+.s5 .frow:nth-child(1){animation:rise-fast .3s ease-out 41.0s forwards}
+.s5 .frow:nth-child(2){animation:rise-fast .3s ease-out 41.5s forwards}
+.s5 .frow:nth-child(3){animation:rise-fast .3s ease-out 42.0s forwards}
+
+/* ══════════════════════════════════════════
+   SCENE 6 — CTA
+   50s → 60s
+══════════════════════════════════════════ */
+.s6 .cta{z-index:1;text-align:center}
+.logo-ring{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,#00C2A8,#0F9B84);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:700;color:var(--dark);margin:0 auto 24px;box-shadow:0 0 40px rgba(0,194,168,.4);opacity:0;animation:logopop .6s cubic-bezier(.34,1.56,.64,1) 50.3s forwards}
+.s6 .hl {font-size:56px;opacity:0;animation:rise .5s ease-out 50.9s forwards}
+.s6 .sub{margin-top:12px;font-size:17px;color:var(--muted);opacity:0;animation:rise .4s ease-out 51.3s forwards}
+.promo{margin-top:28px;display:inline-flex;align-items:center;gap:20px;background:rgba(0,194,168,.08);border:1px solid rgba(0,194,168,.25);border-radius:12px;padding:16px 36px;opacity:0;animation:zoomin .5s ease-out 51.8s forwards}
+.promo-code{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--teal);letter-spacing:.06em}
+.promo-label{font-size:11px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.08em}
+.div-line{width:1px;height:44px;background:rgba(0,194,168,.2)}
+.s6-url{margin-top:20px;font-size:15px;color:var(--muted);opacity:0;animation:rise .4s ease-out 52.4s forwards}
+.s6-url span{color:var(--white);font-weight:500}
+</style>
+</head>
+<body
+  data-composition-id="solochief-whatsapp-demo"
+  data-width="1280"
+  data-height="720"
+>
+<script>
+window.__timelines = window.__timelines || {};
+window.__timelines["solochief-whatsapp-demo"] = { duration: 60, fps: 30 };
+</script>
+
+<!-- ── AUDIO TRACKS ── -->
+<audio id="a1" src="./scene1.mp3" data-start="0.5"></audio>
+<audio id="a2" src="./scene2.mp3" data-start="10.5"></audio>
+<audio id="a3" src="./scene3.mp3" data-start="20.5"></audio>
+<audio id="a4" src="./scene4.mp3" data-start="30.5"></audio>
+<audio id="a5" src="./scene5.mp3" data-start="40.5"></audio>
+<audio id="a6" src="./scene6.mp3" data-start="50.5"></audio>
+
+<script>
+// Schedule audio playback in sync with scene timing
+document.addEventListener('DOMContentLoaded', function() {
+  var tracks = ['a1','a2','a3','a4','a5','a6'];
+  tracks.forEach(function(id) {
+    var el = document.getElementById(id);
+    var start = parseFloat(el.getAttribute('data-start')) * 1000;
+    setTimeout(function() { el.play().catch(function(){}); }, start);
+  });
+});
+</script>
+
+<!-- SCENE 1 — HERO -->
+<div class="scene s1">
+  <div class="inner">
+    <div class="ey">SoloChief AI — Private Beta</div>
+    <h1 class="hl">Your Chief of Staff.<br>Now on <span class="te">WhatsApp.</span></h1>
+    <p class="sub">Connect once. Get your morning brief, log updates, and <span>talk to Chief</span> — without opening the app.</p>
+    <div class="sframe" style="margin-top:28px;width:920px">
+      <img src="./marketing_hero.png" alt="SoloChief hero"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 2 — ONBOARDING -->
+<div class="scene s2">
+  <div class="split">
+    <div>
+      <div class="chip">Step 1 of 4 — Your setup</div>
+      <h2 class="hl">Tell Chief<br>who you are.</h2>
+      <p class="desc">SoloChief starts with your context — your role, your commitments, your week. No manual config.</p>
+      <div class="flist">
+        <div class="frow"><div class="fdot"></div>Business / Project owner</div>
+        <div class="frow"><div class="fdot"></div>Freelancer / Consultant</div>
+        <div class="frow"><div class="fdot"></div>Creator</div>
+        <div class="frow"><div class="fdot"></div>Professional</div>
+        <div class="frow"><div class="fdot"></div>Student</div>
+        <div class="frow"><div class="fdot"></div>Personal / Family</div>
+        <div class="frow"><div class="fdot"></div>Start from scratch</div>
+      </div>
+    </div>
+    <div class="sframe">
+      <img src="./onboarding_1.png" alt="Onboarding step 1"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 3 — WHATSAPP -->
+<div class="scene s3">
+  <div class="split-narrow">
+    <div>
+      <div class="chip">Pocket Chief — Pro</div>
+      <h2 class="hl">Chief in<br>your pocket.</h2>
+      <p class="desc">Send your token once. Chief activates on WhatsApp and your morning rhythm starts immediately.</p>
+      <div class="slist">
+        <div class="srow"><div class="snum">1</div><div class="stext"><strong>Get your token</strong><span>Settings → WhatsApp → Copy token</span></div></div>
+        <div class="srow"><div class="snum">2</div><div class="stext"><strong>Send it to Chief</strong><span>Message the SoloChief WhatsApp number</span></div></div>
+        <div class="srow"><div class="snum">3</div><div class="stext"><strong>Chief confirms</strong><span>Daily rhythm starts the next morning</span></div></div>
+      </div>
+    </div>
+    <div class="phone">
+      <img src="./whatsapp.png" alt="WhatsApp connection"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 4 — DASHBOARD -->
+<div class="scene s4">
+  <div class="split">
+    <div>
+      <div class="chip">Command Centre</div>
+      <h2 class="hl">Everything<br>in one view.</h2>
+      <p class="desc">The Command Centre shows what needs attention today — your focus, follow-ups, and open loops — without the noise.</p>
+      <div class="flist">
+        <div class="frow"><div class="fdot"></div>Today's focus and end-of-day outcome</div>
+        <div class="frow"><div class="fdot"></div>Commitments flagged automatically</div>
+        <div class="frow"><div class="fdot"></div>Follow-ups waiting on someone</div>
+        <div class="frow"><div class="fdot"></div>Quick actions — park, log, review</div>
+      </div>
+    </div>
+    <div class="sframe">
+      <img src="./dashboard.png" alt="Command Centre"/>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 5 — WEEKLY + REVIEW -->
+<div class="scene s5">
+  <div class="split">
+    <div>
+      <div class="sf-top"><img src="./weekly_plan.png" alt="Weekly Plan"/></div>
+      <div class="sf-bot"><img src="./friday_review.png" alt="Friday Review"/></div>
+    </div>
+    <div>
+      <div class="chip">The weekly rhythm</div>
+      <h2 class="hl">Plan. Operate.<br>Review. Repeat.</h2>
+      <p class="desc">Chief structures your week so nothing falls through. Monday to Friday, one clear rhythm.</p>
+      <div class="flist">
+        <div class="frow"><div class="fdot"></div><div><strong style="display:block;color:var(--white);margin-bottom:2px">Monday — Weekly Plan</strong>Lock focus, three outcomes, stop list</div></div>
+        <div class="frow"><div class="fdot"></div><div><strong style="display:block;color:var(--white);margin-bottom:2px">Daily — Today Focus</strong>One outcome. Chief keeps you honest.</div></div>
+        <div class="frow"><div class="fdot"></div><div><strong style="display:block;color:var(--white);margin-bottom:2px">Friday — Review</strong>What shipped, what slipped, what's next</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 6 — CTA -->
+<div class="scene s6">
+  <div class="cta">
+    <div class="logo-ring">S</div>
+    <h2 class="hl">Solo. Not alone.</h2>
+    <p class="sub">SoloChief AI is in private beta. Pro includes WhatsApp.</p>
+    <div class="promo">
+      <div>
+        <div class="promo-label">Use code at signup</div>
+        <div class="promo-code">TAZPRO</div>
+      </div>
+      <div class="div-line"></div>
+      <div>
+        <div class="promo-label">What you get</div>
+        <div class="promo-code" style="font-size:18px">30 days Pro free</div>
+      </div>
+    </div>
+    <p class="s6-url">Start at <span>usesolochief.com</span></p>
+  </div>
+</div>
+
+</body>
+</html>
