@@ -1,0 +1,71 @@
+:root {
+  --color-midnight-950: #08111f;
+  --color-midnight-900: #0b1422;
+  --color-midnight-850: #0e1929;
+  --color-midnight-800: #111e30;
+  --color-midnight-750: #162438;
+
+  --color-teal-400: #42d4cc;
+  --color-teal-500: #1bc5bd;
+  --color-teal-600: #16aaa3;
+  --color-teal-soft: rgba(27, 197, 189, 0.12);
+  --color-teal-border: rgba(27, 197, 189, 0.35);
+
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-border-default: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+
+  --background-page: var(--color-midnight-900);
+  --background-deep: var(--color-midnight-950);
+  --background-section: var(--color-midnight-850);
+  --background-card: var(--color-midnight-800);
+  --background-card-hover: var(--color-midnight-750);
+
+  --foreground-primary: var(--color-text-primary);
+  --foreground-secondary: var(--color-text-secondary);
+  --foreground-muted: var(--color-text-muted);
+
+  --accent-primary: var(--color-teal-500);
+  --accent-hover: var(--color-teal-600);
+  --accent-soft: var(--color-teal-soft);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.22);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.4);
+
+  --duration-fast: 120ms;
+  --duration-default: 180ms;
+  --duration-slow: 280ms;
+  --duration-reveal: 420ms;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
