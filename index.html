@@ -202,17 +202,27 @@
       transform: translateX(-6%);
       position: relative;
       z-index: 2;
-      overflow: visible;
     }
 
-    .hero-phone-wrap {
+    .hero-phone-float {
       position: relative;
       z-index: 2;
       overflow: visible;
+      /* entrance and idle float animations only */
+      animation: phoneEnter 1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards,
+                 phoneFloat 6s ease-in-out 1.5s infinite alternate;
+      opacity: 0;
+    }
+
+    .hero-phone-parallax {
+      position: relative;
+      z-index: 2;
+      overflow: visible;
+      /* pointer transform only - JavaScript writes inline style here */
       filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.2));
     }
 
-    .hero-phone-wrap::after {
+    .hero-phone-parallax::after {
       content: "";
       position: absolute;
       left: 50%;
@@ -676,10 +686,7 @@
       to { transform: translateY(-6px); }
     }
 
-    [data-motion-ready="true"] .hero-phone-wrap {
-      animation: phoneEnter 1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards, phoneFloat 6s ease-in-out 1.5s infinite alternate;
-      opacity: 0;
-    }
+    /* Animations moved to .hero-phone-float above */
 
     @keyframes glowBreathe {
       from {
@@ -712,20 +719,20 @@
     }
 
     /* ── Feature cards scroll reveal animation ────────────────────── */
-    @keyframes cardReveal {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     [data-motion-ready="true"] .feature-card {
       opacity: 0;
-      animation: cardReveal 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      transform: translateY(20px);
+      transition:
+        opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-motion-ready="true"] .feature-card:nth-child(1) { transition-delay: 0ms; }
+    [data-motion-ready="true"] .feature-card:nth-child(2) { transition-delay: 100ms; }
+
+    [data-motion-ready="true"] .feature-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .feature-card {
@@ -734,14 +741,6 @@
         border-color 220ms ease,
         background-color 220ms ease,
         box-shadow 220ms ease;
-    }
-
-    .feature-card:nth-child(1) { animation-delay: 0ms; }
-    .feature-card:nth-child(2) { animation-delay: 100ms; }
-
-    .feature-card.is-visible {
-      opacity: 1;
-      animation: none;
     }
 
     .feature-card:hover {
@@ -758,30 +757,22 @@
     }
 
     /* ── How it works section scroll reveal animation ───────────────── */
-    @keyframes stepReveal {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     [data-motion-ready="true"] .how-it-works-item {
       opacity: 0;
-      animation: stepReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      transform: translateY(18px);
+      transition:
+        opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .how-it-works-item:nth-child(1) { animation-delay: 0ms; }
-    .how-it-works-item:nth-child(2) { animation-delay: 120ms; }
-    .how-it-works-item:nth-child(3) { animation-delay: 240ms; }
-    .how-it-works-item:nth-child(4) { animation-delay: 360ms; }
+    [data-motion-ready="true"] .how-it-works-item:nth-child(1) { transition-delay: 0ms; }
+    [data-motion-ready="true"] .how-it-works-item:nth-child(2) { transition-delay: 120ms; }
+    [data-motion-ready="true"] .how-it-works-item:nth-child(3) { transition-delay: 240ms; }
+    [data-motion-ready="true"] .how-it-works-item:nth-child(4) { transition-delay: 360ms; }
 
-    .how-it-works-item.is-visible {
+    [data-motion-ready="true"] .how-it-works-item.is-visible {
       opacity: 1;
-      animation: none;
+      transform: translateY(0);
     }
 
     .how-it-works-item:hover {
@@ -805,7 +796,7 @@
       .hero-copy,
       .hero-buttons,
       .hero-trust,
-      .hero-phone-wrap {
+      .hero-phone-float {
         animation: none !important;
         opacity: 1;
         transform: none;
@@ -864,7 +855,7 @@
       .hero-copy,
       .hero-buttons,
       .hero-trust,
-      .hero-phone-wrap,
+      .hero-phone-float,
       .hero-phone-glow,
       .message,
       .pulse-dot::after {
@@ -952,14 +943,16 @@
       <div class="hero-visual">
         <div class="hero-phone-glow" aria-hidden="true"></div>
         <div class="hero-phone-position">
-          <div class="hero-phone-wrap">
-            <img
-              class="hero-phone-image"
-              src="/img/solochief-phone-final.png"
-              alt="SoloChief running as a personal Chief of Staff in WhatsApp"
-              loading="eager"
-              decoding="async"
-            />
+          <div class="hero-phone-float">
+            <div class="hero-phone-parallax">
+              <img
+                class="hero-phone-image"
+                src="/img/solochief-phone-final.png"
+                alt="SoloChief running as a personal Chief of Staff in WhatsApp"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -1506,8 +1499,8 @@
 
   // Desktop parallax on hero phone
   (function() {
-    const phoneWrap = document.querySelector('.hero-phone-wrap');
-    if (!phoneWrap || window.matchMedia('(max-width: 1024px)').matches) return;
+    const phoneParallax = document.querySelector('.hero-phone-parallax');
+    if (!phoneParallax || window.matchMedia('(max-width: 1024px)').matches) return;
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1526,7 +1519,7 @@
       const rotX = (targetY / window.innerHeight) * 0.5;
       const rotY = (targetX / window.innerWidth) * 0.8;
 
-      phoneWrap.style.transform = `translate(${px}px, ${py}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      phoneParallax.style.transform = `translate(${px}px, ${py}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       rafId = requestAnimationFrame(updateParallax);
     }
 
