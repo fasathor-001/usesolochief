@@ -204,6 +204,14 @@
       z-index: 2;
     }
 
+    /* Final polish: phone position adjustment */
+    .hero-phone-position {
+      transform: translate(-20%, -4%);
+      position: relative;
+      z-index: 3;
+      overflow: visible;
+    }
+
     .hero-phone-float {
       position: relative;
       z-index: 2;
@@ -548,7 +556,7 @@
     .hero-context-left {
       width: 350px;
       min-height: 520px;
-      left: -12%;
+      left: -14%;
       top: 19%;
       transform: rotate(-3deg);
     }
@@ -556,14 +564,14 @@
     .hero-context-right {
       width: 315px;
       min-height: 475px;
-      right: -12%;
-      top: 24%;
+      right: -15%;
+      top: 23%;
     }
 
     .hero-context h3 {
       font-size: 16px;
       font-weight: 600;
-      color: rgba(226, 232, 240, 0.72);
+      color: rgba(226, 232, 240, 0.78);
       margin: 0 0 20px 0;
       letter-spacing: -0.01em;
     }
@@ -576,7 +584,7 @@
       display: block;
       font-size: 12px;
       font-weight: 600;
-      color: rgba(27, 197, 189, 0.78);
+      color: rgba(27, 197, 189, 0.82);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       margin-bottom: 8px;
@@ -584,7 +592,7 @@
 
     .context-group > div {
       font-size: 13px;
-      color: rgba(148, 163, 184, 0.58);
+      color: rgba(148, 163, 184, 0.66);
       padding: 8px 12px;
       margin-bottom: 6px;
       border: 1px solid rgba(27, 197, 189, 0.07);
@@ -594,28 +602,21 @@
 
     .review-chart {
       position: absolute;
-      bottom: 24px;
+      bottom: 20px;
       left: 24px;
       right: 24px;
       height: 60px;
-      background: linear-gradient(90deg,
-        rgba(27, 197, 189, 0.1) 0%,
-        rgba(27, 197, 189, 0.2) 50%,
-        rgba(27, 197, 189, 0.1) 100%);
-      border-radius: 8px;
-      border: 1px solid rgba(27, 197, 189, 0.08);
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 100%;
     }
 
     /* ── Hero phone position and sizing ────────────────────────────── */
-    .hero-phone-position {
-      position: relative;
-      transform: translate(-18%, -4%);
-      overflow: visible;
-      z-index: 3;
-    }
 
     .hero-phone-image {
-      width: clamp(460px, 41vw, 590px);
+      width: clamp(480px, 43vw, 620px);
       height: auto;
       display: block;
       object-fit: contain;
@@ -1115,7 +1116,13 @@
             <div>✓ Plan next week</div>
           </div>
 
-          <div class="review-chart" aria-hidden="true"></div>
+          <div class="review-chart" aria-hidden="true">
+            <svg viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
+              <rect width="240" height="60" fill="rgba(0, 0, 0, 0.08)" rx="6"/>
+              <polyline points="8,48 30,44 52,40 74,36 96,28 118,24 140,18 162,14 184,12 206,10 228,8"
+                        fill="none" stroke="rgba(27, 197, 189, 0.6)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
         </div>
 
         <div class="hero-phone-position">
