@@ -666,22 +666,64 @@
       }
     }
 
-    @media (max-width: 768px) {
-      .hero-context-left,
-      .hero-context-right {
-        display: none;
+    @media (max-width: 767px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
       }
 
+      .hero-copy {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        justify-content: flex-start;
+      }
+
+      .hero-headline {
+        font-size: clamp(32px, 11vw, 48px);
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        max-width: 100%;
+      }
+
+      .hero-section {
+        padding-top: clamp(48px, 8vw, 96px);
+        padding-bottom: clamp(48px, 8vw, 80px);
+      }
+
+      .hero-visual {
+        order: 999;
+        width: 100%;
+        min-height: auto;
+      }
+
+      .hero-context-left,
+      .hero-context-right,
       .hero-ambient-glow {
-        display: none;
+        display: none !important;
       }
 
       .hero-phone-position {
-        transform: translate(0, 0);
+        transform: none;
+        width: 100%;
+        display: flex;
+        justify-content: center;
       }
 
       .hero-phone-image {
-        width: clamp(300px, 82vw, 400px);
+        width: clamp(300px, 85vw, 390px);
+        height: auto;
+      }
+
+      .hero-phone-float {
+        /* keep entrance animation but no initial delay on mobile */
+        animation: phoneEnter 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+                   phoneFloat 6s ease-in-out 1s infinite alternate;
+      }
+
+      /* Disable parallax on mobile */
+      .hero-phone-parallax {
+        transform: none !important;
       }
     }
 
