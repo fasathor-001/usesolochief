@@ -179,6 +179,7 @@
       min-height: auto;
       width: 100%;
       z-index: 0;
+      overflow: visible;
     }
 
     .hero-phone-glow {
@@ -200,6 +201,8 @@
     .hero-phone-wrap {
       position: relative;
       z-index: 2;
+      overflow: visible;
+      transform: translateX(-6%);
       filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.2));
     }
 
@@ -223,7 +226,7 @@
     }
 
     .hero-phone-image {
-      width: clamp(370px, 31vw, 430px);
+      width: clamp(390px, 33vw, 470px);
       height: auto;
       display: block;
       object-fit: contain;
