@@ -616,13 +616,187 @@
       outline: 2px solid rgba(27, 197, 189, 0.5);
       outline-offset: 2px;
     }
+
+    /* ── Premium hero motion ──────────────────────────────────────── */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-eyebrow {
+      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      opacity: 0;
+    }
+
+    .hero-headline {
+      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+      opacity: 0;
+    }
+
+    .hero-copy {
+      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+      opacity: 0;
+    }
+
+    .hero-buttons {
+      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+      opacity: 0;
+    }
+
+    .hero-trust {
+      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+      opacity: 0;
+    }
+
+    @keyframes phoneEnter {
+      from {
+        opacity: 0;
+        transform: translateY(22px) scale(1.04);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes phoneFloat {
+      from { transform: translateY(0); }
+      to { transform: translateY(-6px); }
+    }
+
+    .hero-phone-wrap {
+      animation: phoneEnter 1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards, phoneFloat 6s ease-in-out 1.5s infinite alternate;
+    }
+
+    @keyframes glowBreathe {
+      from {
+        opacity: 0.08;
+        transform: scale(1);
+      }
+      to {
+        opacity: 0.12;
+        transform: scale(1.03);
+      }
+    }
+
+    .hero-phone-glow {
+      animation: glowBreathe 8s ease-in-out infinite alternate;
+    }
+
+    /* ── CTA button hover microinteractions ────────────────────────── */
+    .hero-buttons a {
+      transition: transform 200ms ease, box-shadow 200ms ease, color 200ms ease, border-color 200ms ease;
+    }
+
+    .hero-buttons a:first-child:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .hero-buttons a:last-child:hover {
+      border-color: rgba(27, 197, 189, 0.35);
+      color: rgba(27, 197, 189, 0.95);
+    }
+
+    /* ── Respect prefers-reduced-motion ────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-eyebrow,
+      .hero-headline,
+      .hero-copy,
+      .hero-buttons,
+      .hero-trust,
+      .hero-phone-wrap {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+      }
+
+      .hero-buttons a {
+        transition: none;
+      }
+
+      .hero-phone-glow {
+        animation: none;
+      }
+    }
+
+    /* ── Navigation scroll state ────────────────────────────────────── */
+    header {
+      transition: background-color 300ms ease, border-color 300ms ease, backdrop-filter 300ms ease;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+    }
+
+    header.is-scrolled {
+      background: rgba(8, 20, 34, 0.82);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* ── Accessibility: Disable animations for reduced motion ───────── */
+    @media (prefers-reduced-motion: reduce) {
+      /* Disable all transitions and animations */
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      /* Preserve header scroll state styling but without transitions */
+      header {
+        transition: none;
+      }
+
+      header.is-scrolled {
+        transition: none;
+      }
+
+      /* Preserve interactive hover/focus states without motion */
+      button:hover,
+      a:hover {
+        color: inherit;
+        border-color: inherit;
+      }
+
+      /* Target specific animated elements */
+      [class*="animation"],
+      .hero-eyebrow,
+      .hero-headline,
+      .hero-copy,
+      .hero-buttons,
+      .hero-trust,
+      .hero-phone-wrap,
+      .hero-phone-glow,
+      .message,
+      .pulse-dot::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      /* Remove transforms on hover for animated elements */
+      .feature-card:hover,
+      .how-it-works-item:hover,
+      .hero-buttons a:hover {
+        transform: none;
+      }
+
+      /* Keep FAQ chevron state but no animation */
+      .faq-chevron {
+        transition: none;
+      }
+    }
   </style>
 </head>
 
 <body class="bg-bg text-[#F0F4F8]">
 
 <!-- ── NAV ──────────────────────────────────────────────────────────────── -->
-<header class="fixed top-0 inset-x-0 z-50 border-b border-line" style="background: rgba(15,27,45,0.72); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
+<header class="fixed top-0 inset-x-0 z-50 border-b border-line">
   <nav class="max-w-site mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
     <a href="#top" class="text-lg font-extrabold tracking-tight text-teal">SoloChief</a>
 
@@ -655,20 +829,20 @@
     <div class="hero-grid relative z-10 max-w-site mx-auto px-5 sm:px-6">
 
       <!-- Left -->
-      <div class="hero-copy">
-        <div class="inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/5 px-3 py-1.5 mb-8 w-fit">
+      <div>
+        <div class="hero-eyebrow inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/5 px-3 py-1.5 mb-8 w-fit">
           <span class="pulse-dot" aria-hidden="true"></span>
           <span class="text-xs font-medium text-teal tracking-wide leading-tight">Web + WhatsApp. One system.</span>
         </div>
 
-        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.0] tracking-tight text-white mb-6" style="max-width: 580px;">
+        <h1 class="hero-headline text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.0] tracking-tight text-white mb-6" style="max-width: 580px;">
           Your personal <span style="color: #00C2A8;">Chief of Staff</span>, on web and in your pocket.
         </h1>
-        <p class="text-base sm:text-[1.0625rem] text-[#A0AEC0] leading-relaxed mt-6" style="max-width: 520px;">
+        <p class="hero-copy text-base sm:text-[1.0625rem] text-[#A0AEC0] leading-relaxed mt-6" style="max-width: 520px;">
           SoloChief helps you plan the week, protect today's focus, track follow-ups, and start every morning with clarity.
         </p>
 
-        <div class="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div class="hero-buttons mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-4 rounded-lg transition-colors duration-200 text-base">
             Start free
           </a>
@@ -677,7 +851,7 @@
           </a>
         </div>
 
-        <p class="mt-8 text-sm text-[#64748B]">No credit card required. 7-day WhatsApp trial included on Pro.</p>
+        <p class="hero-trust mt-8 text-sm text-[#64748B]">No credit card required. 7-day Pocket Chief trial included on Pro.</p>
       </div>
 
       <!-- Right: hero phone only -->
@@ -1197,6 +1371,85 @@
         }
       });
     });
+  })();
+
+  // Navigation scroll state enhancement
+  (function() {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    let lastScrollY = 0;
+    let ticking = false;
+
+    function updateHeader() {
+      const scrollY = window.scrollY;
+
+      if (scrollY > 80) {
+        header.classList.add('is-scrolled');
+      } else {
+        header.classList.remove('is-scrolled');
+      }
+
+      lastScrollY = scrollY;
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateHeader();
+  })();
+
+  // Desktop parallax on hero phone
+  (function() {
+    const phoneWrap = document.querySelector('.hero-phone-wrap');
+    if (!phoneWrap || window.matchMedia('(max-width: 1024px)').matches) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+    let rafId;
+
+    function updateParallax() {
+      targetX += (mouseX - targetX) * 0.1;
+      targetY += (mouseY - targetY) * 0.1;
+
+      const px = (targetX / window.innerWidth) * 6;
+      const py = (targetY / window.innerHeight) * 6;
+      const rotX = (targetY / window.innerHeight) * 0.5;
+      const rotY = (targetX / window.innerWidth) * 0.8;
+
+      phoneWrap.style.transform = `translate(${px}px, ${py}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      rafId = requestAnimationFrame(updateParallax);
+    }
+
+    function onMouseMove(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    }
+
+    function onMouseLeave() {
+      mouseX = 0;
+      mouseY = 0;
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseleave', onMouseLeave);
+    updateParallax();
+
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseleave', onMouseLeave);
+      cancelAnimationFrame(rafId);
+    };
   })();
 </script>
 
