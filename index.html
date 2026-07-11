@@ -513,50 +513,178 @@
       z-index: 5;
     }
 
+    /* ── Hero ambient glow ─────────────────────────────────────────── */
+    .hero-ambient-glow {
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(27, 197, 189, 0.16) 0%,
+        rgba(27, 197, 189, 0.07) 38%,
+        transparent 72%
+      );
+      filter: blur(42px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Hero context panels ───────────────────────────────────────── */
+    .hero-context {
+      position: absolute;
+      border-radius: 24px;
+      background: rgba(7, 26, 40, 0.64);
+      border: 1px solid rgba(27, 197, 189, 0.13);
+      box-shadow:
+        0 28px 90px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.025);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+      z-index: 1;
+      padding: 24px;
+    }
+
+    .hero-context-left {
+      width: 340px;
+      min-height: 520px;
+      left: -2%;
+      top: 19%;
+      transform: rotate(-3deg);
+    }
+
+    .hero-context-right {
+      width: 300px;
+      min-height: 470px;
+      right: -5%;
+      top: 26%;
+    }
+
+    .hero-context h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(226, 232, 240, 0.62);
+      margin: 0 0 20px 0;
+      letter-spacing: -0.01em;
+    }
+
+    .context-group {
+      margin-bottom: 18px;
+    }
+
+    .context-group > span {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(27, 197, 189, 0.68);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .context-group > div {
+      font-size: 13px;
+      color: rgba(148, 163, 184, 0.48);
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border: 1px solid rgba(27, 197, 189, 0.07);
+      border-radius: 8px;
+      line-height: 1.4;
+    }
+
+    .review-chart {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      height: 60px;
+      background: linear-gradient(90deg,
+        rgba(27, 197, 189, 0.1) 0%,
+        rgba(27, 197, 189, 0.2) 50%,
+        rgba(27, 197, 189, 0.1) 100%);
+      border-radius: 8px;
+      border: 1px solid rgba(27, 197, 189, 0.08);
+    }
+
+    /* ── Hero phone position and sizing ────────────────────────────── */
+    .hero-phone-position {
+      position: relative;
+      transform: translate(-11%, -3%);
+      overflow: visible;
+      z-index: 3;
+    }
+
+    .hero-phone-image {
+      width: clamp(430px, 38vw, 550px);
+      height: auto;
+      display: block;
+      object-fit: contain;
+      opacity: 1;
+      filter: none;
+      mix-blend-mode: normal;
+      animation: none;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* ── Phone shadow ──────────────────────────────────────────────── */
+    .hero-phone-parallax::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 72%;
+      height: 54px;
+      transform: translateX(-50%);
+      background: radial-gradient(
+        ellipse,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.16) 48%,
+        transparent 76%
+      );
+      filter: blur(18px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ── Responsive behavior ───────────────────────────────────────── */
     @media (max-width: 1024px) {
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: clamp(40px, 8vw, 60px);
-      }
-      .hero-visual {
-        min-height: auto;
-        margin-top: 0;
-      }
-      .hero-phone-image {
-        max-width: clamp(320px, 50vw, 500px);
-        height: auto;
-        max-height: none;
-      }
-      .hero-cc-panels {
+      .hero-context-right {
         display: none;
+      }
+
+      .hero-context-left {
+        width: 300px;
+        min-height: 450px;
+        transform: rotate(-2deg);
+      }
+
+      .hero-phone-image {
+        width: clamp(380px, 40vw, 480px);
       }
     }
 
-    @media (max-width: 640px) {
-      .hero-section {
-        padding-top: clamp(72px, 10vw, 96px);
-        padding-bottom: clamp(80px, 10vw, 120px);
-      }
-      .hero-grid {
-        gap: clamp(32px, 6vw, 48px);
-      }
-      .hero-copy {
-        animation: none;
-      }
-      .hero-visual {
-        min-height: auto;
-        margin-top: 24px;
-      }
-      .hero-phone-image {
-        max-width: clamp(280px, 85vw, 100%);
-        height: auto;
-        max-height: none;
-        animation: none;
-      }
-      .hero-cc-panels {
+    @media (max-width: 768px) {
+      .hero-context-left,
+      .hero-context-right {
         display: none;
       }
+
+      .hero-ambient-glow {
+        display: none;
+      }
+
+      .hero-phone-position {
+        transform: translate(0, 0);
+      }
+
+      .hero-phone-image {
+        width: clamp(300px, 82vw, 400px);
+      }
     }
+
 
     /* Dashed connectors for How it works */
     .step-connector {
@@ -943,9 +1071,54 @@
         <p class="hero-trust mt-8 text-sm text-[#64748B]">No credit card required. 7-day Pocket Chief trial included on Pro.</p>
       </div>
 
-      <!-- Right: hero phone only -->
+      <!-- Right: hero phone with layered context panels -->
       <div class="hero-visual">
-        <div class="hero-phone-glow" aria-hidden="true"></div>
+        <div class="hero-ambient-glow" aria-hidden="true"></div>
+
+        <div class="hero-context hero-context-left" aria-hidden="true">
+          <h3>Weekly Plan</h3>
+
+          <div class="context-group">
+            <span>This Week</span>
+            <div>RevenueLoop launch</div>
+            <div>Website redesign</div>
+            <div>Investor update</div>
+            <div>Team hiring</div>
+          </div>
+
+          <div class="context-group">
+            <span>Today's Focus</span>
+            <div>Finish launch page</div>
+            <div>Review message</div>
+          </div>
+
+          <div class="context-group">
+            <span>Follow-ups</span>
+            <div>Alex – Launch feedback</div>
+            <div>Sam – Partnership intro</div>
+          </div>
+        </div>
+
+        <div class="hero-context hero-context-right" aria-hidden="true">
+          <h3>Friday Review</h3>
+
+          <div class="context-group">
+            <span>What happened</span>
+            <div>✓ Launch page completed</div>
+            <div>✓ 3 investor replies</div>
+            <div>✓ Partnership call done</div>
+          </div>
+
+          <div class="context-group">
+            <span>What's next</span>
+            <div>✓ Refine messaging</div>
+            <div>✓ Prepare deck</div>
+            <div>✓ Plan next week</div>
+          </div>
+
+          <div class="review-chart" aria-hidden="true"></div>
+        </div>
+
         <div class="hero-phone-position">
           <div class="hero-phone-float">
             <div class="hero-phone-parallax">
@@ -953,8 +1126,6 @@
                 class="hero-phone-image"
                 src="/img/solochief-phone-final.png"
                 alt="SoloChief running as a personal Chief of Staff in WhatsApp"
-                loading="eager"
-                decoding="async"
                 draggable="false"
               />
             </div>
