@@ -188,11 +188,11 @@
       border-radius: 50%;
       background: radial-gradient(
         circle,
-        rgba(27, 197, 189, 0.13) 0%,
-        rgba(27, 197, 189, 0.05) 42%,
-        transparent 72%
+        rgba(27, 197, 189, 0.12) 0%,
+        rgba(27, 197, 189, 0.04) 45%,
+        transparent 74%
       );
-      filter: blur(24px);
+      filter: blur(28px);
       pointer-events: none;
       z-index: 1;
     }
@@ -200,6 +200,7 @@
     .hero-phone-wrap {
       position: relative;
       z-index: 2;
+      filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.2));
     }
 
     .hero-phone-wrap::after {
@@ -207,30 +208,29 @@
       position: absolute;
       left: 50%;
       bottom: 1%;
-      width: 72%;
-      height: 44px;
+      width: 68%;
+      height: 42px;
       transform: translateX(-50%);
       background: radial-gradient(
         ellipse,
-        rgba(0, 0, 0, 0.42),
-        rgba(0, 0, 0, 0.12) 48%,
+        rgba(0, 0, 0, 0.42) 0%,
+        rgba(0, 0, 0, 0.14) 48%,
         transparent 74%
       );
       filter: blur(14px);
       z-index: -1;
+      pointer-events: none;
     }
 
     .hero-phone-image {
-      width: clamp(360px, 30vw, 420px);
+      width: clamp(370px, 31vw, 430px);
       height: auto;
       display: block;
       object-fit: contain;
       opacity: 1;
+      filter: none;
+      mix-blend-mode: normal;
       animation: fadeUp 0.8s ease-out 0.2s forwards;
-      /* Subtle CSS shadow replaces baked shadow */
-      filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.32)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.16));
-      /* Slight leftward and upward positioning adjustment */
-      transform: translateX(-2%);
     }
 
     .solochief-phone {
@@ -679,12 +679,12 @@
 
       <!-- Right: hero phone only -->
       <div class="hero-visual">
-        <div class="hero-phone-glow"></div>
+        <div class="hero-phone-glow" aria-hidden="true"></div>
         <div class="hero-phone-wrap">
           <img
-            src="/img/solochief-phone-hero-clean.png"
-            alt="SoloChief running as a personal Chief of Staff in WhatsApp"
             class="hero-phone-image"
+            src="/img/solochief-phone-final.png"
+            alt="SoloChief running as a personal Chief of Staff in WhatsApp"
             loading="eager"
             decoding="async"
           />
