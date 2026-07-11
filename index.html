@@ -170,7 +170,7 @@
       }
     }
 
-    /* ── Hero visual: Command Center panels + Phone mockup ──────────── */
+    /* ── Hero visual: Phone only ──────────────────────────────────────── */
     .hero-visual {
       position: relative;
       display: flex;
@@ -178,63 +178,52 @@
       justify-content: center;
       min-height: auto;
       width: 100%;
-      /* Create stacking context to keep phone above panels */
       z-index: 0;
     }
 
-    .hero-cc-panels {
+    .hero-phone-glow {
       position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      width: 440px;
+      height: 440px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(27, 197, 189, 0.13) 0%,
+        rgba(27, 197, 189, 0.05) 42%,
+        transparent 72%
+      );
+      filter: blur(24px);
       pointer-events: none;
-      z-index: 0;
-      gap: clamp(12px, 3vw, 24px);
-      padding: clamp(16px, 2vw, 32px);
-      /* Ensure panels remain behind phone at all times */
+      z-index: 1;
     }
 
-    .cc-panel {
-      flex: 0 1 auto;
-      background: rgba(15, 32, 48, 0.72);
-      border: 1px solid rgba(27, 197, 189, 0.24);
-      border-radius: 12px;
-      padding: clamp(12px, 1.5vw, 16px);
-      min-width: clamp(120px, 15vw, 200px);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-      backdrop-filter: blur(12px);
-      animation: fadeUp 0.8s ease-out both;
-      /* Ensure panels stay behind phone */
+    .hero-phone-wrap {
       position: relative;
-      z-index: 0;
+      z-index: 2;
     }
 
-    .cc-panel-1 { animation-delay: 0.3s; }
-    .cc-panel-2 { animation-delay: 0.5s; }
-    .cc-panel-3 { animation-delay: 0.7s; }
-
-    .cc-panel-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(27, 197, 189, 0.88);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
-    }
-
-    .cc-panel-item {
-      font-size: 12px;
-      color: rgba(240, 244, 248, 0.74);
-      line-height: 1.4;
-      margin: 4px 0;
+    .hero-phone-wrap::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 1%;
+      width: 72%;
+      height: 44px;
+      transform: translateX(-50%);
+      background: radial-gradient(
+        ellipse,
+        rgba(0, 0, 0, 0.42),
+        rgba(0, 0, 0, 0.12) 48%,
+        transparent 74%
+      );
+      filter: blur(14px);
+      z-index: -1;
     }
 
     .hero-phone-image {
-      position: relative;
-      z-index: 1;
-      width: clamp(360px, 29vw, 420px);
+      width: clamp(360px, 30vw, 420px);
       height: auto;
+      display: block;
       object-fit: contain;
       opacity: 1;
       animation: fadeUp 0.8s ease-out 0.2s forwards;
@@ -688,33 +677,18 @@
         <p class="mt-8 text-sm text-[#64748B]">No credit card required. 7-day WhatsApp trial included on Pro.</p>
       </div>
 
-      <!-- Right: product visual with Command Center and WhatsApp -->
+      <!-- Right: hero phone only -->
       <div class="hero-visual">
-        <!-- Command Center panels (background layer) -->
-        <div class="hero-cc-panels" aria-hidden="true">
-          <div class="cc-panel cc-panel-1">
-            <div class="cc-panel-label">Weekly Plan</div>
-            <div class="cc-panel-item">Launch review</div>
-            <div class="cc-panel-item">Client meeting</div>
-          </div>
-          <div class="cc-panel cc-panel-2">
-            <div class="cc-panel-label">Today's Focus</div>
-            <div class="cc-panel-item">Finish designs</div>
-          </div>
-          <div class="cc-panel cc-panel-3">
-            <div class="cc-panel-label">Follow-ups</div>
-            <div class="cc-panel-item">Pending: 3</div>
-          </div>
+        <div class="hero-phone-glow"></div>
+        <div class="hero-phone-wrap">
+          <img
+            src="/img/solochief-phone-hero-clean.png"
+            alt="SoloChief running as a personal Chief of Staff in WhatsApp"
+            class="hero-phone-image"
+            loading="eager"
+            decoding="async"
+          />
         </div>
-
-        <!-- Phone mockup (foreground) -->
-        <img
-          src="/img/solochief-phone-hero-clean.png"
-          alt="SoloChief running as a personal Chief of Staff in WhatsApp"
-          class="hero-phone-image"
-          loading="eager"
-          decoding="async"
-        />
       </div>
 
     </div>
