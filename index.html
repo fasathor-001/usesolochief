@@ -170,36 +170,66 @@
       }
     }
 
-    /* ── Hero visual: Command Center context + WhatsApp ──────────── */
-    .hero-cc-context {
+    /* ── Hero visual: Command Center panels + Phone mockup ──────────── */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: auto;
+      width: 100%;
+    }
+
+    .hero-cc-panels {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
-      justify-content: center;
-      opacity: 0.08;
+      justify-content: flex-start;
+      opacity: 0.12;
       pointer-events: none;
-      animation: fadeIn 1.2s ease-out 0.4s both;
-    }
-    .cc-blur {
-      width: 380px;
-      height: 480px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, rgba(27, 197, 189, 0.3), rgba(27, 197, 189, 0.1));
-      filter: blur(40px);
+      z-index: 0;
+      gap: clamp(12px, 3vw, 24px);
+      padding: clamp(16px, 2vw, 32px);
     }
 
-    /* ── WhatsApp conversation presentation ──────────────────── */
-    .solochief-phone-stage {
+    .cc-panel {
+      flex: 0 1 auto;
+      background: rgba(27, 197, 189, 0.08);
+      border: 1px solid rgba(27, 197, 189, 0.15);
+      border-radius: 12px;
+      padding: clamp(12px, 1.5vw, 16px);
+      min-width: clamp(120px, 15vw, 200px);
+      animation: fadeUp 0.8s ease-out both;
+    }
+
+    .cc-panel-1 { animation-delay: 0.3s; }
+    .cc-panel-2 { animation-delay: 0.5s; }
+    .cc-panel-3 { animation-delay: 0.7s; }
+
+    .cc-panel-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(27, 197, 189, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .cc-panel-item {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+      margin: 4px 0;
+    }
+
+    .hero-phone-image {
       position: relative;
+      z-index: 1;
       width: 100%;
-      min-height: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0;
-      padding: 0;
-      overflow: visible;
+      max-width: clamp(320px, 36vw, 620px);
+      height: auto;
+      object-fit: contain;
       animation: fadeUp 0.8s ease-out 0.2s both;
     }
 
@@ -466,14 +496,14 @@
         gap: clamp(40px, 8vw, 60px);
       }
       .hero-visual {
-        min-height: 420px;
+        min-height: auto;
         margin-top: 0;
       }
-      .solochief-phone {
-        max-width: 380px;
+      .hero-phone-image {
+        max-width: clamp(320px, 50vw, 500px);
       }
-      h1 {
-        font-size: clamp(2.5rem, 8vw, 4rem);
+      .hero-cc-panels {
+        display: none;
       }
     }
 
@@ -489,47 +519,15 @@
         animation: none;
       }
       .hero-visual {
-        min-height: 380px;
+        min-height: auto;
+        margin-top: 24px;
       }
-      .solochief-phone {
+      .hero-phone-image {
         max-width: 100%;
+        animation: none;
       }
-      .hero-cc-context {
+      .hero-cc-panels {
         display: none;
-      }
-      h1 {
-        font-size: clamp(2rem, 7vw, 3rem);
-        line-height: 1.1;
-      }
-      .message {
-        font-size: 11.5px;
-        padding: 9px 11px;
-        max-width: 85%;
-      }
-      .chat-body {
-        padding: 12px 12px 8px;
-        gap: 6px;
-        min-height: 240px;
-      }
-      .phone-header {
-        padding: 0 16px;
-        height: 56px;
-      }
-      .phone-frame {
-        border-radius: 16px;
-      }
-      .phone-screen {
-        border-radius: 16px;
-      }
-      .chief-avatar {
-        width: 32px;
-        height: 32px;
-      }
-      .chief-title {
-        font-size: 14px;
-      }
-      .phone-status {
-        font-size: 12px;
       }
     }
 
@@ -656,17 +654,10 @@
           <span class="text-xs font-medium text-teal tracking-wide leading-tight">Web + WhatsApp. One system.</span>
         </div>
 
-        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.0] tracking-tight text-white mb-2" style="max-width: 580px;">
-          Your personal
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.0] tracking-tight text-white mb-6" style="max-width: 580px;">
+          Your personal <span style="color: #00C2A8;">Chief of Staff</span>, on web and in your pocket.
         </h1>
-        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.0] tracking-tight mb-6" style="color: #00C2A8; max-width: 580px;">
-          Chief of Staff
-        </h1>
-        <p class="text-lg sm:text-xl text-[#CBD5E1] leading-relaxed font-medium mb-8" style="max-width: 500px;">
-          On web and in your pocket.
-        </p>
-
-        <p class="text-base sm:text-[1.0625rem] text-[#A0AEC0] leading-relaxed" style="max-width: 520px;">
+        <p class="text-base sm:text-[1.0625rem] text-[#A0AEC0] leading-relaxed mt-6" style="max-width: 520px;">
           SoloChief helps you plan the week, protect today's focus, track follow-ups, and start every morning with clarity.
         </p>
 
@@ -682,81 +673,33 @@
         <p class="mt-8 text-sm text-[#64748B]">No credit card required. 7-day WhatsApp trial included on Pro.</p>
       </div>
 
-      <!-- Right: product visual showing web + WhatsApp connection -->
+      <!-- Right: product visual with Command Center and WhatsApp -->
       <div class="hero-visual">
-        <!-- Command Center context (background layer) -->
-        <div class="hero-cc-context" aria-hidden="true">
-          <div class="cc-blur"></div>
-        </div>
-
-        <!-- WhatsApp conversation (foreground) -->
-        <div class="solochief-phone-stage" aria-label="SoloChief WhatsApp conversation">
-        <div class="solochief-phone">
-          <div class="phone-side phone-side-right" aria-hidden="true"></div>
-          <div class="phone-frame">
-            <div class="phone-screen">
-              <div class="phone-status">
-                <span>9:41</span>
-                <div class="phone-icons" aria-hidden="true">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-
-              <div class="phone-header">
-                <div class="phone-back" aria-hidden="true">&lsaquo;</div>
-                <div class="chief-avatar" aria-hidden="true"></div>
-                <div>
-                  <div class="chief-title">SoloChief</div>
-                  <div class="chief-status">online</div>
-                </div>
-                <div class="phone-menu" aria-hidden="true">&#8942;</div>
-              </div>
-
-              <div class="chat-body">
-                <div class="message chief">
-                  <p class="message-main">&#9728;&#65039; Morning, Frankie.</p>
-                  <span>9:00 AM</span>
-                </div>
-
-                <div class="message chief">
-                  <p class="message-label">Today's focus:</p>
-                  <p class="message-main">Finish RevenueLoop launch page.</p>
-                  <span>9:00 AM</span>
-                </div>
-
-                <div class="message chief">
-                  <p class="message-label">Top 3:</p>
-                  <p>1. Send Paystack follow-up</p>
-                  <p>2. Review SoloChief onboarding</p>
-                  <p>3. Park new ideas until Friday</p>
-                  <span>9:00 AM</span>
-                </div>
-
-                <div class="message user">
-                  <p class="message-main">Done on Paystack.</p>
-                  <span>9:02 AM &#10003;&#10003;</span>
-                </div>
-
-                <div class="message chief">
-                  <p class="message-main">Logged. 2 items remaining.</p>
-                  <span>9:02 AM</span>
-                </div>
-              </div>
-
-              <div class="chat-input">
-                <span class="emoji" aria-hidden="true">&#9786;</span>
-                <span class="placeholder">Type a message...</span>
-                <span class="clip" aria-hidden="true">&#8984;</span>
-                <button aria-label="Send message">&#10148;</button>
-              </div>
-
-              <div class="home-indicator" aria-hidden="true"></div>
-            </div>
+        <!-- Command Center panels (background layer) -->
+        <div class="hero-cc-panels" aria-hidden="true">
+          <div class="cc-panel cc-panel-1">
+            <div class="cc-panel-label">Weekly Plan</div>
+            <div class="cc-panel-item">Launch review</div>
+            <div class="cc-panel-item">Client meeting</div>
+          </div>
+          <div class="cc-panel cc-panel-2">
+            <div class="cc-panel-label">Today's Focus</div>
+            <div class="cc-panel-item">Finish designs</div>
+          </div>
+          <div class="cc-panel cc-panel-3">
+            <div class="cc-panel-label">Follow-ups</div>
+            <div class="cc-panel-item">Pending: 3</div>
           </div>
         </div>
-      </div>
+
+        <!-- Phone mockup (foreground) -->
+        <img
+          src="/img/solochief-phone.png"
+          alt="SoloChief mobile app showing WhatsApp conversation with your personal Chief of Staff"
+          class="hero-phone-image"
+          loading="eager"
+          decoding="async"
+        />
       </div>
 
     </div>
