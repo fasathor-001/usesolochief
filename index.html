@@ -516,16 +516,16 @@
     /* ── Hero ambient glow ─────────────────────────────────────────── */
     .hero-ambient-glow {
       position: absolute;
-      width: 620px;
-      height: 620px;
+      width: 700px;
+      height: 660px;
       border-radius: 50%;
       background: radial-gradient(
         circle,
-        rgba(27, 197, 189, 0.16) 0%,
-        rgba(27, 197, 189, 0.07) 38%,
+        rgba(27, 197, 189, 0.19) 0%,
+        rgba(27, 197, 189, 0.08) 38%,
         transparent 72%
       );
-      filter: blur(42px);
+      filter: blur(46px);
       pointer-events: none;
       z-index: 0;
     }
@@ -534,8 +534,8 @@
     .hero-context {
       position: absolute;
       border-radius: 24px;
-      background: rgba(7, 26, 40, 0.64);
-      border: 1px solid rgba(27, 197, 189, 0.13);
+      background: rgba(7, 26, 40, 0.72);
+      border: 1px solid rgba(27, 197, 189, 0.18);
       box-shadow:
         0 28px 90px rgba(0, 0, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.025);
@@ -546,24 +546,24 @@
     }
 
     .hero-context-left {
-      width: 340px;
+      width: 350px;
       min-height: 520px;
-      left: -2%;
+      left: -12%;
       top: 19%;
       transform: rotate(-3deg);
     }
 
     .hero-context-right {
-      width: 300px;
-      min-height: 470px;
-      right: -5%;
-      top: 26%;
+      width: 315px;
+      min-height: 475px;
+      right: -12%;
+      top: 24%;
     }
 
     .hero-context h3 {
       font-size: 16px;
       font-weight: 600;
-      color: rgba(226, 232, 240, 0.62);
+      color: rgba(226, 232, 240, 0.72);
       margin: 0 0 20px 0;
       letter-spacing: -0.01em;
     }
@@ -576,7 +576,7 @@
       display: block;
       font-size: 12px;
       font-weight: 600;
-      color: rgba(27, 197, 189, 0.68);
+      color: rgba(27, 197, 189, 0.78);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       margin-bottom: 8px;
@@ -584,7 +584,7 @@
 
     .context-group > div {
       font-size: 13px;
-      color: rgba(148, 163, 184, 0.48);
+      color: rgba(148, 163, 184, 0.58);
       padding: 8px 12px;
       margin-bottom: 6px;
       border: 1px solid rgba(27, 197, 189, 0.07);
@@ -609,20 +609,19 @@
     /* ── Hero phone position and sizing ────────────────────────────── */
     .hero-phone-position {
       position: relative;
-      transform: translate(-11%, -3%);
+      transform: translate(-18%, -4%);
       overflow: visible;
       z-index: 3;
     }
 
     .hero-phone-image {
-      width: clamp(430px, 38vw, 550px);
+      width: clamp(460px, 41vw, 590px);
       height: auto;
       display: block;
       object-fit: contain;
       opacity: 1;
       filter: none;
       mix-blend-mode: normal;
-      animation: none;
       pointer-events: none;
       user-select: none;
       -webkit-user-select: none;
@@ -662,7 +661,7 @@
       }
 
       .hero-phone-image {
-        width: clamp(380px, 40vw, 480px);
+        width: clamp(400px, 42vw, 520px);
       }
     }
 
