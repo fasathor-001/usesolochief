@@ -1,0 +1,2905 @@
+/* SoloChief Homepage V2 — Phase 1 motion foundation.
+   Isolated stylesheet. All selectors are prefixed hv2- to avoid
+   any collision with the production homepage (index.html) or
+   styles/tokens.css, neither of which this file touches or imports. */
+
+:root {
+  --hv2-bg: #0F1B2D;
+  --hv2-deep: #0B1422;
+  --hv2-panel: #1A273A;
+  --hv2-panelhi: #1E2D43;
+  --hv2-muted: #94A3B8;
+  --hv2-line: #1E293B;
+  --hv2-teal: #00C2A8;
+  --hv2-tealh: #00A892;
+  --hv2-text: #F0F4F8;
+
+  --hv2-duration: 600ms;
+  --hv2-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --hv2-stagger-step: 90ms;
+
+  /* Page-scoped light-theme tokens — no global/user-facing theme toggle.
+     Applied only via the .hv2-light-section utility (see FEATURES PAGE
+     REBUILD block below), which re-points the same hv2-bg/-panel/-muted/
+     -line/-text/-teal variables every existing component already reads,
+     so light sections re-theme automatically with no per-component work. */
+  --hv2-light-bg: #F7F3EC;
+  --hv2-light-surface: #FFFFFF;
+  --hv2-light-surface-alt: #ECF1F5;
+  --hv2-light-text: #0F1B2D;
+  --hv2-light-muted: #47536A;
+  --hv2-light-border: #D9E0E8;
+  --hv2-light-accent: #0F766E;
+  --hv2-light-accent-hover: #0B5D57;
+}
+
+.hv2-root {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--hv2-bg);
+  color: var(--hv2-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hv2-root * { box-sizing: border-box; }
+
+.hv2-root img { max-width: 100%; display: block; }
+
+.hv2-root a:focus-visible,
+.hv2-root button:focus-visible {
+  outline: 2px solid var(--hv2-teal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.hv2-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .hv2-container { padding: 0 1.5rem; }
+}
+
+/* ---------- Navigation ---------- */
+
+.hv2-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--hv2-line);
+  background: rgba(15, 27, 45, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.hv2-nav {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+  .hv2-nav { padding: 0 1.5rem; }
+}
+
+.hv2-logo {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--hv2-teal);
+  text-decoration: none;
+}
+
+.hv2-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hv2-muted);
+  border: 1px solid var(--hv2-line);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  margin-left: 0.6rem;
+}
+
+.hv2-nav-links {
+  display: none;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hv2-nav-links { display: flex; }
+}
+
+.hv2-nav-link {
+  font-size: 0.875rem;
+  color: var(--hv2-muted);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.hv2-nav-link:hover { color: #fff; }
+
+.hv2-nav-cta {
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--hv2-teal);
+  color: var(--hv2-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  transition: background 160ms ease;
+}
+
+.hv2-nav-cta:hover { background: var(--hv2-tealh); }
+
+.hv2-menu-btn {
+  display: inline-flex;
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .hv2-menu-btn { display: none; }
+}
+
+.hv2-mobile-menu {
+  display: none;
+  border-top: 1px solid var(--hv2-line);
+  padding: 1rem 1.25rem;
+  background: rgba(11, 20, 34, 0.98);
+}
+
+.hv2-mobile-menu.hv2-menu-open { display: block; }
+
+@media (min-width: 768px) {
+  .hv2-mobile-menu { display: none !important; }
+}
+
+.hv2-mobile-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.6rem 0;
+  font-size: 0.875rem;
+  color: var(--hv2-muted);
+  text-decoration: none;
+}
+
+.hv2-mobile-menu a:hover { color: #fff; }
+
+/* ---------- Hero ---------- */
+/* Hero, Film, How It Works and the paired chapters are distinct sibling
+   panels — NOT merged into one continuous section. Hero sits at ~68svh
+   on desktop (a floor, not a fixed height — content that needs more room
+   simply pushes it taller, so nothing is ever clipped) specifically so
+   Film's rounded top edge is already visible on the first screen, making
+   the "next panel rises and covers" sequence obvious from the start. */
+
+.hv2-hero {
+  position: relative;
+  z-index: 1;
+  min-height: 68vh;
+  min-height: 68svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5.5rem 0 4.5rem;
+  background:
+    radial-gradient(65% 55% at 78% 12%, rgba(0, 194, 168, 0.09), transparent 60%),
+    var(--hv2-deep);
+  overflow-x: hidden;
+}
+
+.hv2-hero-inner { width: 100%; }
+
+/* Faint structural grid + bottom fade so the panel that rises over the
+   hero on scroll never reads as an abrupt colour cut. */
+.hv2-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(240, 244, 248, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 244, 248, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(75% 60% at 50% 20%, #000 40%, transparent 85%);
+  pointer-events: none;
+}
+
+.hv2-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, transparent, var(--hv2-panel));
+  pointer-events: none;
+}
+
+.hv2-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .hv2-hero-inner { grid-template-columns: 0.74fr 1fr; gap: 2.5rem; }
+}
+
+.hv2-hero-copy { min-width: 0; }
+
+.hv2-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hv2-teal);
+  border: 1px solid var(--hv2-line);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.hv2-h1 {
+  font-size: clamp(2.1rem, 4.2vw, 3.35rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+}
+
+.hv2-h1-line { display: block; }
+
+.hv2-h1 .hv2-accent { color: var(--hv2-teal); }
+
+.hv2-lede {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  max-width: 30rem;
+  margin: 0 0 2rem;
+}
+
+.hv2-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.hv2-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0.75rem 1.4rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+.hv2-btn-primary {
+  background: var(--hv2-teal);
+  color: var(--hv2-bg);
+}
+
+.hv2-btn-primary:hover { background: var(--hv2-tealh); }
+
+.hv2-btn-secondary {
+  background: transparent;
+  color: var(--hv2-text);
+  border: 1px solid var(--hv2-line);
+}
+
+.hv2-btn-secondary:hover { border-color: var(--hv2-teal); color: var(--hv2-teal); }
+
+.hv2-hero-support {
+  font-size: 0.8125rem;
+  color: var(--hv2-muted);
+  margin: 0;
+}
+
+/* ---------- Hero product scene: Command Center + WhatsApp Pocket Chief ---------- */
+
+.hv2-hero-scene { position: relative; }
+
+.hv2-scene {
+  position: relative;
+  padding: 0.5rem 0 3.5rem;
+}
+
+.hv2-scene-glow {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(0, 194, 168, 0.16), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Command Center layer */
+
+.hv2-cc-panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: var(--hv2-panel);
+  border: 1px solid var(--hv2-line);
+  border-radius: 1.25rem;
+  padding: 1.5rem 1.5rem 1.75rem;
+  box-shadow: 0 30px 70px -35px rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 1024px) {
+  .hv2-cc-panel {
+    width: calc(100% + 3.5rem);
+    margin-right: -3.5rem;
+    padding: 1.75rem 2rem 2rem;
+  }
+}
+
+.hv2-cc-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.hv2-cc-header-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hv2-muted);
+}
+
+.hv2-cc-live-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+  flex-shrink: 0;
+}
+
+.hv2-cc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+.hv2-cc-block {
+  background: var(--hv2-panelhi);
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+}
+
+.hv2-cc-block--wide { grid-column: 1 / -1; }
+
+.hv2-cc-block-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hv2-muted);
+  margin: 0 0 0.4rem;
+}
+
+.hv2-cc-block-value {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--hv2-text);
+  margin: 0;
+}
+
+.hv2-cc-progress {
+  height: 0.375rem;
+  border-radius: 999px;
+  background: var(--hv2-line);
+  overflow: hidden;
+  margin: 0.5rem 0 0.55rem;
+}
+
+.hv2-cc-progress-fill {
+  width: 60%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--hv2-teal);
+}
+
+/* WhatsApp Pocket Chief layer — original browser-built frame, no imagery */
+
+.hv2-phone {
+  position: relative;
+  z-index: 2;
+  width: 15.5rem;
+  margin: -3rem 0 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .hv2-phone {
+    position: absolute;
+    right: -0.5rem;
+    bottom: -3.25rem;
+    width: 15rem;
+    margin: 0;
+  }
+}
+
+.hv2-phone-frame {
+  background: var(--hv2-deep);
+  border: 1px solid var(--hv2-line);
+  border-radius: 1.5rem;
+  padding: 0.6rem;
+  box-shadow: 0 35px 70px -30px rgba(0, 0, 0, 0.7);
+}
+
+.hv2-phone-notch {
+  width: 2.5rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: var(--hv2-line);
+  margin: 0 auto 0.5rem;
+}
+
+.hv2-phone-screen {
+  background: var(--hv2-bg);
+  border-radius: 1rem;
+  padding: 0.85rem;
+}
+
+.hv2-wa-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid var(--hv2-line);
+}
+
+.hv2-wa-avatar {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hv2-teal), var(--hv2-tealh));
+  flex-shrink: 0;
+}
+
+.hv2-wa-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--hv2-text);
+}
+
+.hv2-wa-status {
+  font-size: 0.625rem;
+  color: var(--hv2-muted);
+  margin: 0;
+}
+
+.hv2-wa-thread {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.hv2-wa-bubble {
+  background: var(--hv2-panel);
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.65rem 0.65rem 0.65rem 0.2rem;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--hv2-text);
+  max-width: 92%;
+}
+
+.hv2-wa-bubble strong { color: var(--hv2-teal); font-weight: 600; }
+
+.hv2-wa-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.hv2-wa-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--hv2-line);
+  color: var(--hv2-muted);
+}
+
+.hv2-wa-chip--primary {
+  background: var(--hv2-teal);
+  border-color: var(--hv2-teal);
+  color: var(--hv2-bg);
+}
+
+/* Connecting state — shows web + WhatsApp are one system */
+
+.hv2-connector {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: fit-content;
+  max-width: 15rem;
+  margin: -1.25rem 0 0 0.25rem;
+  background: var(--hv2-panelhi);
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.85rem;
+  padding: 0.65rem 0.9rem;
+  box-shadow: 0 20px 45px -25px rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 1024px) {
+  .hv2-connector {
+    position: absolute;
+    left: -0.75rem;
+    bottom: 2.5rem;
+    margin: 0;
+  }
+}
+
+.hv2-connector-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(0, 194, 168, 0.16);
+  color: var(--hv2-teal);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.hv2-connector-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--hv2-text);
+}
+
+.hv2-connector-sub {
+  font-size: 0.6875rem;
+  color: var(--hv2-muted);
+  margin: 0;
+}
+
+/* Scroll cue */
+
+/* Pinned to the very bottom of the hero, centred, sitting just above the
+   film panel's rounded edge — independent of how tall the hero copy/scene
+   content is, so it always reads as "scroll past here" rather than
+   floating somewhere mid-content. */
+.hv2-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: max-content;
+  font-size: 0.75rem;
+  color: var(--hv2-muted);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.hv2-scroll-cue:hover { color: var(--hv2-text); }
+
+.hv2-scroll-cue-icon { display: inline-block; }
+
+/* ---------- Hero entrance motion sequence ----------
+   Baseline state (no attribute / no JS / reduced motion) is the final,
+   fully visible composition — see <requirement: content must not wait
+   on JavaScript classes>. The animated sequence is an enhancement only. */
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-hv2-hero-motion="ready"] .hv2-hero-copy > * {
+    animation: hv2HeroFadeUp 700ms var(--hv2-ease) both;
+  }
+  html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(1) { animation-delay: 0ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(2) { animation-delay: 90ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(3) { animation-delay: 180ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(4) { animation-delay: 260ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(5) { animation-delay: 330ms; }
+
+  html[data-hv2-hero-motion="ready"] .hv2-cc-panel {
+    animation: hv2SceneEnter 800ms var(--hv2-ease) both;
+    animation-delay: 200ms;
+  }
+
+  html[data-hv2-hero-motion="ready"] .hv2-phone {
+    animation: hv2PhoneEnter 750ms var(--hv2-ease) both;
+    animation-delay: 420ms;
+  }
+
+  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(1) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 640ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(2) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 740ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(3) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 840ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(4) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 940ms; }
+  html[data-hv2-hero-motion="ready"] .hv2-wa-actions { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 1040ms; }
+
+  html[data-hv2-hero-motion="ready"] .hv2-connector {
+    animation: hv2ConnectorPop 650ms var(--hv2-ease) both;
+    animation-delay: 1160ms;
+  }
+
+  html[data-hv2-hero-motion="ready"] .hv2-cc-progress-fill {
+    animation: hv2ProgressFill 700ms var(--hv2-ease) both;
+    animation-delay: 1300ms;
+  }
+
+  /* Settled idle state: one barely perceptible ambient movement, stops under reduced motion */
+  html[data-hv2-hero-motion="ready"] .hv2-scene-glow {
+    animation: hv2Breathe 6s ease-in-out 1.8s infinite;
+  }
+
+  html[data-hv2-hero-motion="ready"] .hv2-scroll-cue-icon {
+    animation: hv2ChevronFloat 2.4s ease-in-out 1.4s infinite;
+  }
+}
+
+@keyframes hv2HeroFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hv2SceneEnter {
+  from { opacity: 0; transform: translateY(26px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hv2PhoneEnter {
+  from { opacity: 0; transform: translateY(22px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hv2BubbleReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hv2ConnectorPop {
+  0% { opacity: 0; transform: translateY(10px) scale(0.92); }
+  70% { opacity: 1; transform: translateY(-2px) scale(1.02); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes hv2ProgressFill {
+  from { width: 0%; }
+  to { width: 60%; }
+}
+
+@keyframes hv2Breathe {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+@keyframes hv2ChevronFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ---------- Tablet: reduced overlap, both surfaces still visible ---------- */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hv2-scene { max-width: 30rem; margin: 0 auto; padding-bottom: 2.5rem; }
+  .hv2-phone { width: 13rem; margin-top: -2.5rem; }
+  .hv2-connector { margin-top: -1rem; }
+}
+
+/* ---------- Mobile: normal flow, simplified scene ---------- */
+
+@media (max-width: 767px) {
+  .hv2-hero { padding-top: 7rem; }
+
+  .hv2-scene {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+  }
+
+  .hv2-scene-glow { display: none; }
+
+  .hv2-cc-panel { width: 100%; margin: 0; }
+
+  .hv2-cc-grid { grid-template-columns: 1fr; }
+
+  .hv2-cc-block--secondary { display: none; }
+
+  .hv2-phone { position: static; width: 100%; max-width: 19rem; margin: 0 auto; }
+
+  .hv2-connector { position: static; margin: 0 auto; }
+}
+
+.hv2-mock-card {
+  background: var(--hv2-panel);
+  border: 1px solid var(--hv2-line);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 20px 45px -25px rgba(0, 0, 0, 0.55);
+}
+
+.hv2-mock-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hv2-muted);
+  margin-bottom: 0.75rem;
+}
+
+.hv2-mock-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--hv2-line);
+  font-size: 0.8125rem;
+  color: var(--hv2-text);
+}
+
+.hv2-mock-row:first-of-type { border-top: none; }
+
+.hv2-mock-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+  flex-shrink: 0;
+}
+
+.hv2-mock-bubble {
+  background: var(--hv2-panelhi);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.8125rem;
+  max-width: 85%;
+}
+
+.hv2-mock-bubble + .hv2-mock-bubble { margin-top: 0.5rem; margin-left: auto; }
+
+/* ---------- Film section: a distinct cover-slide panel ----------
+   Film is a real .hv2-cover-panel (see the shared cover-panel rules
+   further down this file) — sticky, rounded top edge, its own z-index.
+   Its surface uses --hv2-panelhi (a step lighter than --hv2-panel, and
+   well clear of the hero's --hv2-deep) plus a restrained top border so
+   the rounded edge reads clearly as the next sheet while it slides over
+   the hero — no neon, no hue shift, still the same SoloChief palette. */
+
+.hv2-film {
+  position: relative;
+  background: var(--hv2-panelhi);
+  border-top: 1px solid rgba(240, 244, 248, 0.08);
+  padding: 6rem 0 2.25rem;
+  overflow: hidden;
+}
+
+.hv2-film-bg-word {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(6rem, 18vw, 15rem);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: rgba(240, 244, 248, 0.035);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
+}
+
+.hv2-film-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1.25rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.hv2-film-copy { max-width: 38rem; }
+
+.hv2-film-title {
+  font-size: clamp(1.9rem, 3.4vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 1rem;
+}
+
+.hv2-film-lede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  margin: 0;
+}
+
+.hv2-film-stage {
+  position: relative;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .hv2-film-stage { max-width: min(88%, 1200px); margin: 0 auto; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hv2-film-stage { max-width: 90%; margin: 0 auto; }
+}
+
+/* Wrap shrink-wraps to the video's own letterboxed size (see .hv2-film-video
+   below) so the frame/border/shadow always hugs the real 16:9 box rather
+   than leaving dead space when the video is height-constrained. */
+.hv2-film-video-wrap {
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--hv2-line);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.65);
+  background: var(--hv2-deep);
+}
+
+/* Replaced-element letterbox sizing: width/height auto + max-width/max-height
+   together always preserve the video's intrinsic 16:9 ratio and never crop
+   it, unlike a fixed-aspect-ratio box with object-fit:cover. The height
+   cap is intentionally generous (85vh, not ~46vh) — width (.hv2-film-stage
+   above) is meant to be the dominant constraint now that the film panel
+   uses min-height rather than a fixed height, so content driving the
+   panel taller is safe: nothing here can ever crop the video. */
+.hv2-film-video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  background: var(--hv2-deep);
+}
+
+@media (min-width: 768px) {
+  .hv2-film-video {
+    max-height: 85vh;
+    max-height: 85svh;
+  }
+}
+
+.hv2-film-sound-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--hv2-line);
+  background: var(--hv2-panelhi);
+  color: var(--hv2-text);
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.hv2-film-sound-btn:hover,
+.hv2-film-sound-btn[aria-pressed="true"] {
+  border-color: var(--hv2-teal);
+  color: var(--hv2-teal);
+}
+
+.hv2-film-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0;
+  font-size: 0.8125rem;
+  color: var(--hv2-muted);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.hv2-film-next:hover { color: var(--hv2-text); }
+
+@media (max-width: 767px) {
+  .hv2-film { padding: 4rem 0 2rem; }
+  .hv2-film-bg-word { font-size: 5rem; }
+}
+
+/* ---------- How It Works: concise bridge between film and story chapters ---------- */
+
+.hv2-hiw {
+  position: relative;
+  background: var(--hv2-panel);
+  padding: 3.75rem 0 4rem;
+}
+
+/* Desktop: HIW's content (~430px) is far shorter than the shared
+   min-height floor it still rides (that floor can't change here — same
+   nested-centering cancellation as PLAN/FOCUS applies), so the leftover
+   space is pushed almost entirely below the content instead of split
+   evenly above and below it. PLAN slides up and covers that trailing
+   space next, exactly like PLAN's own bottom padding is covered by
+   FOCUS — it is never seen as a static gap. This brings the header
+   noticeably closer to the top of the panel. */
+@media (min-width: 1024px) {
+  .hv2-cover-panel--hiw { padding: 1rem 0 14.5rem; }
+}
+
+.hv2-hiw-inner {
+  display: grid;
+  gap: 2.75rem;
+}
+
+.hv2-hiw-header {
+  max-width: 38rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hv2-hiw-title {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  margin: 1rem 0;
+}
+
+.hv2-hiw-lede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  margin: 0;
+}
+
+.hv2-hiw-sequence {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.hv2-hiw-line {
+  position: absolute;
+  top: 1.375rem;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--hv2-line), var(--hv2-teal), var(--hv2-line));
+  z-index: 0;
+  transform-origin: left;
+}
+
+.hv2-hiw-step {
+  position: relative;
+  z-index: 1;
+}
+
+.hv2-hiw-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--hv2-panelhi);
+  border: 1px solid var(--hv2-line);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--hv2-teal);
+  margin-bottom: 1rem;
+}
+
+.hv2-hiw-step-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.6rem;
+}
+
+.hv2-hiw-step-copy {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  margin: 0;
+  max-width: 20rem;
+}
+
+/* Connecting-line progressive fill — desktop: left-to-right */
+@media (min-width: 768px) {
+  .hv2-hiw-line.hv2-reveal {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: opacity var(--hv2-duration) var(--hv2-ease), transform 900ms var(--hv2-ease);
+  }
+  .hv2-hiw-line.hv2-reveal.hv2-is-visible { transform: scaleX(1); }
+}
+
+@media (max-width: 767px) {
+  .hv2-hiw-sequence { grid-template-columns: 1fr; gap: 2.25rem; }
+
+  .hv2-hiw-line {
+    top: 0;
+    bottom: 0;
+    left: 1.375rem;
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: linear-gradient(180deg, var(--hv2-line), var(--hv2-teal), var(--hv2-line));
+  }
+
+  .hv2-hiw-step { padding-left: 3.75rem; }
+
+  .hv2-hiw-step-number { position: absolute; left: 0; top: 0; margin-bottom: 0; }
+
+  /* Connecting-line progressive fill — mobile: top-to-bottom */
+  .hv2-hiw-line.hv2-reveal {
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: opacity var(--hv2-duration) var(--hv2-ease), transform 900ms var(--hv2-ease);
+  }
+  .hv2-hiw-line.hv2-reveal.hv2-is-visible { transform: scaleY(1); }
+}
+
+/* Reduced motion: the line is fully drawn immediately, on any breakpoint —
+   declared after the breakpoint rules above so it wins on source order
+   at equal specificity when both conditions are true simultaneously. */
+@media (prefers-reduced-motion: reduce) {
+  .hv2-hiw-line.hv2-reveal { transform: none; transition: none; }
+}
+
+/* ---------- Direct sticky cover panels ----------
+   Film, How It Works, and the three paired story chapters all share the
+   exact same cover-panel mechanism, in that order, so the whole sequence
+   reads as one consistent rhythm — every panel rises, briefly settles
+   while covering the one before it, then gives way to the next. Hero is
+   the only panel that isn't a cover panel; it's the fixed starting point
+   everything else rises over.
+
+   Each cover panel is its own sticky element directly in document flow —
+   no outer "hold" shell, no separate sticky-inner wrapper, so there is no
+   dead scroll time before the next one starts visibly rising over the last.
+
+   Desktop/tablet: a -80px top offset with a matching oversized min-height
+   keeps the panel in continuous upward motion right up to settling,
+   rather than snapping into a fully-pinned static state.
+
+   Mobile: the same cover-slide mechanic stays ON (SoloChief is mobile-
+   first — this is not something to fall back away from) but scaled down:
+   a much smaller offset, smaller rounded corners, and — critically —
+   content-driven height instead of a forced 100svh+ box, so real content
+   (paragraphs, later real product captures) is never compressed or
+   clipped to fit an artificial fixed-height panel. */
+
+.hv2-cover-panel {
+  position: sticky;
+  top: -80px;
+  min-height: calc(100vh + 80px);
+  min-height: calc(100svh + 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 2.5rem 2.5rem 0 0;
+  /* One shared leading-edge treatment for every cover-panel on both
+     pages (Film/How It Works/Plan/Focus and all four Features chapters)
+     — radius, shadow and this hairline are never overridden per-panel,
+     only background/z-index/padding are. border-top uses --hv2-line so
+     the hairline is always visible against whatever theme the panel
+     itself resolves to (dark or light), not a single fixed colour. */
+  border-top: 1px solid var(--hv2-line);
+  box-shadow: 0 -40px 80px -28px rgba(0, 0, 0, 0.6);
+}
+
+/* Film only: top-align its content instead of centering it. How It Works
+   covers film from the bottom up as it rises, so content sitting near
+   film's top edge (right under the rounded corner) stays reachable for
+   the longest possible span of the transition — keeping the video and
+   its controls usable, not covered mid-interaction. */
+.hv2-film.hv2-cover-panel { justify-content: flex-start; }
+
+.hv2-cover-panel--film { z-index: 2; }
+.hv2-cover-panel--hiw { z-index: 3; }
+.hv2-cover-panel--plan { background: var(--hv2-panel); z-index: 4; padding: 2.5rem 0; }
+.hv2-cover-panel--focus { background: #142338; z-index: 5; padding: 2.5rem 0; }
+
+/* Each panel centers its single scene within the shared cover-panel's
+   fixed min-height floor (100svh + 80px) — a floor taller than either
+   scene's natural content, and here specifically because a scene's own
+   min-height cancels out under nested centering (the scene centers in
+   the panel, the screenshot/copy center in the scene — the scene's own
+   height drops out of the math entirely). Splitting that leftover space
+   evenly top/bottom would push real content down into a visible gap the
+   user sees first. Instead the padding is heavily bottom-weighted: a
+   small top inset gets content close to the panel's rounded top edge,
+   and the leftover space collects below it, where the next panel's own
+   rounded top slides up to cover it — never seen as a static gap. */
+@media (min-width: 1024px) {
+  .hv2-cover-panel--plan,
+  .hv2-cover-panel--focus {
+    padding: 1rem 0 10rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .hv2-cover-panel {
+    top: -24px;
+    min-height: 0;
+    border-radius: 1.5rem 1.5rem 0 0;
+  }
+
+  .hv2-cover-panel--plan,
+  .hv2-cover-panel--focus {
+    padding: 3.5rem 0;
+  }
+
+  .hv2-cover-panel + .hv2-cover-panel {
+    margin-top: -1rem;
+  }
+}
+
+/* Reduced motion: the cover-slide mechanic itself is motion — fall back
+   to plain document flow at every breakpoint, keeping the rounded edges
+   (a static visual, not an animation) as the separation cue instead. */
+@media (prefers-reduced-motion: reduce) {
+  .hv2-cover-panel {
+    position: static;
+    top: auto;
+    min-height: 0;
+  }
+}
+
+.hv2-panel-inner {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .hv2-panel-inner { grid-template-columns: 1fr 1fr; }
+}
+
+.hv2-panel-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hv2-teal);
+  margin: 0 0 1rem;
+}
+
+.hv2-panel-title {
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+.hv2-panel-copy {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--hv2-muted);
+  max-width: 30rem;
+  margin: 0;
+}
+
+.hv2-panel-scene {
+  display: grid;
+  gap: 0.85rem;
+}
+
+/* ---------- PLAN + FOCUS: real product captures ----------
+   Two independent cover panels (#hv2Plan, #hv2Focus), each a large
+   editorial split — a narrow copy column paired with a large real
+   screenshot that dominates the scene, mirrored between the two panels.
+   Each still uses .hv2-cover-panel's min-height (a floor, not a cap),
+   so when content needs more room the panel simply grows; nothing here
+   is ever clipped or compressed to force a fixed height. */
+
+.hv2-pf-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  /* top/bottom only — a shorthand here would zero out the horizontal
+     safe padding inherited from .hv2-container on this same element. */
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+
+/* Below the split breakpoint, always stack copy first then screenshot —
+   FOCUS's DOM order is shot-then-copy (needed for the desktop split
+   below), so it needs an explicit reorder here to keep the lede text
+   ahead of the image on small screens. */
+@media (max-width: 1023px) {
+  .hv2-pf-scene--focus .hv2-pf-copy { order: -1; }
+}
+
+@media (min-width: 1024px) {
+  .hv2-pf-scene {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(2rem, 4vw, 4rem);
+    /* Just a floor against squishing on short viewports — the actual
+       top position is controlled by the panel's own padding split
+       above, not by this value (the panel centers this scene, and the
+       scene centers its own children, so the scene's height cancels
+       out of that math and this number has no visible effect on it). */
+    min-height: 60svh;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  /* FOCUS's DOM order is already shot-then-copy (needed so the mobile
+     order:-1 hack below has a copy element to promote) — plain `row`
+     already renders shot-left/copy-right, matching PLAN's shot-right/
+     copy-left mirrored the other way. No flex-direction override needed
+     here; row-reverse would put copy first (left) instead. */
+}
+
+@media (min-width: 1280px) {
+  .hv2-pf-scene {
+    min-height: 68svh;
+    gap: 1.5rem;
+  }
+}
+
+/* PLAN: pull the screenshot a little closer to the panel's right edge —
+   still a real safe inset, just tighter than the page's usual 1.5rem. */
+@media (min-width: 1024px) {
+  .hv2-pf-scene--plan {
+    padding-right: 0.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hv2-pf-scene--plan { padding-right: 0.25rem; }
+}
+
+/* FOCUS mirrors PLAN's tightened inset on its own leading edge (the
+   screenshot side) — same safe padding, same width budget, so both
+   panels read as matched halves of one composition. */
+@media (min-width: 1024px) {
+  .hv2-pf-scene--focus {
+    padding-left: 0.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hv2-pf-scene--focus { padding-left: 0.25rem; }
+}
+
+.hv2-pf-copy {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .hv2-pf-copy { flex: 0 0 40%; }
+}
+
+/* Large desktop only: widen just this scene's own stage (not the shared
+   .hv2-container used everywhere else on the page) so the screenshot
+   column can grow ~4-6% at every width from 1280px up, not just on very
+   wide screens. Copy switches from a percentage basis to a fixed width
+   (23.1rem — a ~3% trim from its old ~24rem rendered width, small
+   enough not to change how the text wraps) so the combination of that
+   small trim, the tightened gap/padding above, and the wider stage
+   together land the screenshot in range at both 1280px and 1440px+,
+   not just one or the other. */
+@media (min-width: 1280px) {
+  .hv2-pf-scene { max-width: 80.625rem; }
+  .hv2-pf-copy { flex: 0 0 23.1rem; }
+}
+
+.hv2-pf-copy .hv2-eyebrow { margin-bottom: 1.25rem; }
+
+.hv2-pf-heading {
+  font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 1rem;
+}
+
+.hv2-pf-copy-lede {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  margin: 0 0 1.5rem;
+  max-width: 26rem;
+}
+
+.hv2-pf-points {
+  list-style: none;
+  display: grid;
+  gap: 0.7rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  max-width: 26rem;
+}
+
+.hv2-pf-points li {
+  position: relative;
+  padding-left: 1.35rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--hv2-text);
+}
+
+.hv2-pf-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+}
+
+.hv2-pf-lock {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hv2-teal);
+  border: 1px solid var(--hv2-line);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+}
+
+/* The screenshot itself, restrained framing only — no browser chrome,
+   no decorative dots, no heavy card container. */
+.hv2-pf-shot {
+  display: flex;
+  min-width: 0;
+  margin: 0;
+}
+
+@media (min-width: 1024px) {
+  .hv2-pf-shot { flex: 1 1 60%; }
+  .hv2-pf-scene--plan .hv2-pf-shot { justify-content: flex-end; }
+  .hv2-pf-scene--focus .hv2-pf-shot { justify-content: flex-start; }
+}
+
+.hv2-pf-img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  border: 1px solid var(--hv2-line);
+  box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 1024px) {
+  .hv2-pf-img { max-height: min(70svh, 760px); }
+}
+
+@media (min-width: 1280px) {
+  .hv2-pf-img { max-height: min(76svh, 860px); }
+}
+
+/* ---------- Scroll-reveal (JS-driven) ---------- */
+
+.hv2-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity var(--hv2-duration) var(--hv2-ease),
+    transform var(--hv2-duration) var(--hv2-ease);
+  transition-delay: calc(var(--hv2-stagger-index, 0) * var(--hv2-stagger-step));
+}
+
+.hv2-reveal.hv2-is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Homepage footer (separate Final CTA + Footer) ----------
+   Restored after a combined-CTA/footer experiment was reverted per
+   explicit instruction — the Homepage keeps its own separate Final CTA
+   section and footer-reveal footer. Only the Features page uses the
+   combined .hv2-closing system below. */
+
+.hv2-footer {
+  background: var(--hv2-bg);
+  border-top: 1px solid var(--hv2-line);
+  position: relative;
+  z-index: 4;
+}
+
+.hv2-footer--separated { border-top-color: rgba(0, 194, 168, 0.2); }
+
+.hv2-footer-inner {
+  padding: 3.5rem 0;
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .hv2-footer-inner { grid-template-columns: 1fr 1fr; }
+}
+
+.hv2-footer-brand a {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--hv2-teal);
+  text-decoration: none;
+}
+
+.hv2-footer-brand p {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--hv2-muted);
+}
+
+.hv2-footer-reveal {
+  background: var(--hv2-deep);
+  border-radius: 2.5rem 2.5rem 0 0;
+  margin-top: -2.5rem;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 -36px 72px -32px rgba(0, 0, 0, 0.55);
+  border-top: 1px solid rgba(0, 194, 168, 0.25);
+}
+
+.hv2-footer-reveal-top {
+  padding: 3rem 0 0.5rem;
+  text-align: center;
+}
+
+.hv2-footer-reveal-line {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--hv2-teal);
+}
+
+.hv2-footer-reveal-word {
+  margin: 0;
+  font-size: clamp(2.75rem, 12vw, 7.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  color: var(--hv2-text);
+  word-break: keep-all;
+}
+
+.hv2-footer-reveal-word .hv2-fx-accent-dot { color: var(--hv2-teal); }
+
+@media (max-width: 767px) {
+  .hv2-footer-reveal {
+    margin-top: -1.5rem;
+    border-radius: 1.5rem 1.5rem 0 0;
+  }
+
+  .hv2-footer-reveal-top { padding: 2.25rem 0 0.5rem; }
+}
+
+.hv2-final-cta {
+  background: var(--hv2-panelhi);
+  border-top: 1px solid var(--hv2-line);
+  padding: 4.5rem 0;
+}
+
+@media (min-width: 1024px) {
+  .hv2-final-cta { padding: 6.5rem 0; }
+}
+
+/* ---------- Closing section (Final CTA + Footer, one combined block) ----------
+   Used by the Features page only (see features/index.html's <footer>).
+   Final CTA and Footer used to be two separate elements (a <section>
+   followed by a <footer>) with their own backgrounds, their own top
+   borders, and a negative-margin "reveal" trick pulling one over the
+   other. That always left a seam, however small. Now there is exactly
+   one <footer> element, one background, one top edge, one padding
+   system — the CTA content is simply the first thing inside it. The
+   only internal separation between CTA / nav / wordmark / legal is
+   spacing and a single hairline rule (.hv2-closing-divider,
+   .hv2-closing-legal's own border-top) — never a second background
+   or a second rounded corner. */
+
+.hv2-closing {
+  background: var(--hv2-deep);
+  border-radius: 2.5rem 2.5rem 0 0;
+  border-top: 1px solid rgba(0, 194, 168, 0.25);
+  position: relative;
+  z-index: 4;
+  padding: 4.5rem 0 3rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-closing { padding: 6rem 0 3.5rem; }
+}
+
+@media (max-width: 767px) {
+  .hv2-closing { border-radius: 1.5rem 1.5rem 0 0; padding: 3rem 0 2rem; }
+}
+
+.hv2-closing-divider {
+  border: none;
+  border-top: 1px solid var(--hv2-line);
+  margin: 3.5rem 0;
+}
+
+@media (max-width: 767px) {
+  .hv2-closing-divider { margin: 2.5rem 0; }
+}
+
+.hv2-closing-nav {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+  .hv2-closing-nav { grid-template-columns: repeat(4, 1fr); }
+}
+
+.hv2-closing-wordmark {
+  margin: 0 0 1.75rem;
+  text-align: center;
+  font-size: clamp(2.75rem, 12vw, 7.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  color: var(--hv2-text);
+  word-break: keep-all;
+}
+
+@media (max-width: 767px) {
+  .hv2-closing-wordmark { margin-bottom: 1.25rem; }
+}
+
+.hv2-closing-wordmark .hv2-fx-accent-dot { color: var(--hv2-teal); }
+
+.hv2-closing-legal {
+  text-align: center;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--hv2-line);
+}
+
+.hv2-closing-legal a {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--hv2-teal);
+  text-decoration: none;
+}
+
+.hv2-closing-legal p {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--hv2-muted);
+}
+
+.hv2-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .hv2-footer-cols { grid-template-columns: repeat(4, 1fr); }
+}
+
+.hv2-footer-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hv2-muted);
+  margin: 0 0 0.75rem;
+}
+
+.hv2-footer-cols ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.hv2-footer-cols a {
+  font-size: 0.875rem;
+  color: #CBD5E1;
+  text-decoration: none;
+}
+
+.hv2-footer-cols a:hover { color: var(--hv2-teal); }
+
+/* ---------- Conversion sections: Pricing Preview, Trust, FAQ, Final CTA
+   ----------
+   The cinematic cover-slide system (position: sticky, negative top
+   offsets, 100svh+ floors, stacking z-index) ends at FOCUS. Everything
+   below — Pricing, Trust, FAQ, Final CTA — is normal document flow:
+   position: relative or static, content-driven height, no scroll
+   runway. This is a deliberate register change: the product story
+   above is cinematic, the conversion sections below should read fast. */
+
+.hv2-conv-section {
+  position: relative;
+}
+
+.hv2-pricing-section {
+  background: var(--hv2-panel);
+  padding: 4rem 0;
+}
+
+@media (min-width: 1024px) {
+  .hv2-pricing-section { padding: 6rem 0; }
+}
+
+.hv2-trust-section {
+  background: #142338;
+  padding: 3.5rem 0;
+}
+
+@media (min-width: 1024px) {
+  .hv2-trust-section { padding: 5rem 0; }
+}
+
+.hv2-conv-header {
+  max-width: 40rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.hv2-conv-header--left {
+  margin: 0 0 2rem;
+  text-align: left;
+}
+
+.hv2-conv-heading {
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 1rem 0 0;
+}
+
+.hv2-conv-copy {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--hv2-muted);
+  margin: 1rem 0 0;
+  max-width: 32rem;
+}
+
+.hv2-conv-footline {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.hv2-conv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--hv2-muted);
+  text-decoration: none;
+}
+
+.hv2-conv-link:hover { color: var(--hv2-teal); }
+
+/* ---------- Pricing Preview ---------- */
+
+.hv2-pricing-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .hv2-pricing-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.hv2-pricing-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--hv2-line);
+  background: var(--hv2-panelhi);
+  border-radius: 1rem;
+  padding: 1.75rem;
+}
+
+.hv2-pricing-card--highlight {
+  border-color: var(--hv2-teal);
+  border-width: 2px;
+  background: var(--hv2-deep);
+}
+
+.hv2-pricing-badge {
+  position: absolute;
+  top: -0.7rem;
+  left: 1.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: var(--hv2-teal);
+  color: var(--hv2-bg);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+
+.hv2-pricing-badge--outline {
+  background: transparent;
+  color: var(--hv2-teal);
+  border: 1px solid var(--hv2-line);
+}
+
+.hv2-pricing-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0;
+}
+
+.hv2-pricing-price {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0.75rem 0 0;
+}
+
+.hv2-pricing-price span {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--hv2-muted);
+}
+
+.hv2-pricing-points {
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  flex: 1;
+}
+
+.hv2-pricing-points li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--hv2-muted);
+}
+
+.hv2-pricing-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+}
+
+.hv2-pricing-cta {
+  display: block;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  padding: 0.7rem 1rem;
+  margin-top: 1.5rem;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.hv2-pricing-cta--solid {
+  background: var(--hv2-teal);
+  color: var(--hv2-bg);
+}
+
+.hv2-pricing-cta--solid:hover { background: var(--hv2-tealh); }
+
+.hv2-pricing-cta--outline {
+  border: 1px solid var(--hv2-line);
+  color: var(--hv2-text);
+}
+
+.hv2-pricing-cta--outline:hover { border-color: var(--hv2-teal); }
+
+/* ---------- Trust and Privacy ---------- */
+
+.hv2-trust-layout {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-trust-layout { grid-template-columns: 0.85fr 1fr; align-items: start; }
+}
+
+.hv2-trust-links {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.hv2-trust-links a {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--hv2-muted);
+  text-decoration: none;
+}
+
+.hv2-trust-links a:hover { color: var(--hv2-teal); }
+
+.hv2-trust-points {
+  list-style: none;
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .hv2-trust-points { grid-template-columns: 1fr 1fr; }
+}
+
+.hv2-trust-points li {
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.hv2-trust-point-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+
+.hv2-trust-point-copy {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--hv2-muted);
+}
+
+/* ---------- FAQ (normal flow — see block comment above) ---------- */
+
+.hv2-faq {
+  background: var(--hv2-deep);
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--hv2-line);
+}
+
+@media (min-width: 1024px) {
+  .hv2-faq { padding: 6rem 0; }
+}
+
+/* Features-page-only compact variant — the Homepage FAQ keeps the
+   standard padding/width above (still aligned to the shared grid, per
+   the earlier fix). Scoped narrower reading width + tighter spacing
+   for the Features FAQ only, since it sits after several dense
+   sections and doesn't need as much vertical room. */
+.hv2-faq--compact { padding: 3rem 0; }
+
+@media (min-width: 1024px) {
+  .hv2-faq--compact { padding: 4rem 0; }
+}
+
+.hv2-faq--compact .hv2-faq-container { max-width: 46rem; }
+
+.hv2-faq--compact .hv2-faq-item { padding: 0; }
+
+.hv2-faq--compact .hv2-faq-q { padding: 0.85rem 0.25rem; min-height: 44px; }
+
+.hv2-faq--compact .hv2-faq-a-inner p { padding-bottom: 0.9rem; }
+
+/* Previously narrower than .hv2-container (58rem vs 80rem) for FAQ
+   reading width — removed: it put the FAQ's left/right edges out of
+   line with the sections directly above and below it (Plan summary,
+   Final CTA, footer all use the standard .hv2-container width), which
+   is exactly what made the lower page feel like a different grid. The
+   accordion question/answer text itself stays comfortably readable at
+   80rem since each row is a single line until expanded, not a dense
+   paragraph column. */
+
+.hv2-faq-list {
+  border-bottom: 1px solid var(--hv2-line);
+}
+
+.hv2-faq-item {
+  border-top: 1px solid var(--hv2-line);
+}
+
+.hv2-faq-item h3 { margin: 0; }
+
+.hv2-faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--hv2-text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 1rem 0.25rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.hv2-faq-chevron {
+  flex-shrink: 0;
+  color: var(--hv2-teal);
+  transition: transform 220ms ease;
+}
+
+.hv2-faq-item.hv2-is-open .hv2-faq-chevron { transform: rotate(180deg); }
+
+.hv2-faq-a-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms ease;
+}
+
+.hv2-faq-item.hv2-is-open .hv2-faq-a-wrap { grid-template-rows: 1fr; }
+
+.hv2-faq-a-inner { overflow: hidden; }
+
+.hv2-faq-a-inner p {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--hv2-muted);
+  margin: 0;
+  padding: 0 0.25rem 1.1rem;
+  max-width: 42rem;
+}
+
+/* ---------- Final CTA content (now the top region of .hv2-closing —
+   see the Closing section block above; no section-level background,
+   border or padding of its own any more, only the text/action styling
+   below, which is unchanged). ---------- */
+
+.hv2-final-cta-panel {
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hv2-final-cta-heading {
+  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.hv2-final-cta-copy {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  max-width: 30rem;
+  margin: 1.25rem auto 0;
+}
+
+.hv2-final-cta-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 480px) {
+  .hv2-final-cta-actions { flex-direction: row; justify-content: center; }
+}
+
+.hv2-final-cta-primary {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  padding: 1.05rem 2.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  box-shadow: 0 16px 32px -16px rgba(0, 194, 168, 0.45);
+}
+
+@media (min-width: 480px) {
+  .hv2-final-cta-primary { width: auto; }
+}
+
+/* Secondary action stays deliberately quiet next to the strengthened
+   primary button — same link style used elsewhere, no extra weight. */
+.hv2-final-cta-actions .hv2-conv-link {
+  font-weight: 500;
+}
+
+/* ---------- Nav: active-page indicator (Features page) ----------
+   Underline + weight, not colour alone, so the active link is legible
+   without relying on colour perception. */
+.hv2-nav-link[aria-current="page"],
+.hv2-mobile-menu a[aria-current="page"] {
+  color: var(--hv2-teal);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hv2-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ====================================================================
+   Shared availability-badge system — used by the Features page rebuild
+   (features/index.html: hv2-fx-* — see the FEATURES PAGE REBUILD block
+   further down this file) and available to any other page. The earlier
+   flat Features implementation these badges originally shipped with
+   (hv2-features-hero/-model/-capability/-editorial/-spotlight/-index/
+   -matrix) has been fully replaced and removed — grep confirmed zero
+   remaining references in features/index.html, home-v2/index.html or
+   scripts/home-v2.js before deletion.
+   ==================================================================== */
+
+/* ---------- Availability badges (text-based — never colour alone) ---------- */
+
+.hv2-badge-state {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--hv2-line);
+  white-space: nowrap;
+}
+
+.hv2-badge-state--free { color: var(--hv2-teal); border-color: rgba(0, 194, 168, 0.4); }
+.hv2-badge-state--pro { color: var(--hv2-bg); background: var(--hv2-teal); border-color: var(--hv2-teal); }
+.hv2-badge-state--operator { color: var(--hv2-text); border-color: var(--hv2-line); background: var(--hv2-panelhi); }
+.hv2-badge-state--coming { color: var(--hv2-muted); border-style: dashed; }
+
+.hv2-badge-platform {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--hv2-muted);
+  border: 1px solid var(--hv2-line);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+/* Guard against any accidental horizontal overflow at small widths.
+   overflow-x: clip (NOT hidden) is required here. Per the CSS Overflow
+   spec, setting overflow-x to any non-visible value OTHER than clip
+   silently forces overflow-y to compute as "auto" even if overflow-y is
+   explicitly written as "visible" — turning <body> into its own scroll
+   container. That breaks position:sticky throughout the page (sticky
+   elements stick relative to the nearest scroll container, which
+   becomes <body> instead of the real viewport) — this is what was
+   making How It Works, and every other cover panel, fail to visibly
+   rise. clip is exempt from that auto-pairing rule, so overflow-y stays
+   genuinely visible and <body> never becomes its own scroll container. */
+.hv2-root { overflow-x: clip; overflow-y: visible; }
+
+/* =====================================================================
+   FEATURES PAGE REBUILD — institutional-grade interactive reference.
+   Prefixed hv2-fx- throughout. Reuses .hv2-container, .hv2-eyebrow,
+   .hv2-conv-header/-heading/-copy/-link, .hv2-nav-cta, .hv2-btn-secondary,
+   .hv2-pricing-cta/-badge, .hv2-cover-panel, .hv2-reveal, .hv2-badge-state
+   and .hv2-badge-platform from the shared design system above.
+   ===================================================================== */
+
+/* ---------- Generic section rhythm ---------- */
+
+.hv2-fx-section {
+  position: relative;
+  background: var(--hv2-bg);
+  padding: 2.75rem 0;
+}
+
+@media (min-width: 768px) {
+  .hv2-fx-section { padding: 4rem 0; }
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-section { padding: 6rem 0; }
+}
+
+/* Supporting sections (Coming later, FAQ) use less vertical padding
+   than the major content sections — a compact roadmap strip and a
+   short FAQ list should never claim as much vertical space as the
+   36-row explorer or the differentiator/platform panels above them. */
+.hv2-fx-section--compact { padding: 2.5rem 0; }
+
+@media (min-width: 768px) {
+  .hv2-fx-section--compact { padding: 3.5rem 0; }
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-section--compact { padding: 4rem 0; }
+}
+
+.hv2-fx-map-section { background: var(--hv2-bg); }
+.hv2-fx-plans-section { background: var(--hv2-panel); }
+.hv2-fx-demo-section { background: var(--hv2-bg); }
+.hv2-fx-differentiators-section { background: var(--hv2-bg); }
+
+/* ---------- 1. Features hero ---------- */
+
+.hv2-fx-hero {
+  padding: 6.5rem 0 3.5rem;
+  background:
+    radial-gradient(60% 60% at 85% 0%, rgba(0, 194, 168, 0.12), transparent 70%),
+    var(--hv2-deep);
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-hero { padding: 8.5rem 0 4.5rem; }
+}
+
+.hv2-fx-hero-inner {
+  display: grid;
+  gap: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-hero-inner { grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: 2.5rem; }
+}
+
+.hv2-fx-hero-h1 {
+  font-size: clamp(2rem, 4.4vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  margin: 0.75rem 0 1.1rem;
+}
+
+.hv2-fx-hero-lede {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--hv2-muted);
+  max-width: 34rem;
+  margin: 0 0 1.75rem;
+}
+
+.hv2-fx-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hv2-fx-hero-primary { padding: 0.85rem 1.5rem; }
+.hv2-fx-hero-secondary { padding: 0.85rem 1.5rem; }
+
+/* Single hero photo — product-led, one image only, no diagram. */
+.hv2-fx-hero-photo { margin: 0; }
+
+/* ---------- 2. Operating-system overview ---------- */
+
+.hv2-fx-map {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-map { grid-template-columns: 15rem minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+}
+
+.hv2-fx-map-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-map-nav {
+    flex-direction: column;
+    align-items: stretch;
+    overflow-x: visible;
+    gap: 0;
+    position: sticky;
+    top: 6rem;
+  }
+}
+
+.hv2-fx-map-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.75rem;
+  background: var(--hv2-panel);
+  color: var(--hv2-muted);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 200ms var(--hv2-ease), color 200ms var(--hv2-ease), background 200ms var(--hv2-ease);
+}
+
+.hv2-fx-map-btn:hover { color: var(--hv2-text); border-color: var(--hv2-teal); }
+.hv2-fx-map-btn:focus-visible { outline: 2px solid var(--hv2-teal); outline-offset: 2px; }
+
+.hv2-fx-map-btn[aria-selected="true"] {
+  color: var(--hv2-bg);
+  background: var(--hv2-teal);
+  border-color: var(--hv2-teal);
+}
+
+.hv2-fx-map-btn[aria-selected="true"] .hv2-fx-map-btn-num { color: var(--hv2-bg); opacity: 0.65; }
+
+.hv2-fx-map-btn-num {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--hv2-teal);
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-map-btn { margin-bottom: 0.6rem; }
+}
+
+.hv2-fx-map-connector {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1px;
+  background: var(--hv2-line);
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-map-connector { display: none; }
+}
+
+.hv2-fx-map-detail {
+  position: relative;
+  border: 1px solid var(--hv2-line);
+  border-radius: 1rem;
+  background: var(--hv2-panel);
+  padding: 1.75rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-map-detail { padding: 2.75rem 3rem; min-height: 27rem; display: flex; flex-direction: column; justify-content: center; }
+}
+
+.hv2-fx-map-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+  color: var(--hv2-bg);
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+}
+
+.hv2-fx-map-promise {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: var(--hv2-text);
+  line-height: 1.25;
+  margin: 0 0 1rem;
+  max-width: 34rem;
+}
+
+.hv2-fx-map-explain {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  margin: 0 0 1.25rem;
+  max-width: 40rem;
+}
+
+.hv2-fx-map-caps {
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .hv2-fx-map-caps { grid-template-columns: 1fr 1fr; }
+}
+
+.hv2-fx-map-caps li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--hv2-text);
+}
+
+.hv2-fx-map-caps li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+}
+
+.hv2-fx-map-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0 0 1.25rem;
+}
+
+.hv2-fx-map-example {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--hv2-muted);
+  margin: 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--hv2-line);
+}
+
+.hv2-fx-map-example strong { color: var(--hv2-text); font-weight: 600; }
+
+/* ---------- 3. Interactive product demonstration ---------- */
+
+.hv2-fx-demo { margin-top: 2.75rem; }
+
+.hv2-fx-demo-nav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-demo-nav {
+    flex-direction: column;
+    overflow-x: visible;
+    margin-bottom: 0;
+  }
+}
+
+.hv2-fx-demo-btn {
+  flex-shrink: 0;
+  min-width: 12rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-height: 44px;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.85rem;
+  background: var(--hv2-bg);
+  color: var(--hv2-text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 200ms var(--hv2-ease), background 200ms var(--hv2-ease);
+}
+
+.hv2-fx-demo-btn:hover { border-color: var(--hv2-teal); }
+.hv2-fx-demo-btn:focus-visible { outline: 2px solid var(--hv2-teal); outline-offset: 2px; }
+
+.hv2-fx-demo-btn[aria-selected="true"] {
+  border-color: var(--hv2-teal);
+  background: var(--hv2-panelhi);
+  box-shadow: inset 3px 0 0 var(--hv2-teal);
+}
+
+.hv2-fx-demo-btn-name { font-weight: 700; font-size: 0.9375rem; }
+
+.hv2-fx-demo-btn-promise {
+  font-size: 0.8125rem;
+  color: var(--hv2-muted);
+  line-height: 1.4;
+}
+
+.hv2-fx-demo-btn[aria-selected="true"] .hv2-fx-demo-btn-promise { color: var(--hv2-text); }
+
+.hv2-fx-demo-stage {
+  border: 1px solid var(--hv2-line);
+  border-radius: 1.25rem;
+  background: var(--hv2-panel);
+  padding: 1.75rem;
+}
+
+@media (min-width: 1024px) {
+  .hv2-fx-demo-stage { padding: 2.5rem; }
+}
+
+@media (min-width: 900px) {
+  .hv2-fx-demo { display: grid; grid-template-columns: 16rem minmax(0, 1fr); gap: 2rem; align-items: start; }
+}
+
+.hv2-fx-demo-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .hv2-fx-demo-panel { flex-direction: row; align-items: stretch; }
+  .hv2-fx-demo-panel .hv2-fx-demo-preview { flex: 0 0 18rem; }
+  .hv2-fx-demo-panel .hv2-fx-demo-story { flex: 1; }
+}
+
+/* The product preview is a composed illustration in the same visual
+   language as the Homepage hero's Command Center panel — never a real
+   screenshot, always dark-navy contrast within an otherwise white
+   section, per "dark navy only for selected contrast sections". */
+.hv2-fx-demo-preview {
+  background: #0F1B2D;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.hv2-fx-demo-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #F0F4F8;
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid #1E293B;
+}
+
+.hv2-fx-demo-preview-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #00C2A8;
+  flex-shrink: 0;
+}
+
+.hv2-fx-demo-preview-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7C8CA6;
+  margin: 0.25rem 0 0;
+}
+
+.hv2-fx-demo-preview-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #F0F4F8;
+  margin: 0.15rem 0 0;
+}
+
+.hv2-fx-demo-preview-value--muted { color: #CBD5E1; font-weight: 500; }
+
+.hv2-fx-demo-preview-note {
+  font-size: 0.8125rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: #CBD5E1;
+  margin: 0.75rem 0 0;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+}
+
+.hv2-fx-demo-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.85rem 0 0;
+}
+
+.hv2-fx-demo-action {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #1E293B;
+  color: #CBD5E1;
+}
+
+.hv2-fx-demo-action--primary {
+  background: #00C2A8;
+  border-color: #00C2A8;
+  color: #0F1B2D;
+}
+
+.hv2-fx-demo-preview-history {
+  font-size: 0.6875rem;
+  color: #7C8CA6;
+  margin: 0.85rem 0 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid #1E293B;
+}
+
+.hv2-fx-demo-story {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.hv2-fx-demo-story-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hv2-teal);
+  margin: 1rem 0 0;
+}
+
+.hv2-fx-demo-story-label:first-child { margin-top: 0; }
+
+.hv2-fx-demo-story-text {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--hv2-text);
+  margin: 0.35rem 0 0;
+}
+
+/* Subtle, restrained transition between scenarios — opacity + a small
+   vertical shift, never a slider/carousel. Reduced-motion strips this
+   to an instant swap via the shared rule further down this file. */
+.hv2-fx-demo-panel {
+  animation: hv2DemoPanelIn 220ms var(--hv2-ease) both;
+}
+
+@keyframes hv2DemoPanelIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 4. Strongest differentiators (2x2 grid) ---------- */
+
+.hv2-fx-differentiators {
+  margin-top: 2.75rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .hv2-fx-differentiators { grid-template-columns: 1fr 1fr; gap: 2rem; }
+}
+
+.hv2-fx-differentiator-card {
+  border: 1px solid var(--hv2-line);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  background: var(--hv2-bg);
+}
+
+.hv2-fx-differentiator-num {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--hv2-teal);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.hv2-fx-differentiator-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.85rem;
+}
+
+.hv2-fx-differentiator-copy {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--hv2-muted);
+  margin: 0 0 1.25rem;
+  max-width: 32rem;
+}
+
+.hv2-fx-differentiator-tag {
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--hv2-muted);
+  border: 1px solid var(--hv2-line);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+}
+
+/* ---------- 6. Plan availability summary ---------- */
+
+.hv2-fx-plans {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 900px) {
+  .hv2-fx-plans { grid-template-columns: repeat(3, 1fr); }
+}
+
+.hv2-fx-plan-card {
+  position: relative;
+  border: 1px solid var(--hv2-line);
+  border-radius: 1rem;
+  background: var(--hv2-panelhi);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hv2-fx-plan-card--highlight {
+  border-color: var(--hv2-teal);
+  background: var(--hv2-panel);
+}
+
+.hv2-fx-plan-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0.5rem 0 0.5rem;
+}
+
+.hv2-fx-plan-price {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--hv2-muted);
+}
+
+.hv2-fx-plan-for {
+  font-size: 0.9375rem;
+  color: var(--hv2-text);
+  margin: 0 0 0.6rem;
+}
+
+.hv2-fx-plan-target {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--hv2-muted);
+  margin: 0 0 1.25rem;
+}
+
+.hv2-fx-plan-target strong { color: var(--hv2-teal); font-weight: 700; }
+
+.hv2-fx-plan-list {
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+  margin: 0 0 1.25rem;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid var(--hv2-line);
+  flex: 1;
+}
+
+.hv2-fx-plan-platform { margin: 0 0 1.5rem; }
+
+.hv2-fx-plan-list li {
+  position: relative;
+  padding-left: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--hv2-muted);
+}
+
+.hv2-fx-plan-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--hv2-teal);
+}
+
+@media (max-width: 767px) {
+  .hv2-fx-map-detail { padding: 1.5rem; }
+}
+
+/* =====================================================================
+   MIXED LIGHT/DARK EDITORIAL SYSTEM (no user-facing theme toggle).
+   .hv2-light-section re-points the same --hv2-bg/-deep/-panel/-panelhi/
+   -muted/-line/-text/-teal/-tealh custom properties every existing
+   component already reads via var(...), plus sets color: var(--hv2-text)
+   on itself for inherited text. Adding the class to a section re-themes
+   everything inside it — badges, eyebrows, headings, buttons, borders —
+   with no per-component overrides required.
+   ===================================================================== */
+
+.hv2-light-section {
+  /* All four surface tokens collapse to the SAME single light value —
+     one background system per section, not a section tone plus a
+     separate card tone plus a separate alt tone. Cards (map detail,
+     status/context panels, quadrant cells) stay legible only through
+     their existing border, never through a background-colour step,
+     which is what "nested light surfaces" meant in practice: a white
+     card floating on a cream section floating on a blue-grey page. */
+  --hv2-bg: var(--hv2-light-bg);
+  --hv2-deep: var(--hv2-light-bg);
+  --hv2-panel: var(--hv2-light-bg);
+  --hv2-panelhi: var(--hv2-light-bg);
+  --hv2-muted: var(--hv2-light-muted);
+  --hv2-line: var(--hv2-light-border);
+  --hv2-text: var(--hv2-light-text);
+  --hv2-teal: var(--hv2-light-accent);
+  --hv2-tealh: var(--hv2-light-accent-hover);
+  background: var(--hv2-bg);
+  color: var(--hv2-text);
+}
+
+/* Explicit dark-section restoration — used on sections that must never
+   depend on inherited/leaked variables from a preceding sibling (they
+   don't leak under normal CSS custom-property scoping, since siblings
+   never inherit from each other, but this makes the intent explicit
+   and removes any doubt when auditing the cascade section by section). */
+.hv2-dark-section {
+  --hv2-bg: #0F1B2D;
+  --hv2-deep: #0B1422;
+  --hv2-panel: #1A273A;
+  --hv2-panelhi: #1E2D43;
+  --hv2-muted: #94A3B8;
+  --hv2-line: #1E293B;
+  --hv2-text: #F0F4F8;
+  --hv2-teal: #00C2A8;
+  --hv2-tealh: #00A892;
+  background: var(--hv2-bg);
+  color: var(--hv2-text);
+}
+
+/* Pure-white variant — Features page only. Distinct from
+   .hv2-light-section (cream #F7F3EC), which stays exactly as-is
+   because the Homepage FAQ still uses it and the Homepage must not
+   change. Same "one clear background system" discipline: every
+   surface token collapses to the same #FFFFFF, cards are distinguished
+   only by a very light neutral-grey border, never a background step. */
+.hv2-white-section {
+  --hv2-bg: #FFFFFF;
+  --hv2-deep: #FFFFFF;
+  --hv2-panel: #FFFFFF;
+  --hv2-panelhi: #FFFFFF;
+  --hv2-muted: #5B6472;
+  --hv2-line: #E5E7EB;
+  --hv2-text: #0F1B2D;
+  --hv2-teal: #0F766E;
+  --hv2-tealh: #0B5D57;
+  background: var(--hv2-bg);
+  color: var(--hv2-text);
+}
+
+/* Active-stage marker on light sections: a filled pill alone can read as
+   "just a colour change" — add a non-colour checkmark so the active
+   stage is identifiable even without colour perception. */
+.hv2-fx-map-btn[aria-selected="true"]::after {
+  content: '\2713';
+  margin-left: auto;
+  font-weight: 700;
+}
+
+/* ---------- Editorial photography ----------
+   Four real images, each 762×452 source, framed at a uniform 4:3 crop
+   so the visual system reads as one consistent editorial treatment
+   rather than four different aspect ratios. 4:3 against a 1.69:1
+   source crops horizontally only (object-fit: cover scales to fill
+   the taller target, so height is never cropped) — each image gets
+   its own object-position below to keep the face/hands/notebook/phone
+   inside that horizontal crop; see the final report for the exact
+   value used per image and why. */
+
+.hv2-fx-photo {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--hv2-line);
+  background: var(--hv2-deep);
+}
+
+.hv2-fx-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.03);
+  transition: transform 900ms var(--hv2-ease);
+}
+
+.hv2-fx-photo.hv2-is-visible img { transform: scale(1); }
+
+/* Deliberate per-image crop anchor — keeps the subject (face, hands,
+   notebook or phone) inside the 4:3 frame for each specific photo.
+   Only two images are used on the rebuilt Features page (hero,
+   Pocket Chief differentiator) — features-run-week.webp and
+   features-close-loop.webp are no longer referenced in the page, so
+   their object-position rules were removed; the files themselves are
+   left on disk, not deleted, since nothing in this task confirmed they
+   are unused anywhere else in the repository. */
+.hv2-fx-photo--hero img { object-position: 62% 35%; }
+.hv2-fx-photo--carry-context img { object-position: 40% 30%; }
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hv2-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    transition-delay: 0s;
+  }
+
+  .hv2-root * {
+    scroll-behavior: auto !important;
+  }
+
+  .hv2-faq-a-wrap,
+  .hv2-faq-chevron {
+    transition: none;
+  }
+
+  .hv2-fx-map-btn,
+  .hv2-fx-demo-btn {
+    transition: none;
+  }
+
+  .hv2-fx-photo img {
+    transform: none;
+    transition: none;
+  }
+
+  .hv2-fx-demo-panel {
+    animation: none;
+  }
+}

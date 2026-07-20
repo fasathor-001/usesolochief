@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SoloChief Features V2 Preview</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Fonts (same setup as home-v2/index.html) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+
+  <link rel="stylesheet" href="../styles/home-v2.css">
+</head>
+<body class="hv2-root">
+
+  <header class="hv2-header">
+    <nav class="hv2-nav">
+      <a href="/home-v2/" class="hv2-logo">SoloChief<span class="hv2-badge">V2 Preview</span></a>
+
+      <div class="hv2-nav-links">
+        <a href="/home-v2/" class="hv2-nav-link">Product</a>
+        <a href="/features/" class="hv2-nav-link" aria-current="page">Features</a>
+        <a href="/home-v2/#hv2HowItWorks" class="hv2-nav-link">How it works</a>
+        <a href="/pricing/" class="hv2-nav-link">Pricing</a>
+        <a href="https://solochief.app/auth/login" class="hv2-nav-link">Sign in</a>
+        <a href="https://solochief.app/auth/signup" class="hv2-nav-cta">Start free</a>
+      </div>
+
+      <button id="hv2MenuBtn" class="hv2-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="hv2MobileMenu">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+    </nav>
+
+    <div id="hv2MobileMenu" class="hv2-mobile-menu">
+      <a href="/home-v2/">Product</a>
+      <a href="/features/" aria-current="page">Features</a>
+      <a href="/home-v2/#hv2HowItWorks">How it works</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="https://solochief.app/auth/login">Sign in</a>
+      <a href="https://solochief.app/auth/signup">Start free</a>
+    </div>
+  </header>
+
+  <main id="hv2Top">
+
+    <!-- ========== 1. HERO ========== -->
+    <section class="hv2-fx-hero hv2-dark-section">
+      <div class="hv2-container hv2-fx-hero-inner">
+        <div class="hv2-fx-hero-copy">
+          <span class="hv2-eyebrow">SoloChief Features</span>
+          <h1 class="hv2-fx-hero-h1">Everything you need to run the week with control.</h1>
+          <p class="hv2-fx-hero-lede">Plan the week, protect today's focus, capture what changes, keep commitments moving and review what actually happened.</p>
+          <div class="hv2-fx-hero-actions">
+            <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-fx-hero-primary">Start free</a>
+            <a href="/pricing/" class="hv2-btn hv2-btn-secondary hv2-fx-hero-secondary">Compare plans</a>
+          </div>
+        </div>
+
+        <figure class="hv2-fx-photo hv2-fx-hero-photo hv2-fx-photo--hero">
+          <img src="../home-v2/assets/images/features/features-hero.webp" width="762" height="452" alt="A solo founder sits at a desk with a laptop, notebook and coffee, planning the week." loading="eager" fetchpriority="high">
+        </figure>
+      </div>
+    </section>
+
+    <!-- ========== 2. OPERATING-SYSTEM OVERVIEW ========== -->
+    <section id="overview" class="hv2-fx-section hv2-fx-map-section hv2-white-section">
+      <div class="hv2-container">
+        <div class="hv2-conv-header">
+          <span class="hv2-eyebrow">The operating system</span>
+          <h2 class="hv2-conv-heading">One operating rhythm.<br>Four connected responsibilities.</h2>
+        </div>
+
+        <div class="hv2-fx-map">
+          <div class="hv2-fx-map-nav" role="tablist" aria-label="Operating system responsibilities">
+            <button type="button" class="hv2-fx-map-btn" role="tab" id="hv2StageTabPlan" aria-controls="hv2StagePanelPlan" aria-selected="true" data-stage="plan">
+              <span class="hv2-fx-map-btn-num">01</span>
+              <span class="hv2-fx-map-btn-name">Plan</span>
+            </button>
+            <button type="button" class="hv2-fx-map-btn" role="tab" id="hv2StageTabFocus" aria-controls="hv2StagePanelFocus" aria-selected="false" data-stage="focus" tabindex="-1">
+              <span class="hv2-fx-map-btn-num">02</span>
+              <span class="hv2-fx-map-btn-name">Focus</span>
+            </button>
+            <button type="button" class="hv2-fx-map-btn" role="tab" id="hv2StageTabFollowup" aria-controls="hv2StagePanelFollowup" aria-selected="false" data-stage="followup" tabindex="-1">
+              <span class="hv2-fx-map-btn-num">03</span>
+              <span class="hv2-fx-map-btn-name">Follow up</span>
+            </button>
+            <button type="button" class="hv2-fx-map-btn" role="tab" id="hv2StageTabReview" aria-controls="hv2StagePanelReview" aria-selected="false" data-stage="review" tabindex="-1">
+              <span class="hv2-fx-map-btn-num">04</span>
+              <span class="hv2-fx-map-btn-name">Review</span>
+            </button>
+          </div>
+
+          <div class="hv2-fx-map-detail">
+            <!-- All four panels are visible in this static markup; JS
+                 narrows to one only once it has actually run (see
+                 initTabGroups' initial activate() call) — with JS
+                 blocked or slow, every responsibility stays readable. -->
+            <article class="hv2-fx-map-panel" id="hv2StagePanelPlan" role="tabpanel" aria-labelledby="hv2StageTabPlan" data-stage-panel="plan">
+              <span class="hv2-fx-map-step" aria-hidden="true">01</span>
+              <p class="hv2-fx-map-promise">Build a week the system can protect.</p>
+              <ul class="hv2-fx-map-caps">
+                <li>Weekly Plan</li>
+                <li>Main focus commitment</li>
+                <li>Stop List</li>
+                <li>Lock plan</li>
+              </ul>
+              <div class="hv2-fx-map-meta">
+                <span class="hv2-badge-platform">Web</span>
+                <span class="hv2-badge-state hv2-badge-state--free">Free</span>
+              </div>
+              <p class="hv2-fx-map-example"><strong>In practice:</strong> Lock this week's plan once the outcomes are set.</p>
+            </article>
+
+            <article class="hv2-fx-map-panel" id="hv2StagePanelFocus" role="tabpanel" aria-labelledby="hv2StageTabFocus" data-stage-panel="focus">
+              <span class="hv2-fx-map-step" aria-hidden="true">02</span>
+              <p class="hv2-fx-map-promise">Keep one outcome clear while the day changes.</p>
+              <ul class="hv2-fx-map-caps">
+                <li>Today Focus</li>
+                <li>Progress updates</li>
+                <li>Request switch</li>
+                <li>Parking Lot</li>
+              </ul>
+              <div class="hv2-fx-map-meta">
+                <span class="hv2-badge-platform">Web</span>
+                <span class="hv2-badge-state hv2-badge-state--free">Free</span>
+              </div>
+              <p class="hv2-fx-map-example"><strong>In practice:</strong> Request a switch when a new priority genuinely outranks today's outcome.</p>
+            </article>
+
+            <article class="hv2-fx-map-panel" id="hv2StagePanelFollowup" role="tabpanel" aria-labelledby="hv2StageTabFollowup" data-stage-panel="followup">
+              <span class="hv2-fx-map-step" aria-hidden="true">03</span>
+              <p class="hv2-fx-map-promise">Keep open commitments visible until resolved.</p>
+              <ul class="hv2-fx-map-caps">
+                <li>Follow-up Tracker</li>
+                <li>Email reminders</li>
+                <li>WhatsApp reminders on Pro</li>
+                <li>Proactive check-ins</li>
+              </ul>
+              <div class="hv2-fx-map-meta">
+                <span class="hv2-badge-platform">Both</span>
+                <span class="hv2-badge-state hv2-badge-state--free">Free and Pro</span>
+              </div>
+              <p class="hv2-fx-map-example"><strong>In practice:</strong> An overdue follow-up surfaces again in the next Friday Review.</p>
+            </article>
+
+            <article class="hv2-fx-map-panel" id="hv2StagePanelReview" role="tabpanel" aria-labelledby="hv2StageTabReview" data-stage-panel="review">
+              <span class="hv2-fx-map-step" aria-hidden="true">04</span>
+              <p class="hv2-fx-map-promise">Close the week with what actually happened.</p>
+              <ul class="hv2-fx-map-caps">
+                <li>Friday Review</li>
+                <li>Blockers and carryovers</li>
+                <li>Rescue Me</li>
+                <li>Higher AI usage on Pro and Operator</li>
+              </ul>
+              <div class="hv2-fx-map-meta">
+                <span class="hv2-badge-platform">Web and WhatsApp</span>
+                <span class="hv2-badge-state hv2-badge-state--free">Free and Pro</span>
+              </div>
+              <p class="hv2-fx-map-example"><strong>In practice:</strong> Carryovers from Friday feed directly into next week's plan.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 3. INTERACTIVE PRODUCT DEMONSTRATION ========== -->
+    <section id="demo" class="hv2-fx-section hv2-fx-demo-section hv2-white-section">
+      <div class="hv2-container">
+        <div class="hv2-conv-header">
+          <span class="hv2-eyebrow">See it in action</span>
+          <h2 class="hv2-conv-heading">How SoloChief runs the week.</h2>
+          <p class="hv2-conv-copy">Four moments where SoloChief steps in — the situation, what it notices, and what happens next.</p>
+        </div>
+
+        <div class="hv2-fx-demo">
+          <div class="hv2-fx-demo-nav" role="tablist" aria-label="Product scenarios">
+            <button type="button" class="hv2-fx-demo-btn" role="tab" id="hv2DemoTabProtect" aria-controls="hv2DemoPanelProtect" aria-selected="true" data-demo="protect">
+              <span class="hv2-fx-demo-btn-name">Protect today</span>
+              <span class="hv2-fx-demo-btn-promise">Keep the day's outcome from getting reshuffled.</span>
+            </button>
+            <button type="button" class="hv2-fx-demo-btn" role="tab" id="hv2DemoTabRecover" aria-controls="hv2DemoPanelRecover" aria-selected="false" data-demo="recover" tabindex="-1">
+              <span class="hv2-fx-demo-btn-name">Recover attention</span>
+              <span class="hv2-fx-demo-btn-promise">Turn an overloaded week into one clear move.</span>
+            </button>
+            <button type="button" class="hv2-fx-demo-btn" role="tab" id="hv2DemoTabTrack" aria-controls="hv2DemoPanelTrack" aria-selected="false" data-demo="track" tabindex="-1">
+              <span class="hv2-fx-demo-btn-name">Track follow-ups</span>
+              <span class="hv2-fx-demo-btn-promise">Keep commitments visible until resolved.</span>
+            </button>
+            <button type="button" class="hv2-fx-demo-btn" role="tab" id="hv2DemoTabReview" aria-controls="hv2DemoPanelReview" aria-selected="false" data-demo="review" tabindex="-1">
+              <span class="hv2-fx-demo-btn-name">Review the week</span>
+              <span class="hv2-fx-demo-btn-promise">Close out with what actually happened.</span>
+            </button>
+          </div>
+
+          <div class="hv2-fx-demo-stage">
+            <!-- All four panels are visible in this static markup; JS
+                 narrows to one only once it has actually run. -->
+            <article class="hv2-fx-demo-panel" id="hv2DemoPanelProtect" role="tabpanel" aria-labelledby="hv2DemoTabProtect" data-demo-panel="protect">
+              <div class="hv2-fx-demo-preview" aria-hidden="true">
+                <div class="hv2-fx-demo-preview-header">
+                  <span class="hv2-fx-demo-preview-dot"></span>
+                  <span>Today Focus</span>
+                </div>
+                <p class="hv2-fx-demo-preview-label">Confirmed commitment</p>
+                <p class="hv2-fx-demo-preview-value">Confirm event date and promo code</p>
+                <p class="hv2-fx-demo-preview-label">Incoming request</p>
+                <p class="hv2-fx-demo-preview-value hv2-fx-demo-preview-value--muted">Review new vendor proposal</p>
+                <p class="hv2-fx-demo-preview-note">"Adding this now means moving one of today's commitments."</p>
+                <div class="hv2-fx-demo-preview-actions">
+                  <span class="hv2-fx-demo-action hv2-fx-demo-action--primary">Keep focus</span>
+                  <span class="hv2-fx-demo-action">Switch focus</span>
+                  <span class="hv2-fx-demo-action">Park request</span>
+                </div>
+                <p class="hv2-fx-demo-preview-history">New request parked &middot; 09:14</p>
+              </div>
+              <div class="hv2-fx-demo-story">
+                <p class="hv2-fx-demo-story-label">Situation</p>
+                <p class="hv2-fx-demo-story-text">A new request comes in mid-morning, right after this week's priority was locked.</p>
+                <p class="hv2-fx-demo-story-label">SoloChief notices</p>
+                <p class="hv2-fx-demo-story-text">Three new tasks are competing with the confirmed priority.</p>
+                <p class="hv2-fx-demo-story-label">Result</p>
+                <p class="hv2-fx-demo-story-text">The new request is parked and the original focus remains protected.</p>
+              </div>
+            </article>
+
+            <article class="hv2-fx-demo-panel" id="hv2DemoPanelRecover" role="tabpanel" aria-labelledby="hv2DemoTabRecover" data-demo-panel="recover">
+              <div class="hv2-fx-demo-preview" aria-hidden="true">
+                <div class="hv2-fx-demo-preview-header">
+                  <span class="hv2-fx-demo-preview-dot"></span>
+                  <span>Rescue Me</span>
+                </div>
+                <p class="hv2-fx-demo-preview-label">Current state</p>
+                <p class="hv2-fx-demo-preview-value">Multiple open threads, no clear next step</p>
+                <p class="hv2-fx-demo-preview-label">Paths offered</p>
+                <p class="hv2-fx-demo-preview-value hv2-fx-demo-preview-value--muted">Five structured starting points</p>
+                <p class="hv2-fx-demo-preview-note">"Pick one path — the rest can wait their turn."</p>
+                <div class="hv2-fx-demo-preview-actions">
+                  <span class="hv2-fx-demo-action hv2-fx-demo-action--primary">Start Rescue Me</span>
+                  <span class="hv2-fx-demo-action">Review open threads</span>
+                  <span class="hv2-fx-demo-action">Park the rest</span>
+                </div>
+                <p class="hv2-fx-demo-preview-history">Rescue Me started &middot; 14:02</p>
+              </div>
+              <div class="hv2-fx-demo-story">
+                <p class="hv2-fx-demo-story-label">Situation</p>
+                <p class="hv2-fx-demo-story-text">The week has gotten noisy and it's unclear what actually matters right now.</p>
+                <p class="hv2-fx-demo-story-label">SoloChief notices</p>
+                <p class="hv2-fx-demo-story-text">Multiple open threads with no single clear next step.</p>
+                <p class="hv2-fx-demo-story-label">Result</p>
+                <p class="hv2-fx-demo-story-text">One next action is chosen and the rest wait their turn.</p>
+              </div>
+            </article>
+
+            <article class="hv2-fx-demo-panel" id="hv2DemoPanelTrack" role="tabpanel" aria-labelledby="hv2DemoTabTrack" data-demo-panel="track">
+              <div class="hv2-fx-demo-preview" aria-hidden="true">
+                <div class="hv2-fx-demo-preview-header">
+                  <span class="hv2-fx-demo-preview-dot"></span>
+                  <span>Follow-up Tracker</span>
+                </div>
+                <p class="hv2-fx-demo-preview-label">Open follow-up</p>
+                <p class="hv2-fx-demo-preview-value">Send updated contract to Amina</p>
+                <p class="hv2-fx-demo-preview-label">Due</p>
+                <p class="hv2-fx-demo-preview-value hv2-fx-demo-preview-value--muted">Today</p>
+                <p class="hv2-fx-demo-preview-note">"This follow-up is due today."</p>
+                <div class="hv2-fx-demo-preview-actions">
+                  <span class="hv2-fx-demo-action hv2-fx-demo-action--primary">Mark done</span>
+                  <span class="hv2-fx-demo-action">Push date</span>
+                  <span class="hv2-fx-demo-action">Add note</span>
+                </div>
+                <p class="hv2-fx-demo-preview-history">Reminder sent &middot; 08:00</p>
+              </div>
+              <div class="hv2-fx-demo-story">
+                <p class="hv2-fx-demo-story-label">Situation</p>
+                <p class="hv2-fx-demo-story-text">A commitment made last week is due today.</p>
+                <p class="hv2-fx-demo-story-label">SoloChief notices</p>
+                <p class="hv2-fx-demo-story-text">A follow-up is due and hasn't been closed out.</p>
+                <p class="hv2-fx-demo-story-label">Result</p>
+                <p class="hv2-fx-demo-story-text">The follow-up is resolved and removed from the open list.</p>
+              </div>
+            </article>
+
+            <article class="hv2-fx-demo-panel" id="hv2DemoPanelReview" role="tabpanel" aria-labelledby="hv2DemoTabReview" data-demo-panel="review">
+              <div class="hv2-fx-demo-preview" aria-hidden="true">
+                <div class="hv2-fx-demo-preview-header">
+                  <span class="hv2-fx-demo-preview-dot"></span>
+                  <span>Friday Review</span>
+                </div>
+                <p class="hv2-fx-demo-preview-label">This week</p>
+                <p class="hv2-fx-demo-preview-value">3 of 5 outcomes moved</p>
+                <p class="hv2-fx-demo-preview-label">Carrying forward</p>
+                <p class="hv2-fx-demo-preview-value hv2-fx-demo-preview-value--muted">1 blocked, 1 slipped</p>
+                <p class="hv2-fx-demo-preview-note">"Bring what's unfinished into next week's plan."</p>
+                <div class="hv2-fx-demo-preview-actions">
+                  <span class="hv2-fx-demo-action hv2-fx-demo-action--primary">Carry forward</span>
+                  <span class="hv2-fx-demo-action">Mark resolved</span>
+                  <span class="hv2-fx-demo-action">Close week</span>
+                </div>
+                <p class="hv2-fx-demo-preview-history">Friday Review completed &middot; 17:30</p>
+              </div>
+              <div class="hv2-fx-demo-story">
+                <p class="hv2-fx-demo-story-label">Situation</p>
+                <p class="hv2-fx-demo-story-text">It's Friday afternoon and the week needs to close out.</p>
+                <p class="hv2-fx-demo-story-label">SoloChief notices</p>
+                <p class="hv2-fx-demo-story-text">Two outcomes completed, one slipped, one follow-up still open.</p>
+                <p class="hv2-fx-demo-story-label">Result</p>
+                <p class="hv2-fx-demo-story-text">The week closes with context instead of a blank page.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 4. STRONGEST DIFFERENTIATORS ========== -->
+    <section class="hv2-fx-section hv2-fx-differentiators-section hv2-white-section">
+      <div class="hv2-container">
+        <div class="hv2-conv-header">
+          <span class="hv2-eyebrow">Differentiators</span>
+          <h2 class="hv2-conv-heading">What sets SoloChief apart</h2>
+        </div>
+
+        <div class="hv2-fx-differentiators">
+          <article class="hv2-fx-differentiator-card">
+            <span class="hv2-fx-differentiator-num">01</span>
+            <h3 class="hv2-fx-differentiator-title">Protects the plan</h3>
+            <p class="hv2-fx-differentiator-copy">SoloChief does not simply collect tasks. It challenges changes that would weaken the commitments already made.</p>
+            <span class="hv2-fx-differentiator-tag">Switch Challenge</span>
+          </article>
+          <article class="hv2-fx-differentiator-card">
+            <span class="hv2-fx-differentiator-num">02</span>
+            <h3 class="hv2-fx-differentiator-title">Carries the week with you</h3>
+            <p class="hv2-fx-differentiator-copy">Your confirmed priorities remain connected across the Command Center and WhatsApp.</p>
+            <span class="hv2-fx-differentiator-tag">Pocket Chief &middot; Pro</span>
+          </article>
+          <article class="hv2-fx-differentiator-card">
+            <span class="hv2-fx-differentiator-num">03</span>
+            <h3 class="hv2-fx-differentiator-title">Recovers context</h3>
+            <p class="hv2-fx-differentiator-copy">When focus slips, SoloChief brings back the decision, commitment, and reason behind the original plan.</p>
+            <span class="hv2-fx-differentiator-tag">Friday Review</span>
+          </article>
+          <article class="hv2-fx-differentiator-card">
+            <span class="hv2-fx-differentiator-num">04</span>
+            <h3 class="hv2-fx-differentiator-title">Creates accountability</h3>
+            <p class="hv2-fx-differentiator-copy">Follow-ups, unfinished work, and weekly outcomes remain visible until they are resolved.</p>
+            <span class="hv2-fx-differentiator-tag">Follow-up Tracker</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 5. PLAN AVAILABILITY SUMMARY ========== -->
+    <section id="planAvailability" class="hv2-fx-section hv2-fx-plans-section hv2-dark-section">
+      <div class="hv2-container">
+        <div class="hv2-conv-header">
+          <span class="hv2-eyebrow">Plan availability</span>
+          <h2 class="hv2-conv-heading">Where each plan takes you</h2>
+        </div>
+
+        <div class="hv2-fx-plans">
+          <div class="hv2-fx-plan-card">
+            <h3 class="hv2-fx-plan-name">Free <span class="hv2-fx-plan-price">$0</span></h3>
+            <p class="hv2-fx-plan-for">Build and run the week on web.</p>
+            <p class="hv2-fx-plan-target"><strong>For:</strong> anyone starting to run their week with structure.</p>
+            <ul class="hv2-fx-plan-list">
+              <li>Command Center</li>
+              <li>Weekly Plan and Today Focus</li>
+              <li>Parking Lot</li>
+              <li>Follow-up Tracker</li>
+              <li>Friday Review</li>
+              <li>AI Chat</li>
+              <li>Rescue Me</li>
+              <li>Usage visibility</li>
+            </ul>
+            <p class="hv2-fx-plan-platform"><span class="hv2-badge-platform">Web</span></p>
+            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+          </div>
+
+          <div class="hv2-fx-plan-card hv2-fx-plan-card--highlight">
+            <span class="hv2-pricing-badge">Most popular</span>
+            <h3 class="hv2-fx-plan-name">Pro <span class="hv2-fx-plan-price">$19/month</span></h3>
+            <p class="hv2-fx-plan-for">Carry SoloChief into WhatsApp.</p>
+            <p class="hv2-fx-plan-target"><strong>For:</strong> anyone who needs SoloChief with them off the laptop.</p>
+            <ul class="hv2-fx-plan-list">
+              <li>Everything in Free</li>
+              <li>Pocket Chief (WhatsApp)</li>
+              <li>Morning Brief</li>
+              <li>WhatsApp commands and reminders</li>
+              <li>Proactive check-ins</li>
+              <li>Higher AI and WhatsApp usage</li>
+            </ul>
+            <p class="hv2-fx-plan-platform"><span class="hv2-badge-platform">Web and WhatsApp</span></p>
+            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--solid">Start free</a>
+          </div>
+
+          <div class="hv2-fx-plan-card">
+            <span class="hv2-pricing-badge hv2-pricing-badge--outline">Early access</span>
+            <h3 class="hv2-fx-plan-name">Operator <span class="hv2-fx-plan-price">$39/month</span></h3>
+            <p class="hv2-fx-plan-for">Use the highest allowances and advanced operating support.</p>
+            <p class="hv2-fx-plan-target"><strong>For:</strong> the heaviest weekly execution and earliest access to what's next.</p>
+            <ul class="hv2-fx-plan-list">
+              <li>Everything in Pro</li>
+              <li>Voice-note logging</li>
+              <li>Highest usage allowance</li>
+              <li>Advanced operating support</li>
+              <li>Early access to selected capabilities</li>
+            </ul>
+            <p class="hv2-fx-plan-platform"><span class="hv2-badge-platform">Web and WhatsApp</span></p>
+            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+          </div>
+        </div>
+
+        <div class="hv2-conv-footline">
+          <a href="/pricing/" class="hv2-conv-link">Compare every plan <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 6. FAQ ========== -->
+    <section id="hv2FxFaq" class="hv2-faq hv2-faq--compact hv2-white-section">
+      <div class="hv2-container hv2-faq-container">
+        <div class="hv2-conv-header">
+          <span class="hv2-eyebrow">FAQ</span>
+          <h2 class="hv2-conv-heading">Features, answered directly</h2>
+        </div>
+
+        <div class="hv2-faq-list">
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA1" id="hv2FxFaqQ1">
+                <span>How do Web and WhatsApp work together?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA1" role="region" aria-labelledby="hv2FxFaqQ1">
+              <div class="hv2-faq-a-inner">
+                <p>They are not two products. The Command Center on web and Pocket Chief in WhatsApp share the same plan, the same focus and the same follow-ups — WhatsApp access is available on Pro.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA2" id="hv2FxFaqQ2">
+                <span>Is every feature available on Free?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA2" role="region" aria-labelledby="hv2FxFaqQ2">
+              <div class="hv2-faq-a-inner">
+                <p>No. Free covers the full web operating system — Weekly Plan, Today Focus, Parking Lot, Follow-up Tracker, Friday Review, AI Chat, Rescue Me and usage visibility. WhatsApp access and higher usage are Pro and Operator capabilities.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA3" id="hv2FxFaqQ3">
+                <span>What does "Coming later" mean?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA3" role="region" aria-labelledby="hv2FxFaqQ3">
+              <div class="hv2-faq-a-inner">
+                <p>It means the capability is planned but not yet available on any plan today — Chief Memory, Weekly Scorecard, Communication preferences and Quiet hours are the current examples.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA4" id="hv2FxFaqQ4">
+                <span>How does AI and WhatsApp usage work?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA4" role="region" aria-labelledby="hv2FxFaqQ4">
+              <div class="hv2-faq-a-inner">
+                <p>AI Chat is included on Free, with a higher usage allowance on Pro and Operator. Usage visibility shows where you currently stand — exact limits are not published as they continue to be tuned.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA5" id="hv2FxFaqQ5">
+                <span>What is the difference between Pocket Chief and the Command Center?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA5" role="region" aria-labelledby="hv2FxFaqQ5">
+              <div class="hv2-faq-a-inner">
+                <p>The Command Center is the full web system. Pocket Chief, on Pro, carries the same operating context into WhatsApp without opening another app.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA6" id="hv2FxFaqQ6">
+                <span>Does SoloChief act on its own without me?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA6" role="region" aria-labelledby="hv2FxFaqQ6">
+              <div class="hv2-faq-a-inner">
+                <p>No. SoloChief tracks, reminds and surfaces what needs attention — switches, plan changes and follow-up completion are always something you confirm.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv2-faq-item">
+            <h3>
+              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FxFaqA7" id="hv2FxFaqQ7">
+                <span>Is my information private?</span>
+                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
+              </button>
+            </h3>
+            <div class="hv2-faq-a-wrap" id="hv2FxFaqA7" role="region" aria-labelledby="hv2FxFaqQ7">
+              <div class="hv2-faq-a-inner">
+                <p>Yes. Authentication is handled securely, access to your data is controlled, and it is not sold or used for advertising.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FINAL CTA AND FOOTER (unchanged — preserved verbatim
+       from the previously approved closing structure). ========== -->
+  <footer class="hv2-closing hv2-dark-section">
+    <div class="hv2-container">
+      <div class="hv2-final-cta-panel">
+        <h2 class="hv2-final-cta-heading">Run the week with less rebuilding.</h2>
+        <p class="hv2-final-cta-copy">Start with the Command Center. Add WhatsApp when you are ready to carry SoloChief with you.</p>
+        <div class="hv2-final-cta-actions">
+          <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-final-cta-primary">Start free</a>
+          <a href="/pricing/" class="hv2-conv-link">Compare plans <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+
+      <hr class="hv2-closing-divider">
+
+      <nav class="hv2-closing-nav hv2-footer-cols" aria-label="Footer">
+        <div>
+          <p class="hv2-footer-label">Product</p>
+          <ul>
+            <li><a href="/features/" aria-current="page">Features</a></li>
+            <li><a href="/pricing/">Pricing</a></li>
+            <li><a href="/chief-of-staff">Chief of Staff</a></li>
+            <li><a href="/productivity-system">Productivity System</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="hv2-footer-label">Use cases</p>
+          <ul>
+            <li><a href="/ai-chief-of-staff">AI Chief of Staff</a></li>
+            <li><a href="/morning-brief-app">Morning Brief App</a></li>
+            <li><a href="/follow-up-tracker">Follow-up Tracker</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="hv2-footer-label">Account</p>
+          <ul>
+            <li><a href="https://solochief.app/auth/login">Sign in</a></li>
+            <li><a href="https://solochief.app/auth/signup">Sign up</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="hv2-footer-label">Legal</p>
+          <ul>
+            <li><a href="https://solochief.app/privacy">Privacy Policy</a></li>
+            <li><a href="https://solochief.app/terms">Terms of Service</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <p class="hv2-closing-wordmark" aria-hidden="true">SoloChief<span class="hv2-fx-accent-dot">.</span></p>
+
+      <div class="hv2-closing-legal">
+        <a href="/home-v2/">SoloChief</a>
+        <p>Built by Astor Stack Technologies</p>
+        <p>&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../scripts/home-v2.js" defer></script>
+</body>
+</html>
