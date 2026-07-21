@@ -107,6 +107,39 @@
     });
   })();
 
+  // ---------- Homepage hero: rotating audience word ----------
+  // "Built for [Managers/Operators/Students/Founders/Builders]" — the
+  // static markup already shows one real word (progressive enhancement:
+  // with JS blocked, the eyebrow just reads "Built for Managers" and
+  // nothing is missing). Respects prefers-reduced-motion by not
+  // rotating at all — auto-updating content with no user pause control
+  // is exactly what that preference exists to avoid.
+  (function initHeroRoleRotation() {
+    var el = document.getElementById('hv2RoleWord');
+    if (!el) { return; }
+
+    var prefersReducedMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) { return; }
+
+    var roles = (el.getAttribute('data-hv2-roles') || '').split(',')
+      .map(function (r) { return r.trim(); })
+      .filter(Boolean);
+    if (roles.length < 2) { return; }
+
+    var index = roles.indexOf(el.textContent.trim());
+    if (index === -1) { index = 0; }
+
+    setInterval(function () {
+      el.classList.add('hv2-role-word--fading');
+      setTimeout(function () {
+        index = (index + 1) % roles.length;
+        el.textContent = roles[index];
+        el.classList.remove('hv2-role-word--fading');
+      }, 220);
+    }, 2600);
+  })();
+
   // ---------- Features page: generic tab-group widget ----------
   // Powers the operating-system overview and the interactive product
   // demonstration's scenario switcher. No-op wherever no [role="tablist"]

@@ -262,6 +262,25 @@
   margin-bottom: 1.5rem;
 }
 
+/* Hero audience rotation — "Built for [Managers/Operators/Students/
+   Founders/Builders]". min-width on the rotating word (sized to the
+   longest candidate, "Operators") keeps the eyebrow pill's own width
+   stable as the word changes, so surrounding layout never shifts; the
+   cross-fade (JS swaps textContent at a fixed interval) is the only
+   visible motion. Word itself stays left-aligned inside that reserved
+   width rather than centering, so it doesn't visibly jump sideways. */
+.hv2-role-word {
+  display: inline-block;
+  min-width: 6.2ch;
+  transition: opacity 220ms ease;
+}
+
+.hv2-role-word.hv2-role-word--fading { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hv2-role-word { transition: none; }
+}
+
 .hv2-h1 {
   font-size: clamp(2.1rem, 4.2vw, 3.35rem);
   font-weight: 800;
@@ -341,6 +360,33 @@
   filter: blur(10px);
   pointer-events: none;
   z-index: 0;
+}
+
+/* Real product photo hero (replaces the earlier custom-built Command
+   Center + WhatsApp mockup) — a genuine screenshot of the actual
+   SoloChief WhatsApp onboarding flow, the same asset the previous
+   production homepage used at /img/solochief-phone-final.png. Not a
+   fabricated UI: real app chrome, real copy, transparent background. */
+.hv2-scene--photo {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0 2rem;
+}
+
+/* .hv2-root img (base reset, specificity 0,1,1) outranks a single
+   class selector (0,1,0) — the two-class .hv2-hero-scene descendant
+   selector below is required to actually win, not decorative. */
+.hv2-hero-scene .hv2-hero-phone-img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 21rem;
+  height: auto;
+  filter: drop-shadow(0 40px 70px rgba(0, 0, 0, 0.45));
+}
+
+@media (min-width: 1024px) {
+  .hv2-hero-scene .hv2-hero-phone-img { max-width: 23rem; }
 }
 
 /* Command Center layer */
