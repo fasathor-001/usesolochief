@@ -49,153 +49,435 @@
 
   <main id="hv2Top">
 
-    <!-- ========== 1. PRICING HERO ========== -->
-    <section class="hv2-fx-hero hv2-dark-section">
+    <!-- ========== 1. PRICING HERO — Pricing is a fast-conversion commercial
+         page, not a narrative scroll: the hero is deliberately compact
+         (hv2-fx-hero--compact overrides the shared min-height:100svh
+         full-viewport lock used by Features/FAQ) so the plan cards are
+         visible without a long empty scroll first. ========== -->
+    <section class="hv2-fx-hero hv2-fx-hero--compact hv2-dark-section">
       <div class="hv2-container hv2-fx-hero-inner">
         <div class="hv2-fx-hero-copy">
           <span class="hv2-eyebrow">Pricing</span>
           <h1 class="hv2-fx-hero-h1">Start free. Upgrade when SoloChief becomes part of your week.</h1>
-          <p class="hv2-fx-hero-lede">One plan to run the week on the web, one to carry it into WhatsApp, and one for the highest usage and advanced support.</p>
+          <p class="hv2-fx-hero-lede">Run the week on the web, carry the operating rhythm into WhatsApp, and increase your allowance when SoloChief becomes part of daily execution.</p>
           <div class="hv2-fx-hero-actions">
             <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-fx-hero-primary">Start free</a>
+            <a href="#pricingPlans" class="hv2-conv-link hv2-fx-hero-secondary">Compare plans <span aria-hidden="true">&rarr;</span></a>
           </div>
+          <p class="hv2-fx-hero-note">No card required for Free.</p>
         </div>
       </div>
     </section>
 
-    <!-- ========== 2. THREE PLANS ========== -->
-    <section id="pricingPlans" class="sc-cover-shell sc-cover-shell--first sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z2 hv2-dark-section">
+    <!-- ========== 2. THREE DETAILED PLAN CARDS — plain normal-flow
+         section (no sliding cover-panel system). Pricing prioritises
+         getting visitors to the plans quickly; the cinematic sc-cover
+         choreography used on Homepage/Features reserves a large scroll
+         runway (--sc-cover-travel = 100svh+15rem per shell) that is
+         exactly the "excessive blank space above the cards" defect —
+         removed here, kept there by design. Heading and cards share one
+         compact section with reduced top padding so they read as a
+         single commercial unit, not two separate scroll beats. ========== -->
+    <section id="pricingPlans" class="hv2-pricing-section hv2-pricing-section--first hv2-dark-section">
       <div class="hv2-container">
-        <div class="hv2-conv-header">
+        <div class="hv2-conv-header hv2-pricing-header">
           <span class="hv2-eyebrow">Plans</span>
           <h2 class="hv2-conv-heading">Three plans, one operating rhythm.</h2>
         </div>
 
-        <div class="hv2-pricing-grid">
+        <div class="hv2-pricing-grid hv2-pricing-grid--detailed">
+
+          <!-- Free -->
           <div class="hv2-pricing-card">
+            <p class="hv2-pricing-platform">Web Command Center</p>
             <h3 class="hv2-pricing-name">Free</h3>
             <p class="hv2-pricing-price">$0</p>
+            <p class="hv2-pricing-audience">Run the week on the web.</p>
+            <p class="hv2-pricing-desc">The full planning and review system, unlimited, with no card required.</p>
+
             <ul class="hv2-pricing-points">
-              <li>Web Command Center</li>
               <li>Weekly Plan and Today Focus</li>
-              <li>Follow-up Tracker</li>
+              <li>Follow-up Tracker and Parking Lot</li>
+              <li>Launch Checklist and Stop List</li>
+              <li>Switch Challenge</li>
               <li>Friday Review</li>
-              <li>Rescue Me</li>
+              <li>Up to 3 active commitments</li>
+              <li>No standing WhatsApp access</li>
             </ul>
+
+            <div class="hv2-pricing-allowances">
+              <p class="hv2-pricing-allowances-label">Usage allowance</p>
+              <ul class="hv2-pricing-allowances-list">
+                <li><span class="hv2-pricing-allowance-value">20</span> AI Chat actions / month</li>
+                <li><span class="hv2-pricing-allowance-value">1</span> Rescue Me session / week</li>
+              </ul>
+            </div>
+
             <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
           </div>
 
+          <!-- Pro -->
           <div class="hv2-pricing-card hv2-pricing-card--highlight">
             <span class="hv2-pricing-badge">Most popular</span>
+            <p class="hv2-pricing-platform">Web + WhatsApp</p>
             <h3 class="hv2-pricing-name">Pro</h3>
             <p class="hv2-pricing-price">$19<span>/month</span></p>
+            <p class="hv2-pricing-audience">Carry the operating rhythm into WhatsApp.</p>
+            <p class="hv2-pricing-desc">Everything in Free, with Pocket Chief running the same week inside WhatsApp.</p>
+
             <ul class="hv2-pricing-points">
               <li>Everything in Free</li>
               <li>Pocket Chief in WhatsApp</li>
-              <li>Morning Brief and proactive check-ins</li>
-              <li>Higher AI and WhatsApp usage</li>
+              <li>Morning Brief</li>
+              <li>Unlimited commitments</li>
+              <li>Unlimited Rescue Me</li>
             </ul>
-            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--solid">Start free</a>
+
+            <div class="hv2-pricing-allowances">
+              <p class="hv2-pricing-allowances-label">Usage allowance</p>
+              <ul class="hv2-pricing-allowances-list">
+                <li><span class="hv2-pricing-allowance-value">100</span> AI Chat actions / month</li>
+                <li><span class="hv2-pricing-allowance-value">100</span> WhatsApp commands / month</li>
+                <li>Up to <span class="hv2-pricing-allowance-value">30</span> Morning Briefs / month</li>
+              </ul>
+            </div>
+
+            <p class="hv2-pricing-note">Eligible Free users may activate a one-time seven-day WhatsApp trial. <a href="#pricingTrial">Learn more</a>.</p>
+
+            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--solid">Choose Pro</a>
           </div>
 
-          <div class="hv2-pricing-card">
-            <span class="hv2-pricing-badge hv2-pricing-badge--outline">Early access</span>
+          <!-- Operator -->
+          <div class="hv2-pricing-card hv2-pricing-card--operator">
+            <p class="hv2-pricing-platform">Web + WhatsApp + voice notes</p>
             <h3 class="hv2-pricing-name">Operator</h3>
             <p class="hv2-pricing-price">$39<span>/month</span></p>
+            <p class="hv2-pricing-audience">For heavier weekly execution and higher usage.</p>
+            <p class="hv2-pricing-desc">Everything in Pro, with the highest allowance and voice-note logging in WhatsApp.</p>
+
             <ul class="hv2-pricing-points">
               <li>Everything in Pro</li>
-              <li>Voice-note logging</li>
-              <li>Highest usage allowance</li>
-              <li>Advanced operating support</li>
+              <li>Voice-note logging in WhatsApp</li>
+              <li>Unlimited Morning Brief</li>
+              <li>Unlimited commitments</li>
+              <li>Unlimited Rescue Me</li>
             </ul>
-            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+
+            <div class="hv2-pricing-allowances">
+              <p class="hv2-pricing-allowances-label">Usage allowance</p>
+              <ul class="hv2-pricing-allowances-list">
+                <li><span class="hv2-pricing-allowance-value">300</span> AI Chat actions / month</li>
+                <li><span class="hv2-pricing-allowance-value">300</span> WhatsApp commands / month</li>
+                <li>Unlimited Morning Brief</li>
+              </ul>
+            </div>
+
+            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Choose Operator</a>
           </div>
+
         </div>
-      </div>
       </div>
     </section>
 
-    <!-- ========== 3. DETAILED COMPARISON (long panel — content
-         determines height, no fixed viewport lock, no inner scroll) ========== -->
-    <section id="pricingComparison" class="sc-cover-shell sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z3 hv2-white-section">
+    <!-- ========== 3. FULL PLAN COMPARISON ========== -->
+    <section id="pricingComparison" class="hv2-pricing-section hv2-white-section">
       <div class="hv2-container">
         <div class="hv2-conv-header">
           <span class="hv2-eyebrow">Comparison</span>
           <h2 class="hv2-conv-heading">Every capability, by plan.</h2>
         </div>
 
-        <div class="hv2-fx-catalogue">
-          <details class="hv2-fx-catalogue-group" open>
-            <summary class="hv2-fx-catalogue-group-summary">
-              <span class="hv2-fx-catalogue-group-title">Plan the week</span>
-              <span class="hv2-fx-catalogue-group-default">Web &middot; Free</span>
-            </summary>
-            <ul class="hv2-fx-catalogue-list">
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Weekly Plan</span><span class="hv2-fx-catalogue-desc">Set the week's focus and outcomes.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Stop List</span><span class="hv2-fx-catalogue-desc">Decide what this week skips.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Lock plan</span><span class="hv2-fx-catalogue-desc">Confirm the week; changes need a reason.</span></span></li>
-            </ul>
-          </details>
-
-          <details class="hv2-fx-catalogue-group">
-            <summary class="hv2-fx-catalogue-group-summary">
-              <span class="hv2-fx-catalogue-group-title">Protect today and follow through</span>
-              <span class="hv2-fx-catalogue-group-default">Web &middot; Free</span>
-            </summary>
-            <ul class="hv2-fx-catalogue-list">
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Today Focus</span><span class="hv2-fx-catalogue-desc">One clear focus and outcome each day.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Follow-up Tracker</span><span class="hv2-fx-catalogue-desc">Keeps promises and replies from going cold.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Rescue Me</span><span class="hv2-fx-catalogue-desc">A structured next move when overwhelmed.</span></span></li>
-            </ul>
-          </details>
-
-          <details class="hv2-fx-catalogue-group">
-            <summary class="hv2-fx-catalogue-group-summary">
-              <span class="hv2-fx-catalogue-group-title">WhatsApp and AI</span>
-              <span class="hv2-fx-catalogue-group-default">WhatsApp &middot; Pro</span>
-            </summary>
-            <ul class="hv2-fx-catalogue-list">
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Pocket Chief</span><span class="hv2-fx-catalogue-desc">The operating rhythm, in WhatsApp.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Morning Brief</span><span class="hv2-fx-catalogue-desc">Focus, priorities and follow-ups each morning.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Proactive check-ins</span><span class="hv2-fx-catalogue-desc">A check-in when things go quiet.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Voice-note logging</span><span class="hv2-fx-catalogue-desc">Log updates by voice note.</span></span><span class="hv2-fx-catalogue-badges"><span class="hv2-badge-platform">WhatsApp</span><span class="hv2-badge-state hv2-badge-state--operator">Operator</span></span></li>
-            </ul>
-          </details>
-
-          <details class="hv2-fx-catalogue-group">
-            <summary class="hv2-fx-catalogue-group-summary">
-              <span class="hv2-fx-catalogue-group-title">Usage and support</span>
-              <span class="hv2-fx-catalogue-group-default">All plans</span>
-            </summary>
-            <ul class="hv2-fx-catalogue-list">
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Usage visibility</span><span class="hv2-fx-catalogue-desc">See where you stand at a glance.</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Highest usage allowance</span><span class="hv2-fx-catalogue-desc">The most AI and WhatsApp usage.</span></span><span class="hv2-fx-catalogue-badges"><span class="hv2-badge-state hv2-badge-state--operator">Operator</span></span></li>
-              <li class="hv2-fx-catalogue-row"><span class="hv2-fx-catalogue-text"><span class="hv2-fx-catalogue-name">Advanced operating support</span><span class="hv2-fx-catalogue-desc">Priority help as your usage grows.</span></span><span class="hv2-fx-catalogue-badges"><span class="hv2-badge-state hv2-badge-state--operator">Operator</span></span></li>
-            </ul>
-          </details>
+        <div class="hv2-compare-group">
+          <h3 class="hv2-compare-group-title">Plan and focus</h3>
+          <div class="hv2-compare-table-wrap">
+            <table class="hv2-compare-table">
+              <thead>
+                <tr>
+                  <th scope="col">Capability</th>
+                  <th scope="col">Free</th>
+                  <th scope="col">Pro</th>
+                  <th scope="col">Operator</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" data-label="Capability">Weekly Plan</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Today Focus</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Commitments</th>
+                  <td data-label="Free">Up to 3 active</td>
+                  <td data-label="Pro">Unlimited</td>
+                  <td data-label="Operator">Unlimited</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Follow-up Tracker</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Parking Lot</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Launch Checklist</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Stop List</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Switch Challenge</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+
+        <div class="hv2-compare-group">
+          <h3 class="hv2-compare-group-title">Review and recovery</h3>
+          <div class="hv2-compare-table-wrap">
+            <table class="hv2-compare-table">
+              <thead>
+                <tr>
+                  <th scope="col">Capability</th>
+                  <th scope="col">Free</th>
+                  <th scope="col">Pro</th>
+                  <th scope="col">Operator</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" data-label="Capability">Friday Review</th>
+                  <td data-label="Free"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Rescue Me</th>
+                  <td data-label="Free">1 session / week</td>
+                  <td data-label="Pro">Unlimited</td>
+                  <td data-label="Operator">Unlimited</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="hv2-compare-group">
+          <h3 class="hv2-compare-group-title">AI</h3>
+          <div class="hv2-compare-table-wrap">
+            <table class="hv2-compare-table">
+              <thead>
+                <tr>
+                  <th scope="col">Capability</th>
+                  <th scope="col">Free</th>
+                  <th scope="col">Pro</th>
+                  <th scope="col">Operator</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" data-label="Capability">AI Chat allowance</th>
+                  <td data-label="Free">20 / month</td>
+                  <td data-label="Pro">100 / month</td>
+                  <td data-label="Operator">300 / month</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="hv2-compare-group">
+          <h3 class="hv2-compare-group-title">WhatsApp</h3>
+          <div class="hv2-compare-table-wrap">
+            <table class="hv2-compare-table">
+              <thead>
+                <tr>
+                  <th scope="col">Capability</th>
+                  <th scope="col">Free</th>
+                  <th scope="col">Pro</th>
+                  <th scope="col">Operator</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" data-label="Capability">Pocket Chief access</th>
+                  <td data-label="Free"><span class="hv2-compare-cross" aria-hidden="true">&#8213;</span> Not included</td>
+                  <td data-label="Pro"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">WhatsApp command allowance</th>
+                  <td data-label="Free">Not applicable</td>
+                  <td data-label="Pro">100 / month</td>
+                  <td data-label="Operator">300 / month</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Morning Brief allowance</th>
+                  <td data-label="Free">Not applicable</td>
+                  <td data-label="Pro">Up to 30 / month</td>
+                  <td data-label="Operator">Unlimited</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-label="Capability">Voice-note logging</th>
+                  <td data-label="Free"><span class="hv2-compare-cross" aria-hidden="true">&#8213;</span> Not included</td>
+                  <td data-label="Pro"><span class="hv2-compare-cross" aria-hidden="true">&#8213;</span> Not included</td>
+                  <td data-label="Operator"><span class="hv2-compare-check" aria-hidden="true">&#10003;</span> Included</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- ========== 4. HOW USAGE WORKS ========== -->
-    <section id="pricingUsage" class="sc-cover-shell sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z4 hv2-dark-section">
+    <!-- ========== 4. WEB AND WHATSAPP EXPLANATION ========== -->
+    <section id="pricingWebWhatsapp" class="hv2-pricing-section hv2-dark-section">
+      <div class="hv2-container">
+        <div class="hv2-conv-header">
+          <span class="hv2-eyebrow">Web and WhatsApp</span>
+          <h2 class="hv2-conv-heading">One plan, two places to run it.</h2>
+          <p class="hv2-conv-copy">Free is primarily web. Pro introduces standing WhatsApp access. Operator adds voice logging and the highest allowance. WhatsApp does not replace the web app — it carries the same week into a faster, more immediate place to act on it.</p>
+        </div>
+
+        <div class="hv2-platform-grid">
+          <div class="hv2-platform-col">
+            <h3 class="hv2-platform-col-title">Web Command Center</h3>
+            <p class="hv2-platform-col-badge">Available on every plan</p>
+            <ul class="hv2-platform-col-list">
+              <li>Weekly Plan</li>
+              <li>Today Focus</li>
+              <li>Commitments</li>
+              <li>Follow-ups</li>
+              <li>Friday Review</li>
+              <li>AI Chat</li>
+            </ul>
+          </div>
+
+          <div class="hv2-platform-col">
+            <h3 class="hv2-platform-col-title">Pocket Chief in WhatsApp</h3>
+            <p class="hv2-platform-col-badge">Pro and Operator</p>
+            <ul class="hv2-platform-col-list">
+              <li>WhatsApp commands</li>
+              <li>Logging updates</li>
+              <li>Morning Brief</li>
+              <li>Fast interaction with the current week</li>
+              <li>Voice notes <span class="hv2-badge-state hv2-badge-state--operator">Operator</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 5. TRIAL EXPLANATION ========== -->
+    <section id="pricingTrial" class="hv2-pricing-section hv2-white-section">
+      <div class="hv2-container">
+        <div class="hv2-trial-panel">
+          <span class="hv2-eyebrow">WhatsApp trial</span>
+          <h2 class="hv2-conv-heading">Try Pocket Chief in WhatsApp for seven days.</h2>
+          <p class="hv2-conv-copy">Eligible Free users can activate a one-time seven-day WhatsApp trial. No card is required. The trial unlocks Pocket Chief commands and Morning Brief access, while your web-plan allowances remain unchanged.</p>
+
+          <ul class="hv2-trial-points">
+            <li>One-time only, per account</li>
+            <li>Available to eligible Free users</li>
+            <li>No card required</li>
+            <li>Manually activated from Settings or onboarding</li>
+            <li>WhatsApp-specific — commands and Morning Brief only</li>
+            <li>Evaluated at the Pro-tier WhatsApp command and Morning Brief allowance</li>
+            <li>Your Free web allowances, including AI Chat and Rescue Me, remain unchanged</li>
+            <li>Access ends automatically after seven days unless you upgrade</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 6. USAGE AND LIMITS ========== -->
+    <section id="pricingUsage" class="hv2-pricing-section hv2-dark-section">
       <div class="hv2-container">
         <div class="hv2-conv-header">
           <span class="hv2-eyebrow">How usage works</span>
           <h2 class="hv2-conv-heading">Planning is unlimited. AI actions have an allowance.</h2>
-          <p class="hv2-conv-copy">Building your Weekly Plan, logging Today Focus and running your Friday Review on the web are never limited. Usage allowances apply to AI-assisted actions — WhatsApp messages, Morning Briefs and proactive check-ins — and reset each month. Operator carries the highest allowance for heavier weekly execution.</p>
+          <p class="hv2-conv-copy">Building your Weekly Plan, logging Today Focus and running your Friday Review on the web are never limited. Usage allowances apply to AI-assisted actions and WhatsApp — AI Chat, WhatsApp commands and Morning Brief — and reset on the period shown below.</p>
         </div>
-      </div>
+
+        <div class="hv2-compare-table-wrap hv2-compare-table-wrap--usage">
+          <table class="hv2-compare-table hv2-compare-table--usage">
+            <thead>
+              <tr>
+                <th scope="col">Capability</th>
+                <th scope="col">Free</th>
+                <th scope="col">Pro</th>
+                <th scope="col">Operator</th>
+                <th scope="col">Reset</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row" data-label="Capability">AI Chat</th>
+                <td data-label="Free">20</td>
+                <td data-label="Pro">100</td>
+                <td data-label="Operator">300</td>
+                <td data-label="Reset">Monthly</td>
+              </tr>
+              <tr>
+                <th scope="row" data-label="Capability">WhatsApp commands</th>
+                <td data-label="Free">&#8213;</td>
+                <td data-label="Pro">100</td>
+                <td data-label="Operator">300</td>
+                <td data-label="Reset">Monthly</td>
+              </tr>
+              <tr>
+                <th scope="row" data-label="Capability">Morning Brief</th>
+                <td data-label="Free">&#8213;</td>
+                <td data-label="Pro">Up to 30</td>
+                <td data-label="Operator">Unlimited</td>
+                <td data-label="Reset">Monthly</td>
+              </tr>
+              <tr>
+                <th scope="row" data-label="Capability">Rescue Me</th>
+                <td data-label="Free">1</td>
+                <td data-label="Pro">Unlimited</td>
+                <td data-label="Operator">Unlimited</td>
+                <td data-label="Reset">Weekly</td>
+              </tr>
+              <tr>
+                <th scope="row" data-label="Capability">Active commitments</th>
+                <td data-label="Free">3</td>
+                <td data-label="Pro">Unlimited</td>
+                <td data-label="Operator">Unlimited</td>
+                <td data-label="Reset">Current total</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="hv2-usage-note">SoloChief limits proactive WhatsApp messages to protect quiet time and prevent notification overload.</p>
       </div>
     </section>
 
-    <!-- ========== 5. PLAN QUESTIONS ========== -->
-    <section id="pricingFaq" class="sc-cover-shell sc-cover-shell--wide sc-cover-shell--penultimate">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z5 hv2-white-section">
+    <!-- ========== 7. PRICING FAQ ========== -->
+    <section id="pricingFaq" class="hv2-pricing-section hv2-white-section">
       <div class="hv2-container hv2-faq-container">
         <div class="hv2-conv-header">
           <span class="hv2-eyebrow">Plan questions</span>
@@ -203,42 +485,54 @@
         </div>
         <div class="hv2-faq-list">
           <details class="hv2-faq-item" name="pricingFaqGroup" open>
-            <summary class="hv2-faq-q" id="pricingFaqQ1"><span>Which plan should I choose?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
-            <div class="hv2-faq-a-inner"><p>Start on Free to organise your week on web. Move to Pro when you want Pocket Chief in WhatsApp. Operator suits heavier weekly execution with the highest usage allowance.</p></div>
+            <summary class="hv2-faq-q" id="pricingFaqQ1"><span>Can I use SoloChief for free?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>Yes. Free includes the full Web Command Center — Weekly Plan, Today Focus, Follow-up Tracker, Parking Lot, Launch Checklist, Stop List, Switch Challenge and Friday Review — with 20 AI Chat actions a month and one Rescue Me session a week. It does not expire and no card is required.</p></div>
           </details>
           <details class="hv2-faq-item" name="pricingFaqGroup">
-            <summary class="hv2-faq-q" id="pricingFaqQ2"><span>Can I change or cancel my plan?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
-            <div class="hv2-faq-a-inner"><p>Yes, anytime from Settings. Cancelling keeps access until your current billing period ends. More in the <a href="/faq/">full FAQ</a>.</p></div>
+            <summary class="hv2-faq-q" id="pricingFaqQ2"><span>Is the seven-day trial a full Pro trial?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>No. The seven-day trial is WhatsApp-specific. It unlocks Pocket Chief commands and Morning Brief at the Pro-tier allowance while you stay on the Free plan. Your web AI Chat allowance and Rescue Me limit are unaffected. <a href="#pricingTrial">See the trial section</a> for details.</p></div>
           </details>
           <details class="hv2-faq-item" name="pricingFaqGroup">
-            <summary class="hv2-faq-q" id="pricingFaqQ3"><span>Is Operator available now?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
-            <div class="hv2-faq-a-inner"><p>Yes, as an early access plan at $39/month. Some capabilities continue to roll out as the plan matures.</p></div>
+            <summary class="hv2-faq-q" id="pricingFaqQ3"><span>Do I need a card for the WhatsApp trial?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>No. The trial is activated manually from Settings or onboarding and does not require a card.</p></div>
+          </details>
+          <details class="hv2-faq-item" name="pricingFaqGroup">
+            <summary class="hv2-faq-q" id="pricingFaqQ4"><span>What happens when the trial ends?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>WhatsApp access ends automatically after seven days unless you upgrade to Pro or Operator. The trial is one-time only, per account.</p></div>
+          </details>
+          <details class="hv2-faq-item" name="pricingFaqGroup">
+            <summary class="hv2-faq-q" id="pricingFaqQ5"><span>What is the difference between Pro and Operator?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>Operator includes everything in Pro, plus voice-note logging in WhatsApp, a higher AI Chat and WhatsApp command allowance (300 versus 100 a month), and an unlimited Morning Brief allowance instead of Pro's 30 a month.</p></div>
+          </details>
+          <details class="hv2-faq-item" name="pricingFaqGroup">
+            <summary class="hv2-faq-q" id="pricingFaqQ6"><span>Does Operator include unlimited everything?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>Not everything. Morning Brief, commitments and Rescue Me are unlimited on Operator, and AI Chat and WhatsApp commands carry a higher monthly allowance than Pro. Proactive WhatsApp messages are capped the same way on every plan to protect quiet time.</p></div>
+          </details>
+          <details class="hv2-faq-item" name="pricingFaqGroup">
+            <summary class="hv2-faq-q" id="pricingFaqQ7"><span>Can I cancel or downgrade?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>You can manage your subscription from billing settings. Your access follows the active subscription state reported by the billing provider.</p></div>
+          </details>
+          <details class="hv2-faq-item" name="pricingFaqGroup">
+            <summary class="hv2-faq-q" id="pricingFaqQ8"><span>Does WhatsApp replace the Web Command Center?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+            <div class="hv2-faq-a-inner"><p>No. Pocket Chief in WhatsApp carries the same week into a faster, more immediate place to act on it. The Web Command Center remains the full planning and review system on every plan.</p></div>
           </details>
         </div>
       </div>
-      </div>
     </section>
 
-    <!-- FINAL CTA — sliding cover panel, rises over Plan Questions, LAST
-         panel in the Pricing stack. Must be inside <main>, directly
-         after Plan Questions' shell — the CSS overlap contract relies
-         on the adjacent-sibling combinator (.sc-cover-shell +
-         .sc-cover-shell), which only matches true DOM siblings; placing
-         this outside <main> silently broke the negative margin-top
-         pull. Releases directly into the normal-flow footer below. -->
-    <section id="pricingFinalCta" class="sc-cover-shell sc-cover-shell--wide sc-cover-shell--final">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z6 hv2-dark-section">
+    <!-- FINAL CTA — plain normal-flow section (no sliding cover panel).
+         Releases directly into the normal-flow footer below. -->
+    <section id="pricingFinalCta" class="hv2-pricing-section hv2-dark-section">
       <div class="hv2-container">
         <div class="hv2-final-cta-panel">
-          <span class="hv2-eyebrow">Ready when you are</span>
-          <h2 class="hv2-final-cta-heading">Start free today.</h2>
-          <p class="hv2-final-cta-copy">Set up your first Weekly Plan in minutes. Upgrade to Pro or Operator whenever the week needs more.</p>
+          <span class="hv2-eyebrow">Start with the week in front of you</span>
+          <h2 class="hv2-final-cta-heading">Build the operating rhythm first. Upgrade when you need more reach.</h2>
+          <p class="hv2-final-cta-copy">Begin on the web for free. Add Pocket Chief in WhatsApp when SoloChief becomes part of daily execution.</p>
           <div class="hv2-final-cta-actions">
             <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-final-cta-primary">Start free</a>
             <a href="/features/" class="hv2-conv-link">Explore features <span aria-hidden="true">&rarr;</span></a>
           </div>
         </div>
-      </div>
       </div>
     </section>
 
