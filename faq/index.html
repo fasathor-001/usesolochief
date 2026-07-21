@@ -49,8 +49,10 @@
 
   <main id="hv2Top">
 
-    <!-- ========== 1. HERO ========== -->
-    <section class="hv2-fx-hero hv2-dark-section">
+    <!-- ========== 1. HERO — compact, like Pricing: FAQ is a lookup page,
+         not a narrative scroll, so the hero shouldn't force the shared
+         full-viewport min-height:100svh lock. ========== -->
+    <section class="hv2-fx-hero hv2-fx-hero--compact hv2-dark-section">
       <div class="hv2-container hv2-fx-hero-inner">
         <div class="hv2-fx-hero-copy">
           <span class="hv2-eyebrow">SoloChief Help</span>
@@ -71,9 +73,14 @@
       </div>
     </section>
 
-    <!-- ========== 2. GETTING STARTED ========== -->
-    <section id="faqGettingStarted" class="sc-cover-shell sc-cover-shell--first sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z2 hv2-white-section">
+    <!-- ========== 2. GETTING STARTED — plain normal-flow section (no
+         sliding cover-panel system). Matches the Pricing page's
+         approach: a lookup/reference page should let the user reach
+         every question by scrolling its own natural height, not by
+         scrolling through a fixed per-category scroll runway.
+         .hv2-pricing-section is a shared normal-flow-section padding
+         utility, reused here despite the name (Pricing was first). ========== -->
+    <section id="faqGettingStarted" class="hv2-pricing-section hv2-pricing-section--first hv2-white-section">
       <div class="hv2-container">
         <div class="hv2-faq-cat-grid">
           <div class="hv2-faq-cat-intro">
@@ -98,12 +105,10 @@
           </div>
         </div>
       </div>
-      </div>
     </section>
 
     <!-- ========== 3. WEB AND WHATSAPP ========== -->
-    <section id="faqWebWhatsapp" class="sc-cover-shell sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z3 hv2-white-section">
+    <section id="faqWebWhatsapp" class="hv2-pricing-section hv2-white-section">
       <div class="hv2-container">
         <div class="hv2-faq-cat-grid">
           <div class="hv2-faq-cat-intro">
@@ -132,12 +137,10 @@
           </div>
         </div>
       </div>
-      </div>
     </section>
 
     <!-- ========== 4. PLANS AND USAGE ========== -->
-    <section id="faqPlansUsage" class="sc-cover-shell sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z4 hv2-white-section">
+    <section id="faqPlansUsage" class="hv2-pricing-section hv2-white-section">
       <div class="hv2-container">
         <div class="hv2-faq-cat-grid">
           <div class="hv2-faq-cat-intro">
@@ -162,12 +165,10 @@
           </div>
         </div>
       </div>
-      </div>
     </section>
 
     <!-- ========== 5. DATA AND PRIVACY ========== -->
-    <section id="faqDataPrivacy" class="sc-cover-shell sc-cover-shell--wide">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z5 hv2-white-section">
+    <section id="faqDataPrivacy" class="hv2-pricing-section hv2-white-section">
       <div class="hv2-container">
         <div class="hv2-faq-cat-grid">
           <div class="hv2-faq-cat-intro">
@@ -192,12 +193,10 @@
           </div>
         </div>
       </div>
-      </div>
     </section>
 
     <!-- ========== 6. PRODUCT BEHAVIOUR ========== -->
-    <section id="faqProductBehaviour" class="sc-cover-shell sc-cover-shell--wide sc-cover-shell--penultimate">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z6 hv2-white-section">
+    <section id="faqProductBehaviour" class="hv2-pricing-section hv2-white-section">
       <div class="hv2-container">
         <div class="hv2-faq-cat-grid">
           <div class="hv2-faq-cat-intro">
@@ -226,19 +225,11 @@
           </div>
         </div>
       </div>
-      </div>
     </section>
 
-    <!-- FINAL CTA — sliding cover panel, rises over Product Behaviour,
-         LAST panel in the FAQ stack. Must be inside <main>, directly
-         after Product Behaviour's shell — the CSS overlap contract
-         relies on the adjacent-sibling combinator (.sc-cover-shell +
-         .sc-cover-shell), which only matches true DOM siblings; placing
-         this outside <main> silently broke the negative margin-top
-         pull (computed margin-top was 0px, confirmed live). Releases
-         directly into the normal-flow footer below. -->
-    <section id="faqFinalCta" class="sc-cover-shell sc-cover-shell--wide sc-cover-shell--final">
-      <div class="sc-cover-panel sc-cover-panel--wide hv2-fx-cover-panel sc-cover-panel--z7 hv2-dark-section">
+    <!-- FINAL CTA — plain normal-flow section (no sliding cover panel).
+         Releases directly into the normal-flow footer below. -->
+    <section id="faqFinalCta" class="hv2-pricing-section hv2-dark-section">
       <div class="hv2-container">
         <div class="hv2-final-cta-panel">
           <span class="hv2-eyebrow">Still have a question?</span>
@@ -249,7 +240,6 @@
             <a href="/pricing/" class="hv2-conv-link">Compare plans <span aria-hidden="true">&rarr;</span></a>
           </div>
         </div>
-      </div>
       </div>
     </section>
 

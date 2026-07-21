@@ -1337,7 +1337,17 @@
 .hv2-fx-cover-panel {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* Was justify-content: center — with min-height:100svh (below) that
+     vertically centred every panel's content inside a full-viewport
+     box regardless of how short the content was, leaving equal dead
+     space above and below (confirmed live: Features Operating System
+     heading sat ~180px below its actual top padding at 1440x900).
+     flex-start lets each panel's own padding-top (set per-panel below)
+     do the positioning instead — content now sits where its padding
+     places it, not re-centred afterward. Panels that want a
+     deliberately centred moment set their own justify-content
+     override (see .hv2-hiw below for the one place that still does). */
+  justify-content: flex-start;
 }
 
 /* top: var(--hv2-nav-height) was mathematically wrong for "slide to the
@@ -2430,7 +2440,7 @@
 .hv2-fx-hero-note {
   font-size: 0.75rem;
   color: var(--hv2-muted);
-  margin: 1rem 0 0;
+  margin: 0.5rem 0 0;
 }
 
 /* ---------- Comparison: real <table> per capability group, not an
@@ -2625,15 +2635,15 @@
    heading and cards read as one compact commercial unit rather than
    two separate scroll beats. */
 .hv2-pricing-section--first {
-  padding-top: 1.5rem;
+  padding-top: 0.5rem;
 }
 
 @media (min-width: 1024px) {
-  .hv2-pricing-section--first { padding-top: 2rem; }
+  .hv2-pricing-section--first { padding-top: 0.75rem; }
 }
 
 .hv2-pricing-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 /* ---------- Trust and Privacy ---------- */
@@ -3122,17 +3132,23 @@
 .hv2-fx-cover-panel {
   background: var(--hv2-bg);
   overflow: clip;
-  /* Deliberate distance from the rounded top edge to the section
-     heading. */
-  padding-top: clamp(4rem, 7vw, 6.5rem);
+  /* Distance from the rounded top edge to the section heading. Was
+     clamp(4rem, 7vw, 6.5rem) — combined with the nav-clearance rule
+     below that put the heading ~234px from the panel's pinned top at
+     1440px (measured), well past the ~80-130px target once the
+     vertical-centering bug (see .hv2-fx-cover-panel's justify-content
+     above) was fixed and the padding itself became the only thing
+     positioning content. Trimmed so nav-height + this lands inside
+     that range. */
+  padding-top: clamp(2rem, 3.5vw, 3rem);
 }
 
 /* Nav clearance, added exactly once on top of the panel's existing
-   design spacing (clamp(4rem, 7vw, 6.5rem) above) — not stacked on a
-   separate sticky offset. Source-order win over the base rule. */
+   design spacing above — not stacked on a separate sticky offset.
+   Source-order win over the base rule. */
 @media (min-width: 1280px) {
   .hv2-fx-cover-panel {
-    padding-top: calc(var(--hv2-nav-height) + clamp(4rem, 7vw, 6.5rem));
+    padding-top: calc(var(--hv2-nav-height) + clamp(2rem, 3.5vw, 3rem));
   }
 }
 
@@ -3198,10 +3214,15 @@
    padding tuned for the taller Features/FAQ hero, while keeping enough
    top padding to clear the fixed nav. Equal specificity to .hv2-fx-hero
    (single class each) — wins on source order since it's declared after. */
-.hv2-fx-hero--compact { padding: 6.5rem 0 3rem; }
+/* padding-top is nav-height(65px) + ~95px breathing room, landing the
+   eyebrow at ~80-110px below the fixed nav (target range) — measured
+   directly, not guessed: 65px nav + this padding minus the nav's own
+   height is the actual visible gap once nav overlays the fixed header
+   band. */
+.hv2-fx-hero--compact { padding: 8rem 0 1.5rem; }
 
 @media (min-width: 1024px) {
-  .hv2-fx-hero--compact { padding: 7.5rem 0 3rem; }
+  .hv2-fx-hero--compact { padding: 10rem 0 1.5rem; }
 }
 
 @media (min-width: 1280px) {
@@ -3218,6 +3239,16 @@
 
 @media (min-width: 1024px) {
   .hv2-fx-hero-inner { grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: 2.5rem; }
+}
+
+/* Compact heroes (Pricing, FAQ) have no second-column visual — the
+   2-column grid above still reserved ~53% width for the copy,
+   wrapping the H1 across extra lines and inflating the hero's height
+   for no visual reason (measured: H1 alone was 175px tall at 1440px
+   from unnecessary wraps). Let the copy use the full width instead. */
+@media (min-width: 1024px) {
+  .hv2-fx-hero--compact .hv2-fx-hero-inner { grid-template-columns: 1fr; }
+  .hv2-fx-hero--compact .hv2-fx-hero-copy { max-width: 46rem; }
 }
 
 .hv2-fx-hero-h1 {
