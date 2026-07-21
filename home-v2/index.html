@@ -26,6 +26,7 @@
         <a href="/features/" class="hv2-nav-link">Features</a>
         <a href="#hv2HowItWorks" class="hv2-nav-link">How it works</a>
         <a href="/pricing/" class="hv2-nav-link">Pricing</a>
+        <a href="/faq/" class="hv2-nav-link">FAQ</a>
         <a href="https://solochief.app/auth/login" class="hv2-nav-link">Sign in</a>
         <a href="https://solochief.app/auth/signup" class="hv2-nav-cta">Start free</a>
       </div>
@@ -40,6 +41,7 @@
       <a href="/features/">Features</a>
       <a href="#hv2HowItWorks">How it works</a>
       <a href="/pricing/">Pricing</a>
+      <a href="/faq/">FAQ</a>
       <a href="https://solochief.app/auth/login">Sign in</a>
       <a href="https://solochief.app/auth/signup">Start free</a>
     </div>
@@ -143,7 +145,8 @@
     <!-- Film: a distinct cover-slide panel — rises and covers the hero
          using the same .hv2-cover-panel mechanism as How It Works and
          the paired chapters. -->
-    <section id="hv2Film" class="hv2-film hv2-cover-panel hv2-cover-panel--film">
+    <section id="hv2Film" class="hv2-cover-shell">
+      <div class="hv2-film hv2-cover-panel hv2-cover-panel--film">
       <div class="hv2-film-bg-word" aria-hidden="true">OPERATE</div>
       <div class="hv2-container hv2-film-inner">
         <div class="hv2-film-copy">
@@ -178,11 +181,13 @@
           <span aria-hidden="true">&#8595;</span>
         </a>
       </div>
+      </div>
     </section>
 
     <!-- How It Works: rises directly over the Film panel using the same
          shared cover-panel mechanism -->
-    <section id="hv2HowItWorks" class="hv2-hiw hv2-cover-panel hv2-cover-panel--hiw">
+    <section id="hv2HowItWorks" class="hv2-cover-shell">
+      <div class="hv2-hiw hv2-cover-panel hv2-cover-panel--hiw">
       <div class="hv2-container hv2-hiw-inner">
         <div class="hv2-hiw-header">
           <span class="hv2-eyebrow hv2-reveal" data-hv2-stagger="0">How SoloChief Works</span>
@@ -212,11 +217,13 @@
           </div>
         </div>
       </div>
+      </div>
     </section>
 
     <!-- PLAN: real SoloChief Weekly Plan capture — its own independent
          cover panel (not sharing a chapter/min-height budget with FOCUS). -->
-    <section id="hv2Plan" class="hv2-cover-panel hv2-cover-panel--plan hv2-pf">
+    <section id="hv2Plan" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--plan hv2-pf">
       <div class="hv2-container hv2-pf-scene hv2-pf-scene--plan">
         <div class="hv2-pf-copy hv2-reveal" data-hv2-stagger="0">
           <span class="hv2-eyebrow">Plan</span>
@@ -236,11 +243,14 @@
             width="1800" height="1227" loading="lazy" class="hv2-pf-img">
         </figure>
       </div>
+      </div>
     </section>
 
     <!-- FOCUS: real SoloChief Today Focus capture — its own independent
          cover panel, mirrored layout from PLAN. -->
-    <section id="hv2Focus" class="hv2-cover-panel hv2-cover-panel--focus hv2-pf">
+    <section id="hv2Focus" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--focus hv2-pf">
+      <p class="hv2-environment-word hv2-environment-word--focus" aria-hidden="true">SOLOCHIEF</p>
       <div class="hv2-container hv2-pf-scene hv2-pf-scene--focus">
         <figure class="hv2-pf-shot hv2-pf-shot--focus hv2-reveal" data-hv2-stagger="0">
           <img
@@ -260,73 +270,64 @@
           </ul>
         </div>
       </div>
-    </section>
-
-    <!-- Cinematic cover-slide product story ends at FOCUS. Pricing below
-         is normal document flow — the breathing room before its heading
-         is Pricing's own top padding plus the background-colour step
-         from FOCUS's panel tone; no extra divider element needed. -->
-
-    <!-- PRICING PREVIEW: normal flow, content-driven height — compact,
-         locked prices only. Full comparison lives on the standalone
-         /pricing/ page (not built in this task). -->
-    <section id="hv2PricingPreview" class="hv2-conv-section hv2-pricing-section hv2-dark-section">
-      <div class="hv2-container">
-        <div class="hv2-conv-header hv2-reveal" data-hv2-stagger="0">
-          <span class="hv2-eyebrow">Pricing</span>
-          <h2 class="hv2-conv-heading">Start free.<br>Upgrade when SoloChief becomes part of your operating week.</h2>
-        </div>
-
-        <div class="hv2-pricing-grid">
-          <div class="hv2-pricing-card hv2-reveal" data-hv2-stagger="1">
-            <h3 class="hv2-pricing-name">Free</h3>
-            <p class="hv2-pricing-price">$0</p>
-            <ul class="hv2-pricing-points">
-              <li>Web Command Center</li>
-              <li>Weekly planning</li>
-              <li>Today Focus</li>
-              <li>Core review workflow</li>
-            </ul>
-            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
-          </div>
-
-          <div class="hv2-pricing-card hv2-pricing-card--highlight hv2-reveal" data-hv2-stagger="2">
-            <span class="hv2-pricing-badge">Most popular</span>
-            <h3 class="hv2-pricing-name">Pro</h3>
-            <p class="hv2-pricing-price">$19<span>/month</span></p>
-            <ul class="hv2-pricing-points">
-              <li>Everything in Free</li>
-              <li>Pocket Chief in WhatsApp</li>
-              <li>Higher AI and WhatsApp usage</li>
-              <li>Proactive briefs and check-ins</li>
-            </ul>
-            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--solid">Start free</a>
-          </div>
-
-          <div class="hv2-pricing-card hv2-reveal" data-hv2-stagger="3">
-            <span class="hv2-pricing-badge hv2-pricing-badge--outline">Early access</span>
-            <h3 class="hv2-pricing-name">Operator</h3>
-            <p class="hv2-pricing-price">$39<span>/month</span></p>
-            <ul class="hv2-pricing-points">
-              <li>Everything in Pro</li>
-              <li>Highest usage allowance</li>
-              <li>Advanced operating support</li>
-              <li>Early access to selected capabilities</li>
-            </ul>
-            <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
-          </div>
-        </div>
-
-        <div class="hv2-conv-footline hv2-reveal" data-hv2-stagger="4">
-          <a href="/pricing/" class="hv2-conv-link">Compare all plans <span aria-hidden="true">&rarr;</span></a>
-        </div>
       </div>
     </section>
 
-    <!-- TRUST AND PRIVACY: normal flow, concise editorial band — only
-         verified claims, no encryption, compliance or certification
-         language unless confirmed against the product. -->
-    <section id="hv2Trust" class="hv2-conv-section hv2-trust-section hv2-dark-section">
+    <!-- PRICING PREVIEW: sliding cover panel, rises over Focus — compact,
+         locked prices only. Full comparison lives on the standalone
+         /pricing/ page. -->
+    <section id="hv2PricingPreview" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--pricing">
+      <div class="hv2-container">
+        <div class="hv2-conv-2col">
+          <div class="hv2-conv-2col-copy hv2-reveal" data-hv2-stagger="0">
+            <span class="hv2-eyebrow">Choose your level of support</span>
+            <h2 class="hv2-conv-heading">Start with structure. Add your Chief when you need it.</h2>
+            <p class="hv2-conv-copy">Use SoloChief free on the web, carry it into WhatsApp with Pro, or unlock the highest operating support with Operator.</p>
+            <div class="hv2-conv-footline">
+              <a href="/pricing/" class="hv2-conv-link">Compare every feature <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </div>
+
+          <div class="hv2-pricing-preview-stack hv2-reveal" data-hv2-stagger="1">
+            <div class="hv2-pricing-preview-card">
+              <div>
+                <h3 class="hv2-pricing-preview-name">Free</h3>
+                <p class="hv2-pricing-preview-price">$0</p>
+              </div>
+              <p class="hv2-pricing-preview-purpose">Run the full week in the Web Command Center &mdash; planning, focus and review.</p>
+              <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+            </div>
+
+            <div class="hv2-pricing-preview-card hv2-pricing-preview-card--highlight">
+              <div>
+                <h3 class="hv2-pricing-preview-name">Pro <span class="hv2-pricing-badge">Most popular</span></h3>
+                <p class="hv2-pricing-preview-price">$19<span>/month</span></p>
+              </div>
+              <p class="hv2-pricing-preview-purpose">Everything in Free, plus Pocket Chief in WhatsApp and proactive briefs.</p>
+              <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--solid">Start free</a>
+            </div>
+
+            <div class="hv2-pricing-preview-card">
+              <div>
+                <h3 class="hv2-pricing-preview-name">Operator <span class="hv2-pricing-badge hv2-pricing-badge--outline">Early access</span></h3>
+                <p class="hv2-pricing-preview-price">$39<span>/month</span></p>
+              </div>
+              <p class="hv2-pricing-preview-purpose">Everything in Pro, plus voice-note logging and the highest usage allowance.</p>
+              <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- TRUST AND PRIVACY: sliding cover panel, rises over Pricing —
+         concise editorial band — only verified claims, no encryption,
+         compliance or certification language unless confirmed against
+         the product. -->
+    <section id="hv2Trust" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--trust">
       <div class="hv2-container hv2-trust-layout">
         <div class="hv2-conv-header hv2-conv-header--left hv2-reveal" data-hv2-stagger="0">
           <span class="hv2-eyebrow">Built for your operating context</span>
@@ -340,189 +341,116 @@
 
         <ul class="hv2-trust-points hv2-reveal" data-hv2-stagger="1">
           <li>
-            <span class="hv2-trust-point-title">Private by default</span>
+            <span class="hv2-trust-point-num" aria-hidden="true">01</span>
+            <span class="hv2-trust-point-title">You stay in control</span>
             <span class="hv2-trust-point-copy">Your commitments and conversations are used to run your week, not shared publicly.</span>
           </li>
           <li>
-            <span class="hv2-trust-point-title">Controlled access</span>
-            <span class="hv2-trust-point-copy">Authentication is handled securely and access to your data is controlled.</span>
+            <span class="hv2-trust-point-num" aria-hidden="true">02</span>
+            <span class="hv2-trust-point-title">Your week is not rewritten silently</span>
+            <span class="hv2-trust-point-copy">Changes require a reason &mdash; nothing quietly replaces your plan.</span>
           </li>
           <li>
-            <span class="hv2-trust-point-title">No public sharing</span>
-            <span class="hv2-trust-point-copy">Your data is not sold or used for advertising.</span>
+            <span class="hv2-trust-point-num" aria-hidden="true">03</span>
+            <span class="hv2-trust-point-title">Your information is not sold</span>
+            <span class="hv2-trust-point-copy">Your data is not sold or used for advertising, ever.</span>
           </li>
           <li>
-            <span class="hv2-trust-point-title">Clear account controls</span>
-            <span class="hv2-trust-point-copy">Manage your account and cancel from Settings at any time.</span>
+            <span class="hv2-trust-point-num" aria-hidden="true">04</span>
+            <span class="hv2-trust-point-title">WhatsApp and web stay connected</span>
+            <span class="hv2-trust-point-copy">One account, one plan, controlled from Settings at any time.</span>
           </li>
+          <li class="hv2-trust-proof">Authentication is handled securely, and access to your data is controlled at every step.</li>
         </ul>
       </div>
-    </section>
-
-    <!-- FAQ: normal document flow, not a cover panel — keeps the page
-         ending light instead of stacking another full-height slide. -->
-    <section id="hv2Faq" class="hv2-faq hv2-light-section">
-      <div class="hv2-container hv2-faq-container">
-        <div class="hv2-conv-header hv2-reveal" data-hv2-stagger="0">
-          <span class="hv2-eyebrow">FAQ</span>
-          <h2 class="hv2-conv-heading">Frequently asked questions</h2>
-        </div>
-
-        <div class="hv2-faq-list hv2-reveal" data-hv2-stagger="1">
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA1" id="hv2FaqQ1">
-                <span>What is SoloChief?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA1" role="region" aria-labelledby="hv2FaqQ1">
-              <div class="hv2-faq-a-inner">
-                <p>SoloChief is a personal Chief of Staff that combines weekly planning, daily focus, follow-up tracking, and a morning brief in one system, so you always know what matters next.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA2" id="hv2FaqQ2">
-                <span>Is SoloChief another task manager?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA2" role="region" aria-labelledby="hv2FaqQ2">
-              <div class="hv2-faq-a-inner">
-                <p>No. Most productivity tools are pull-based — you have to go check them. SoloChief is push-based: it sends your daily focus and follow-ups instead of waiting for you to open a list.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA3" id="hv2FaqQ3">
-                <span>How does SoloChief work with WhatsApp?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA3" role="region" aria-labelledby="hv2FaqQ3">
-              <div class="hv2-faq-a-inner">
-                <p>Pocket Chief connects to WhatsApp from Settings — tap Connect WhatsApp and send the pre-filled message to activate it on your number. No separate app or manual setup.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA4" id="hv2FaqQ4">
-                <span>Can I use SoloChief without WhatsApp?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA4" role="region" aria-labelledby="hv2FaqQ4">
-              <div class="hv2-faq-a-inner">
-                <p>Yes. The web Command Center is free and fully usable on its own. WhatsApp, through Pocket Chief, is an optional layer available on Pro.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA5" id="hv2FaqQ5">
-                <span>What does SoloChief remember?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA5" role="region" aria-labelledby="hv2FaqQ5">
-              <div class="hv2-faq-a-inner">
-                <p>SoloChief keeps track of your commitments, follow-ups and weekly context so you don't have to hold it all yourself. The exact scope of what's retained is still being refined — check Settings for current detail.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA6" id="hv2FaqQ6">
-                <span>Is my information private?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA6" role="region" aria-labelledby="hv2FaqQ6">
-              <div class="hv2-faq-a-inner">
-                <p>Yes. Authentication is handled securely, your data is protected with access controls, and we do not sell your data or use it for advertising.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA7" id="hv2FaqQ7">
-                <span>Which plan should I choose?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA7" role="region" aria-labelledby="hv2FaqQ7">
-              <div class="hv2-faq-a-inner">
-                <p>Start on Free to organize your week on web. Move to Pro when you want Pocket Chief in WhatsApp and proactive briefs. Operator suits heavier weekly execution with a higher usage allowance.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA8" id="hv2FaqQ8">
-                <span>Can I change or cancel my plan?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA8" role="region" aria-labelledby="hv2FaqQ8">
-              <div class="hv2-faq-a-inner">
-                <p>You can cancel anytime from Settings, and access continues until your current billing period ends. Upgrading or downgrading is managed from the same area — check Settings for current options.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv2-faq-item">
-            <h3>
-              <button type="button" class="hv2-faq-q" aria-expanded="false" aria-controls="hv2FaqA9" id="hv2FaqQ9">
-                <span>Is Operator available now?</span>
-                <span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span>
-              </button>
-            </h3>
-            <div class="hv2-faq-a-wrap" id="hv2FaqA9" role="region" aria-labelledby="hv2FaqQ9">
-              <div class="hv2-faq-a-inner">
-                <p>Operator is available now as an early access plan at $39/month. Some capabilities continue to roll out as the plan matures.</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
-    <!-- FINAL CTA: normal flow, follows FAQ directly — restrained, one
-         dominant action, no product mockups or heavy motion. -->
-    <section id="hv2FinalCta" class="hv2-final-cta hv2-dark-section">
-      <div class="hv2-container">
-        <div class="hv2-final-cta-panel hv2-reveal" data-hv2-stagger="0">
-          <h2 class="hv2-final-cta-heading">Plan your week.<br>Protect your focus.</h2>
-          <p class="hv2-final-cta-copy">Start with the Command Center. Bring SoloChief into WhatsApp when you are ready.</p>
-          <div class="hv2-final-cta-actions">
-            <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-final-cta-primary">Start free</a>
-            <a href="/features/" class="hv2-conv-link">Explore features <span aria-hidden="true">&rarr;</span></a>
+    <!-- FAQ PREVIEW: sliding cover panel, rises over Trust. Content is
+         taller than one viewport — min-height is a floor, not a cap, so
+         the panel grows to fit and its sticky hold releases only after
+         the last question has scrolled past. -->
+    <!-- FAQ PREVIEW: sliding cover panel, rises over Trust — deliberately
+         compact (5 questions, two-column), matching the height of every
+         other panel in the stack. The previous 9-question full list
+         rendered at 1851px tall (vs. ~900px everywhere else) — after it
+         released, the document didn't have enough remaining scroll room
+         for it to fully clear the viewport before the page ended, so it
+         stayed visible over the footer no matter how far the runway was
+         extended. Shrinking the content, not enlarging the runway
+         further, is the fix — the full 9-question list still lives on
+         the dedicated /faq/ page. -->
+    <section id="hv2Faq" class="hv2-cover-shell sc-cover-shell--penultimate">
+      <div class="hv2-cover-panel hv2-cover-panel--faq hv2-light-section">
+      <div class="hv2-container hv2-faq-container">
+        <div class="hv2-conv-2col">
+          <div class="hv2-conv-2col-copy hv2-reveal" data-hv2-stagger="0">
+            <span class="hv2-eyebrow">Questions before you begin</span>
+            <h2 class="hv2-conv-heading">Clear answers before you hand over your week.</h2>
+            <p class="hv2-conv-copy">The essentials, answered directly. Everything else — plans, WhatsApp, privacy and product behaviour — lives on the full FAQ.</p>
+            <div class="hv2-conv-footline">
+              <a href="/faq/" class="hv2-conv-link">Explore all questions <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </div>
+
+          <div class="hv2-faq-list hv2-faq-list--compact hv2-reveal" data-hv2-stagger="1">
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup" open>
+              <summary class="hv2-faq-q" id="hv2FaqQ1"><span>Is SoloChief free?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>Yes. The web Command Center is free and fully usable on its own — Weekly Plan, Today Focus, Follow-up Tracker and Friday Review.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ2"><span>How do web and WhatsApp work together?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>They share one plan and one focus. Pocket Chief, on Pro, carries that same context into WhatsApp.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ3"><span>Does SoloChief replace my existing tools?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>It replaces the planning and focus layer, not necessarily every tool. Most people run it alongside whatever they already use for deep work.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ4"><span>What happens during the trial?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>Free is not a time-limited trial — it stays free. Upgrade to Pro or Operator whenever the week needs more.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ5"><span>Is my data secure?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>Yes. Authentication is handled securely, access is controlled, and your data is never sold or used for advertising.</p></div>
+            </details>
           </div>
         </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA: sliding cover panel, rises over FAQ Preview — the
+         LAST panel in the Homepage stack. It gets a short bounded dwell
+         (hv2-cover-shell--final) then releases directly into the
+         normal-flow Footer — restrained, one dominant action, no
+         product mockups or heavy motion. -->
+    <section id="hv2FinalCta" class="hv2-cover-shell hv2-cover-shell--final">
+      <div class="hv2-cover-panel hv2-cover-panel--finalcta">
+      <p class="hv2-environment-word hv2-environment-word--finalcta" aria-hidden="true">SOLOCHIEF</p>
+      <div class="hv2-container">
+        <div class="hv2-final-cta-panel hv2-reveal" data-hv2-stagger="0">
+          <span class="hv2-eyebrow">Your week does not need another app to manage</span>
+          <h2 class="hv2-final-cta-heading">Plan clearly. Protect your focus. Keep moving.</h2>
+          <p class="hv2-final-cta-copy">SoloChief keeps the operating rhythm with you, on the web and in WhatsApp.</p>
+          <div class="hv2-final-cta-actions">
+            <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-final-cta-primary">Start free</a>
+            <a href="/features/" class="hv2-conv-link">See all features <span aria-hidden="true">&rarr;</span></a>
+          </div>
+          <p class="hv2-final-cta-note">No card required.</p>
+        </div>
+      </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="hv2-footer hv2-footer--separated hv2-footer-reveal hv2-dark-section">
-    <div class="hv2-footer-reveal-top">
-      <p class="hv2-footer-reveal-line">Plan the week. Protect the focus.</p>
-      <p class="hv2-footer-reveal-word" aria-hidden="true">SoloChief<span class="hv2-fx-accent-dot">.</span></p>
-    </div>
+  <footer class="hv2-footer hv2-footer--separated hv2-dark-section">
+    <p class="hv2-environment-word hv2-environment-word--footer" aria-hidden="true">SoloChief<span class="hv2-fx-accent-dot">.</span></p>
     <div class="hv2-container hv2-footer-inner">
       <div class="hv2-footer-brand">
         <a href="#hv2Top">SoloChief</a>
+        <p class="hv2-footer-tagline">Plan the week. Protect the focus.</p>
         <p>Built by Astor Stack Technologies</p>
         <p>&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
       </div>
@@ -533,6 +461,7 @@
           <ul>
             <li><a href="/features/">Features</a></li>
             <li><a href="/pricing/">Pricing</a></li>
+            <li><a href="/faq/">FAQ</a></li>
             <li><a href="/chief-of-staff">Chief of Staff</a></li>
             <li><a href="/productivity-system">Productivity System</a></li>
           </ul>
