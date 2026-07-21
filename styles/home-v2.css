@@ -3100,23 +3100,6 @@
   box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.6);
 }
 
-/* Clearly labelled stand-in for the two stages without a captured
-   screenshot yet — never a fabricated fake app screen, and never an
-   empty bordered box: the label and note make the pending-asset state
-   explicit. */
-.hv2-fx-map-visual--placeholder {
-  width: 100%;
-  min-height: 14rem;
-  flex-direction: column;
-  gap: 0.4rem;
-  border: 1px dashed var(--hv2-line);
-  border-radius: 0.75rem;
-  background: var(--hv2-panelhi);
-  color: var(--hv2-muted);
-  text-align: center;
-  padding: 2rem;
-}
-
 .hv2-fx-map-visual-label {
   font-size: 1rem;
   font-weight: 700;
@@ -3365,19 +3348,6 @@
   border-radius: 0.75rem;
   border: 1px solid var(--hv2-line);
   box-shadow: 0 24px 60px -32px rgba(0, 0, 0, 0.6);
-}
-
-.hv2-fx-demo-visual--placeholder {
-  width: 100%;
-  min-height: 14rem;
-  flex-direction: column;
-  gap: 0.4rem;
-  border: 1px dashed var(--hv2-line);
-  border-radius: 0.75rem;
-  background: var(--hv2-panelhi);
-  color: var(--hv2-muted);
-  text-align: center;
-  padding: 2rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
