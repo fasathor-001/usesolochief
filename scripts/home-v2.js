@@ -196,6 +196,8 @@
         return panelId ? document.getElementById(panelId) : null;
       });
 
+      var userInteracted = false;
+
       function activate(index, moveFocus) {
         tabs.forEach(function (tab, i) {
           var isActive = i === index;
@@ -207,42 +209,80 @@
         if (moveFocus) { tabs[index].focus(); }
       }
 
-      var initialIndex = tabs.findIndex(function (tab) {
-        return tab.getAttribute('aria-selected') === 'true';
-      });
-
       // Deep-link support: /features/#plan, #focus, #follow-up, #review
       // should land on that tab already active, not the default first tab
       // — matched against each tab's data-stage/data-demo attribute
       // (normalizing the URL's hyphenated "follow-up" to the attribute's
       // "followup", since hash fragments can't contain the ID lookup
-      // otherwise needs). Runs before the default activate() call so the
-      // matched tab, not tab 0, is what first paints.
-      var hashStage = window.location.hash
-        ? window.location.hash.slice(1).toLowerCase().replace(/-/g, '')
-        : '';
-      var hashIndex = hashStage
-        ? tabs.findIndex(function (tab) {
-            var stage = (tab.getAttribute('data-stage') || tab.getAttribute('data-demo') || '').toLowerCase();
-            return stage === hashStage;
-          })
-        : -1;
+      // otherwise needs).
+      function resolveHashIndex() {
+        var hashStage = window.location.hash
+          ? window.location.hash.slice(1).toLowerCase().replace(/-/g, '')
+          : '';
+        if (!hashStage) { return -1; }
+        return tabs.findIndex(function (tab) {
+          var stage = (tab.getAttribute('data-stage') || tab.getAttribute('data-demo') || '').toLowerCase();
+          return stage === hashStage;
+        });
+      }
 
-      activate(hashIndex !== -1 ? hashIndex : (initialIndex === -1 ? 0 : initialIndex), false);
-
-      if (hashIndex !== -1) {
+      function activateFromHash(index) {
         // The tab is active; the panel now sits in normal flow instead of
-        // being hidden, so scrolling to it works on first paint (a hidden
-        // element can't be scrolled to, which is why this can't just be a
-        // plain #plan anchor on the panel itself).
+        // being hidden, so scrolling to it works (a hidden element can't
+        // be scrolled to, which is why this can't just be a plain #plan
+        // anchor on the panel itself).
+        activate(index, false);
+        var targetPanel = panels[index];
+        if (targetPanel && targetPanel.scrollIntoView) {
+          targetPanel.scrollIntoView();
+        }
+      }
+
+      var initialIndex = tabs.findIndex(function (tab) {
+        return tab.getAttribute('aria-selected') === 'true';
+      });
+
+      // Runs before the default activate() call so the matched tab, not
+      // tab 0, is what first paints — this is the common case and needs
+      // no extra event to fire.
+      var hashIndex = resolveHashIndex();
+      activate(hashIndex !== -1 ? hashIndex : (initialIndex === -1 ? 0 : initialIndex), false);
+      if (hashIndex !== -1) {
         var targetPanel = panels[hashIndex];
         if (targetPanel && targetPanel.scrollIntoView) {
           targetPanel.scrollIntoView();
         }
       }
 
+      // Fallback: on some browsers, a deferred script's top-level code can
+      // run before the initial navigation has finished resolving the URL
+      // fragment, so window.location.hash reads empty above even though
+      // the address bar already shows one — leaving the default tab active
+      // instead of the linked one. Re-check once after load. Idempotent:
+      // only activates if the hash now resolves to a tab that isn't
+      // already active, and never once the user has picked a tab
+      // themselves, so it can't clobber an explicit in-page choice.
+      window.addEventListener('load', function () {
+        if (userInteracted) { return; }
+        var loadHashIndex = resolveHashIndex();
+        if (loadHashIndex === -1) { return; }
+        if (tabs[loadHashIndex].getAttribute('aria-selected') === 'true') { return; }
+        activateFromHash(loadHashIndex);
+      });
+
+      // A hash change after the page has already loaded — a link to
+      // another #stage, or browser back/forward across tab fragments — is
+      // itself a deliberate navigation, so it still moves the active tab
+      // even after the user has clicked a tab directly.
+      window.addEventListener('hashchange', function () {
+        var newHashIndex = resolveHashIndex();
+        if (newHashIndex === -1) { return; }
+        if (tabs[newHashIndex].getAttribute('aria-selected') === 'true') { return; }
+        activateFromHash(newHashIndex);
+      });
+
       tabs.forEach(function (tab, index) {
-        tab.addEventListener('click', function () { activate(index, false); });
+        tab.addEventListener('click', function () { userInteracted = true; activate(index, false); });
 
         tab.addEventListener('keydown', function (event) {
           var lastIndex = tabs.length - 1;
@@ -260,6 +300,7 @@
 
           if (nextIndex !== null) {
             event.preventDefault();
+            userInteracted = true;
             activate(nextIndex, true);
           }
         });
