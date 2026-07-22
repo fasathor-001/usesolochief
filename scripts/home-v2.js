@@ -210,7 +210,36 @@
       var initialIndex = tabs.findIndex(function (tab) {
         return tab.getAttribute('aria-selected') === 'true';
       });
-      activate(initialIndex === -1 ? 0 : initialIndex, false);
+
+      // Deep-link support: /features/#plan, #focus, #follow-up, #review
+      // should land on that tab already active, not the default first tab
+      // — matched against each tab's data-stage/data-demo attribute
+      // (normalizing the URL's hyphenated "follow-up" to the attribute's
+      // "followup", since hash fragments can't contain the ID lookup
+      // otherwise needs). Runs before the default activate() call so the
+      // matched tab, not tab 0, is what first paints.
+      var hashStage = window.location.hash
+        ? window.location.hash.slice(1).toLowerCase().replace(/-/g, '')
+        : '';
+      var hashIndex = hashStage
+        ? tabs.findIndex(function (tab) {
+            var stage = (tab.getAttribute('data-stage') || tab.getAttribute('data-demo') || '').toLowerCase();
+            return stage === hashStage;
+          })
+        : -1;
+
+      activate(hashIndex !== -1 ? hashIndex : (initialIndex === -1 ? 0 : initialIndex), false);
+
+      if (hashIndex !== -1) {
+        // The tab is active; the panel now sits in normal flow instead of
+        // being hidden, so scrolling to it works on first paint (a hidden
+        // element can't be scrolled to, which is why this can't just be a
+        // plain #plan anchor on the panel itself).
+        var targetPanel = panels[hashIndex];
+        if (targetPanel && targetPanel.scrollIntoView) {
+          targetPanel.scrollIntoView();
+        }
+      }
 
       tabs.forEach(function (tab, index) {
         tab.addEventListener('click', function () { activate(index, false); });

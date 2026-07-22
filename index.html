@@ -4,1860 +4,535 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Primary Meta Tags -->
-  <title>SoloChief: Your Personal Chief of Staff</title>
-  <meta name="title" content="SoloChief: Your Personal Chief of Staff">
-  <meta name="description" content="SoloChief helps you plan the week, protect today's focus, track follow-ups, and start every morning with clarity. Built for people managing too many open loops.">
-  <meta name="keywords" content="personal chief of staff, AI chief of staff, AI productivity assistant, morning brief app, daily briefing app, focus tracker, follow-up tracker, weekly planner, WhatsApp productivity, founder productivity, operator productivity">
+  <title>Personal AI Chief of Staff for Founders | SoloChief</title>
+  <meta name="description" content="SoloChief is your personal AI Chief of Staff. Plan the week, protect today's focus, track follow-ups and review what happened — on the web and in WhatsApp.">
   <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
   <meta name="author" content="Astor Stack Technologies">
-  <link rel="canonical" href="https://usesolochief.com">
+  <link rel="canonical" href="https://usesolochief.com/">
 
-  <!-- Site verification -->
-  <meta name="msvalidate.01" content="8BEE37AC53DDBB06F3392B3892F4238E" />
-
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://usesolochief.com">
-  <meta property="og:title" content="SoloChief: Your Personal Chief of Staff">
-  <meta property="og:description" content="Plan the week, protect your focus, track follow-ups, and start every morning with clarity. Built for people managing too many open loops.">
-  <meta property="og:image" content="https://usesolochief.com/og-image.png">
   <meta property="og:site_name" content="SoloChief">
+  <meta property="og:url" content="https://usesolochief.com/">
+  <meta property="og:title" content="Personal AI Chief of Staff for Founders | SoloChief">
+  <meta property="og:description" content="SoloChief is your personal AI Chief of Staff. Plan the week, protect today's focus, track follow-ups and review what happened — on the web and in WhatsApp.">
+  <meta property="og:image" content="https://usesolochief.com/og-image.png">
+  <meta property="og:image:alt" content="SoloChief: plan the week, protect your focus, and keep work moving on the web and in WhatsApp.">
   <meta property="og:locale" content="en_US">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://usesolochief.com">
-  <meta property="twitter:title" content="SoloChief: Your Personal Chief of Staff">
-  <meta property="twitter:description" content="Plan the week, protect your focus, track follow-ups, and start every morning with clarity. Built for people managing too many open loops.">
+  <meta property="twitter:url" content="https://usesolochief.com/">
+  <meta property="twitter:title" content="Personal AI Chief of Staff for Founders | SoloChief">
+  <meta property="twitter:description" content="SoloChief is your personal AI Chief of Staff. Plan the week, protect today's focus, track follow-ups and review what happened — on the web and in WhatsApp.">
   <meta property="twitter:image" content="https://usesolochief.com/og-image.png">
   <meta property="twitter:creator" content="@fasathor">
 
-  <link rel="stylesheet" href="./styles/tokens.css">
+  <!-- Site verification (carried over from the previous homepage) -->
+  <meta name="msvalidate.01" content="8BEE37AC53DDBB06F3392B3892F4238E" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon.png" sizes="32x32">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-  <!-- Performance -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            bg:      '#0F1B2D',
-            deep:    '#0B1422',
-            panel:   '#1A273A',
-            panelhi: '#1E2D43',
-            slate2:  '#334155',
-            muted:   '#94A3B8',
-            line:    '#1E293B',
-            teal:    '#00C2A8',
-            tealh:   '#00A892',
-          },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          maxWidth: { site: '80rem' },
-        },
-      },
-    }
-  </script>
-
-  <style>
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    body { font-family: 'Inter', sans-serif; background: #0F1B2D; color: #F0F4F8; }
-
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      line-height: 1;
-    }
-
-    section[id] { scroll-margin-top: 84px; }
-
-    .label {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    /* Pulsing badge dot */
-    .pulse-dot {
-      position: relative;
-      width: 0.5rem; height: 0.5rem;
-      border-radius: 50%;
-      background: #00C2A8;
-      flex-shrink: 0;
-    }
-    .pulse-dot::after {
-      content: '';
-      position: absolute; inset: 0;
-      border-radius: 50%;
-      background: #00C2A8;
-      animation: pulse 2s ease-out infinite;
-    }
-    @keyframes pulse {
-      0%   { transform: scale(1);   opacity: 0.6; }
-      100% { transform: scale(3);   opacity: 0; }
-    }
-
-    /* ── Hero layout ───────────────────────────────────────────── */
-    .hero-section {
-      padding-top: clamp(96px, 12vw, 160px);
-      padding-bottom: clamp(96px, 12vw, 160px);
-      position: relative;
-      overflow: hidden;
-    }
-    .hero-section::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(27, 197, 189, 0.2), transparent);
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(360px, 520px);
-      align-items: stretch;
-      gap: clamp(48px, 6vw, 80px);
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    .hero-copy {
-      max-width: 580px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      animation: fadeUp 0.8s ease-out 0.1s both;
-    }
-    .hero-visual {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      min-height: 520px;
-    }
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    /* ── Hero visual: Phone only refinement ──────────────────────────── */
-    /* (min-height, width, z-index, overflow handled by initial definition and media queries) */
-
-    .hero-phone-glow {
-      position: absolute;
-      width: 440px;
-      height: 440px;
-      border-radius: 50%;
-      background: radial-gradient(
-        circle,
-        rgba(27, 197, 189, 0.12) 0%,
-        rgba(27, 197, 189, 0.04) 45%,
-        transparent 74%
-      );
-      filter: blur(28px);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .hero-phone-position {
-      transform: translateX(-6%);
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Final polish: phone position adjustment */
-    .hero-phone-position {
-      transform: translate(-20%, -4%);
-      position: relative;
-      z-index: 3;
-      overflow: visible;
-    }
-
-    .hero-phone-float {
-      position: relative;
-      z-index: 2;
-      overflow: visible;
-      /* entrance and idle float animations only */
-      animation: phoneEnter 1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards,
-                 phoneFloat 6s ease-in-out 1.5s infinite alternate;
-      opacity: 0;
-    }
-
-    .hero-phone-parallax {
-      position: relative;
-      z-index: 2;
-      overflow: visible;
-      /* pointer transform only - JavaScript writes inline style here */
-      filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.2));
-    }
-
-    .hero-phone-parallax::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: 1%;
-      width: 68%;
-      height: 42px;
-      transform: translateX(-50%);
-      background: radial-gradient(
-        ellipse,
-        rgba(0, 0, 0, 0.42) 0%,
-        rgba(0, 0, 0, 0.14) 48%,
-        transparent 74%
-      );
-      filter: blur(14px);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    .hero-phone-image {
-      width: clamp(390px, 33vw, 470px);
-      height: auto;
-      display: block;
-      object-fit: contain;
-      opacity: 1;
-      filter: none;
-      mix-blend-mode: normal;
-      animation: fadeUp 0.8s ease-out 0.2s forwards;
-      pointer-events: none;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    .solochief-phone {
-      position: relative;
-      margin: 0 auto;
-      width: 100%;
-      max-width: 420px;
-      z-index: 2;
-    }
-
-    .phone-side-left { display: none; }
-    .phone-side-right { display: none; }
-
-    .phone-frame {
-      position: relative;
-      width: 100%;
-      height: auto;
-      padding: 0;
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(20, 35, 52, 0.6), rgba(15, 27, 45, 0.8));
-      box-shadow:
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        0 0 1px rgba(27, 197, 189, 0.1);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(27, 197, 189, 0.15);
-      overflow: hidden;
-    }
-
-    .phone-frame::before {
-      display: none;
-    }
-
-    .phone-screen {
-      position: relative;
-      width: 100%;
-      height: auto;
-      border-radius: 20px;
-      overflow: hidden;
-      background: linear-gradient(135deg, #051424 0%, #0a1625 100%);
-      color: #ffffff;
-      border: none;
-    }
-
-    .phone-screen::before {
-      display: none;
-    }
-
-    .phone-status {
-      position: relative;
-      z-index: 3;
-      height: 48px;
-      padding: 16px 28px 0;
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.94);
-    }
-
-    .phone-icons {
-      display: flex;
-      gap: 5px;
-      align-items: center;
-    }
-
-    .phone-icons span {
-      display: block;
-      width: 14px;
-      height: 8px;
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.85);
-    }
-
-    .phone-header {
-      position: relative;
-      z-index: 3;
-      height: 66px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 22px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
-      background: rgba(5, 20, 36, 0.72);
-      backdrop-filter: blur(12px);
-    }
-
-    .phone-back {
-      font-size: 34px;
-      line-height: 1;
-      color: rgba(255, 255, 255, 0.88);
-    }
-
-    .chief-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      background:
-        radial-gradient(circle at center, #051424 38%, transparent 40%),
-        conic-gradient(from 120deg, #1bc5bd, #00c2a8, #0f1b2d, #1bc5bd);
-      box-shadow: 0 0 22px rgba(27, 197, 189, 0.42);
-    }
-
-    .chief-title {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .chief-status {
-      margin-top: 2px;
-      font-size: 11px;
-      color: #1bc5bd;
-    }
-
-    .phone-menu {
-      margin-left: auto;
-      font-size: 24px;
-      color: rgba(255, 255, 255, 0.72);
-    }
-
-    .chat-body {
-      position: relative;
-      z-index: 2;
-      height: calc(100% - 190px);
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      overflow-y: auto;
-    }
-
-    @keyframes messageReveal {
-      0% {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .message {
-      max-width: 82%;
-      padding: 11px 13px;
-      border-radius: 16px;
-      font-size: 12px;
-      line-height: 1.4;
-      box-shadow:
-        0 10px 24px rgba(0, 0, 0, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      animation: messageReveal 0.6s ease-out forwards;
-    }
-
-    .message:nth-child(1) { animation-delay: 0.4s; }
-    .message:nth-child(2) { animation-delay: 0.7s; }
-    .message:nth-child(3) { animation-delay: 1.0s; }
-    .message:nth-child(4) { animation-delay: 1.4s; }
-    .message:nth-child(5) { animation-delay: 1.7s; }
-
-    .message p {
-      margin: 0 0 4px;
-    }
-
-    .message span {
-      display: block;
-      margin-top: 5px;
-      font-size: 10px;
-      color: rgba(212, 228, 250, 0.58);
-    }
-
-    .message.chief {
-      align-self: flex-start;
-      max-width: 80%;
-      background: linear-gradient(145deg, rgba(28, 43, 60, 0.96), rgba(18, 33, 49, 0.96));
-      color: #edf7ff;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-    }
-
-    .message.user {
-      align-self: flex-end;
-      max-width: 70%;
-      background: linear-gradient(145deg, #006f75, #005b63);
-      color: #ffffff;
-      border: 1px solid rgba(27, 197, 189, 0.26);
-    }
-
-    .message.wide {
-      max-width: 88%;
-    }
-
-    .message-label {
-      color: rgba(212, 228, 250, 0.82);
-      font-weight: 600;
-    }
-
-    .message-main {
-      font-weight: 500;
-    }
-
-    .chat-input {
-      position: relative;
-      z-index: 4;
-      height: 54px;
-      margin: 0 16px 12px;
-      padding: 0 8px 0 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-radius: 999px;
-      background: rgba(18, 33, 49, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.28);
-    }
-
-    .emoji {
-      font-size: 20px;
-      color: rgba(255, 255, 255, 0.82);
-    }
-
-    .placeholder {
-      flex: 1;
-      font-size: 13px;
-      color: rgba(212, 228, 250, 0.58);
-    }
-
-    .clip {
-      font-size: 17px;
-      color: rgba(212, 228, 250, 0.72);
-      transform: rotate(45deg);
-    }
-
-    .chat-input button {
-      width: 38px;
-      height: 38px;
-      border: none;
-      border-radius: 999px;
-      background: linear-gradient(145deg, #1bc5bd, #00a892);
-      color: #062022;
-      font-size: 17px;
-      font-weight: 800;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      box-shadow: 0 0 24px rgba(27, 197, 189, 0.32);
-    }
-
-    .home-indicator {
-      position: absolute;
-      left: 50%;
-      bottom: 9px;
-      transform: translateX(-50%);
-      width: 118px;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.88);
-      z-index: 5;
-    }
-
-    /* ── Hero ambient glow ─────────────────────────────────────────── */
-    .hero-ambient-glow {
-      position: absolute;
-      width: 700px;
-      height: 660px;
-      border-radius: 50%;
-      background: radial-gradient(
-        circle,
-        rgba(27, 197, 189, 0.19) 0%,
-        rgba(27, 197, 189, 0.08) 38%,
-        transparent 72%
-      );
-      filter: blur(46px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* ── Hero context panels ───────────────────────────────────────── */
-    .hero-context {
-      position: absolute;
-      border-radius: 24px;
-      background: rgba(7, 26, 40, 0.72);
-      border: 1px solid rgba(27, 197, 189, 0.18);
-      box-shadow:
-        0 28px 90px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.025);
-      backdrop-filter: blur(14px);
-      overflow: hidden;
-      z-index: 1;
-      padding: 24px;
-    }
-
-    .hero-context-left {
-      display: none;
-      width: 350px;
-      min-height: 520px;
-      left: -14%;
-      top: 19%;
-      transform: rotate(-3deg);
-    }
-
-    .hero-context-right {
-      display: none;
-      width: 315px;
-      min-height: 475px;
-      right: -15%;
-      top: 23%;
-    }
-
-    .hero-context h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: rgba(226, 232, 240, 0.78);
-      margin: 0 0 20px 0;
-      letter-spacing: -0.01em;
-    }
-
-    .context-group {
-      margin-bottom: 18px;
-    }
-
-    .context-group > span {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: rgba(27, 197, 189, 0.82);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-
-    .context-group > div {
-      font-size: 13px;
-      color: rgba(148, 163, 184, 0.66);
-      padding: 8px 12px;
-      margin-bottom: 6px;
-      border: 1px solid rgba(27, 197, 189, 0.07);
-      border-radius: 8px;
-      line-height: 1.4;
-    }
-
-    .review-chart {
-      position: absolute;
-      bottom: 20px;
-      left: 24px;
-      right: 24px;
-      height: 60px;
-    }
-
-    .chart-svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* ── Hero phone position and sizing ────────────────────────────── */
-
-    .hero-phone-image {
-      width: clamp(480px, 43vw, 620px);
-      height: auto;
-      display: block;
-      object-fit: contain;
-      opacity: 1;
-      filter: none;
-      mix-blend-mode: normal;
-      pointer-events: none;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    /* ── Phone shadow ──────────────────────────────────────────────── */
-    .hero-phone-parallax::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 72%;
-      height: 54px;
-      transform: translateX(-50%);
-      background: radial-gradient(
-        ellipse,
-        rgba(0, 0, 0, 0.5) 0%,
-        rgba(0, 0, 0, 0.16) 48%,
-        transparent 76%
-      );
-      filter: blur(18px);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* ── Responsive behavior ───────────────────────────────────────── */
-    @media (max-width: 1023px) {
-      .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 32px;
-      }
-
-      .hero-copy {
-        width: 100%;
-        max-width: 680px;
-        margin: 0 auto;
-        justify-content: flex-start;
-      }
-
-      .hero-headline {
-        font-size: clamp(32px, 11vw, 48px);
-        line-height: 1.1;
-        letter-spacing: -0.03em;
-        max-width: 100%;
-      }
-
-      .hero-section {
-        padding-top: clamp(48px, 8vw, 96px);
-        padding-bottom: clamp(48px, 8vw, 80px);
-      }
-
-      .hero-visual {
-        order: 999;
-        width: 100%;
-        min-height: 0;
-        justify-content: center;
-      }
-
-      .hero-ambient-glow {
-        display: none;
-      }
-
-      .hero-phone-position {
-        transform: none;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
-
-      .hero-phone-image {
-        width: min(85vw, 430px);
-        height: auto;
-      }
-
-      .hero-phone-float {
-        /* keep entrance animation but no initial delay on mobile */
-        animation: phoneEnter 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards,
-                   phoneFloat 6s ease-in-out 1s infinite alternate;
-      }
-
-      /* Disable parallax on mobile and tablet */
-      .hero-phone-parallax {
-        transform: none !important;
-      }
-    }
-
-    @media (min-width: 1024px) {
-      /* Full desktop composition with layered panels */
-      .hero-context-left {
-        display: block;
-        width: 350px;
-        min-height: 520px;
-        left: -14%;
-        top: 19%;
-        transform: rotate(-3deg);
-      }
-
-      .hero-context-right {
-        display: block;
-        width: 315px;
-        min-height: 475px;
-        right: -15%;
-        top: 23%;
-      }
-
-      .hero-ambient-glow {
-        display: block;
-      }
-
-      .hero-phone-image {
-        width: clamp(480px, 43vw, 620px);
-      }
-    }
-
-
-    /* Dashed connectors for How it works */
-    .step-connector {
-      position: absolute;
-      top: 20px;
-      left: calc(50% + 28px);
-      right: calc(-50% + 28px);
-      border-top: 1px dashed #24384c;
-    }
-
-    #mobileMenu { display: none; }
-    #mobileMenu.open { display: block; }
-
-    /* FAQ accordion */
-    .faq-q {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      text-align: left;
-      padding: 20px 4px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #ffffff;
-      font-size: 16px;
-      font-weight: 700;
-      font-family: inherit;
-      line-height: 1.4;
-    }
-    .faq-chevron {
-      color: #00C2A8;
-      flex-shrink: 0;
-      transition: transform 0.25s ease;
-    }
-    .faq-item.open .faq-chevron { transform: rotate(180deg); }
-    .faq-a-wrap {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.28s ease;
-    }
-    .faq-item.open .faq-a-wrap { grid-template-rows: 1fr; }
-    .faq-a-inner { overflow: hidden; }
-    .faq-a-inner p {
-      color: #94A3B8;
-      font-size: 15px;
-      line-height: 1.7;
-      padding: 0 4px 20px;
-      margin: 0;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      .pulse-dot::after { animation: none; }
-      .faq-a-wrap, .faq-chevron { transition: none; }
-      .hero-copy, .solochief-phone-stage, .hero-cc-context { animation: none !important; }
-      .message { animation: none !important; }
-    }
-
-    /* ── Navigation refinement ──────────────────────────────────── */
-    nav a {
-      position: relative;
-      transition: color 0.2s ease;
-    }
-    nav a:not(.bg-teal):hover {
-      color: #F0F4F8;
-    }
-    nav a.bg-teal {
-      transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    nav a.bg-teal:hover {
-      background-color: #00A892;
-      box-shadow: 0 0 20px rgba(27, 197, 189, 0.2);
-    }
-    nav a.bg-teal:focus-visible {
-      outline: 2px solid rgba(27, 197, 189, 0.5);
-      outline-offset: 2px;
-    }
-
-    /* ── Premium hero motion ──────────────────────────────────────── */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    [data-motion-ready="true"] .hero-eyebrow {
-      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      opacity: 0;
-    }
-
-    [data-motion-ready="true"] .hero-headline {
-      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
-      opacity: 0;
-    }
-
-    [data-motion-ready="true"] .hero-copy {
-      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
-      opacity: 0;
-    }
-
-    [data-motion-ready="true"] .hero-buttons {
-      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
-      opacity: 0;
-    }
-
-    [data-motion-ready="true"] .hero-trust {
-      animation: fadeInUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
-      opacity: 0;
-    }
-
-    @keyframes phoneEnter {
-      from {
-        opacity: 0;
-        transform: translateY(22px) scale(1.04);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    @keyframes phoneFloat {
-      from { transform: translateY(0); }
-      to { transform: translateY(-6px); }
-    }
-
-    /* Animations moved to .hero-phone-float above */
-
-    @keyframes glowBreathe {
-      from {
-        opacity: 0.08;
-        transform: scale(1);
-      }
-      to {
-        opacity: 0.12;
-        transform: scale(1.03);
-      }
-    }
-
-    .hero-phone-glow {
-      animation: glowBreathe 8s ease-in-out infinite alternate;
-    }
-
-    /* ── CTA button hover microinteractions ────────────────────────── */
-    .hero-buttons a {
-      transition: transform 200ms ease, box-shadow 200ms ease, color 200ms ease, border-color 200ms ease;
-    }
-
-    .hero-buttons a:first-child:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-    }
-
-    .hero-buttons a:last-child:hover {
-      border-color: rgba(27, 197, 189, 0.35);
-      color: rgba(27, 197, 189, 0.95);
-    }
-
-    /* ── Feature cards scroll reveal animation ────────────────────── */
-    [data-motion-ready="true"] .feature-card {
-      opacity: 0;
-      transform: translateY(20px);
-      transition:
-        opacity 650ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    [data-motion-ready="true"] .feature-card:nth-child(1) { transition-delay: 0ms; }
-    [data-motion-ready="true"] .feature-card:nth-child(2) { transition-delay: 100ms; }
-
-    [data-motion-ready="true"] .feature-card.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .feature-card {
-      transition:
-        transform 220ms ease,
-        border-color 220ms ease,
-        background-color 220ms ease,
-        box-shadow 220ms ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(27, 197, 189, 0.28);
-      background: rgba(27, 197, 189, 0.035);
-      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.22);
-    }
-
-    .feature-card:hover .material-symbols-outlined {
-      transform: translateY(-2px) scale(1.06) rotate(-2deg);
-      box-shadow: 0 10px 28px rgba(27, 197, 189, 0.16);
-      transition: transform 220ms ease, box-shadow 220ms ease;
-    }
-
-    /* ── How it works section scroll reveal animation ───────────────── */
-    [data-motion-ready="true"] .how-it-works-item {
-      opacity: 0;
-      transform: translateY(18px);
-      transition:
-        opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
-        transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    [data-motion-ready="true"] .how-it-works-item:nth-child(1) { transition-delay: 0ms; }
-    [data-motion-ready="true"] .how-it-works-item:nth-child(2) { transition-delay: 120ms; }
-    [data-motion-ready="true"] .how-it-works-item:nth-child(3) { transition-delay: 240ms; }
-    [data-motion-ready="true"] .how-it-works-item:nth-child(4) { transition-delay: 360ms; }
-
-    [data-motion-ready="true"] .how-it-works-item.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .how-it-works-item:hover {
-      transform: translateY(-3px);
-      transition: transform 200ms ease;
-    }
-
-    .how-it-works-item .material-symbols-outlined {
-      transition: transform 220ms ease, box-shadow 220ms ease;
-    }
-
-    .how-it-works-item:hover .material-symbols-outlined {
-      transform: scale(1.05) rotate(2deg);
-      box-shadow: 0 8px 20px rgba(27, 197, 189, 0.12);
-    }
-
-    /* ── Respect prefers-reduced-motion ────────────────────────────── */
-    @media (prefers-reduced-motion: reduce) {
-      .hero-eyebrow,
-      .hero-headline,
-      .hero-copy,
-      .hero-buttons,
-      .hero-trust,
-      .hero-phone-float {
-        animation: none !important;
-        opacity: 1;
-        transform: none;
-      }
-
-      .hero-buttons a {
-        transition: none;
-      }
-
-      .hero-phone-glow {
-        animation: none;
-      }
-    }
-
-    /* ── Navigation scroll state ────────────────────────────────────── */
-    header {
-      transition: background-color 300ms ease, border-color 300ms ease, backdrop-filter 300ms ease;
-      background: transparent;
-      border-bottom: 1px solid transparent;
-    }
-
-    header.is-scrolled {
-      background: rgba(8, 20, 34, 0.82);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    /* ── Accessibility: Disable animations for reduced motion ───────── */
-    @media (prefers-reduced-motion: reduce) {
-      /* Disable all transitions and animations */
-      * {
-        animation: none !important;
-        transition: none !important;
-      }
-
-      /* Preserve header scroll state styling but without transitions */
-      header {
-        transition: none;
-      }
-
-      header.is-scrolled {
-        transition: none;
-      }
-
-      /* Preserve interactive hover/focus states without motion */
-      button:hover,
-      a:hover {
-        color: inherit;
-        border-color: inherit;
-      }
-
-      /* Target specific animated elements */
-      [class*="animation"],
-      .hero-eyebrow,
-      .hero-headline,
-      .hero-copy,
-      .hero-buttons,
-      .hero-trust,
-      .hero-phone-float,
-      .hero-phone-glow,
-      .message,
-      .pulse-dot::after {
-        animation: none !important;
-        transition: none !important;
-      }
-
-      /* Remove transforms on hover for animated elements */
-      .feature-card:hover,
-      .how-it-works-item:hover,
-      .hero-buttons a:hover {
-        transform: none;
-      }
-
-      /* Keep FAQ chevron state but no animation */
-      .faq-chevron {
-        transition: none;
-      }
-    }
-  </style>
-</head>
-
-<body class="bg-bg text-[#F0F4F8]">
-
-<!-- ── NAV ──────────────────────────────────────────────────────────────── -->
-<header class="fixed top-0 inset-x-0 z-50 border-b border-line">
-  <nav class="max-w-site mx-auto px-5 sm:px-6 h-16 flex items-center justify-between">
-    <a href="#top" class="text-lg font-extrabold tracking-tight text-teal">SoloChief</a>
-
-    <div class="hidden md:flex items-center gap-8">
-      <a href="#features"     class="text-sm text-muted hover:text-white transition-colors">Features</a>
-      <a href="#how-it-works" class="text-sm text-muted hover:text-white transition-colors">How it works</a>
-      <a href="#pricing"      class="text-sm text-muted hover:text-white transition-colors">Pricing</a>
-      <a href="https://solochief.app/auth/login" class="text-sm text-muted hover:text-white transition-colors">Sign in</a>
-      <a href="https://solochief.app/auth/signup" class="text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2 rounded-md transition-colors">Get started</a>
-    </div>
-
-    <button id="menuBtn" class="md:hidden text-white p-1" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-      <span class="material-symbols-outlined">menu</span>
-    </button>
-  </nav>
-
-  <div id="mobileMenu" class="md:hidden border-t border-line px-5 py-4 space-y-1" style="background: rgba(11,20,34,0.98);">
-    <a href="#features"     class="block py-2.5 text-sm text-muted hover:text-white">Features</a>
-    <a href="#how-it-works" class="block py-2.5 text-sm text-muted hover:text-white">How it works</a>
-    <a href="#pricing"      class="block py-2.5 text-sm text-muted hover:text-white">Pricing</a>
-    <a href="https://solochief.app/auth/login" class="block py-2.5 text-sm text-muted hover:text-white">Sign in</a>
-    <a href="https://solochief.app/auth/signup" class="block mt-2 text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-4 py-2.5 rounded-md">Get started</a>
-  </div>
-</header>
-
-<main id="top" class="pt-16">
-
-  <!-- ── HERO ───────────────────────────────────────────────────────────── -->
-  <section class="hero-section relative overflow-hidden">
-    <div class="hero-grid relative z-10 max-w-site mx-auto px-5 sm:px-6">
-
-      <!-- Left -->
-      <div>
-        <div class="hero-eyebrow inline-flex items-center gap-2 rounded-full border border-teal/30 bg-teal/5 px-3 py-1.5 mb-8 w-fit">
-          <span class="pulse-dot" aria-hidden="true"></span>
-          <span class="text-xs font-medium text-teal tracking-wide leading-tight">Command Center on web. Chief of Staff in your pocket. One system.</span>
-        </div>
-
-        <h1 class="hero-headline text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.0] tracking-tight text-white mb-6" style="max-width: 580px;">
-          Your personal <span style="color: #00C2A8;">Chief of Staff</span>, on web and in your pocket.
-        </h1>
-        <p class="hero-copy text-base sm:text-[1.0625rem] text-[#A0AEC0] leading-relaxed mt-6" style="max-width: 520px;">
-          SoloChief helps you plan the week, protect today's focus, track follow-ups, and start every morning with clarity.
-        </p>
-
-        <div class="hero-buttons mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-4 rounded-lg transition-colors duration-200 text-base">
-            Start free
-          </a>
-          <a href="#how-it-works" class="inline-flex items-center gap-2 text-[#CBD5E1] hover:text-white font-medium transition-colors duration-200">
-            See how it works <span class="text-teal" aria-hidden="true">→</span>
-          </a>
-        </div>
-
-        <p class="hero-trust mt-8 text-sm text-[#64748B]">No credit card required. 7-day Pocket Chief trial included on Pro.</p>
-      </div>
-
-      <!-- Right: hero phone with layered context panels -->
-      <div class="hero-visual">
-        <div class="hero-ambient-glow" aria-hidden="true"></div>
-
-        <div class="hero-context hero-context-left" aria-hidden="true">
-          <h3>Weekly Plan</h3>
-
-          <div class="context-group">
-            <span>This Week</span>
-            <div>RevenueLoop launch</div>
-            <div>Website redesign</div>
-            <div>Investor update</div>
-            <div>Team hiring</div>
-          </div>
-
-          <div class="context-group">
-            <span>Today's Focus</span>
-            <div>Finish launch page</div>
-            <div>Review message</div>
-          </div>
-
-          <div class="context-group">
-            <span>Follow-ups</span>
-            <div>Alex – Launch feedback</div>
-            <div>Sam – Partnership intro</div>
-          </div>
-        </div>
-
-        <div class="hero-context hero-context-right" aria-hidden="true">
-          <h3>Friday Review</h3>
-
-          <div class="context-group">
-            <span>What happened</span>
-            <div>✓ Launch page completed</div>
-            <div>✓ 3 investor replies</div>
-            <div>✓ Partnership call done</div>
-          </div>
-
-          <div class="context-group">
-            <span>What's next</span>
-            <div>✓ Refine messaging</div>
-            <div>✓ Prepare deck</div>
-            <div>✓ Plan next week</div>
-          </div>
-
-          <div class="review-chart" aria-hidden="true">
-            <svg viewBox="0 0 240 60" xmlns="http://www.w3.org/2000/svg" class="chart-svg">
-              <rect width="240" height="60" fill="rgba(0, 0, 0, 0.08)" rx="6"/>
-              <polyline points="8,48 30,44 52,40 74,36 96,28 118,24 140,18 162,14 184,12 206,10 228,8"
-                        fill="none" stroke="rgba(27, 197, 189, 0.6)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="hero-phone-position">
-          <div class="hero-phone-float">
-            <div class="hero-phone-parallax">
-              <img
-                class="hero-phone-image"
-                src="/img/solochief-phone-final.png"
-                alt="SoloChief running as a personal Chief of Staff in WhatsApp"
-                draggable="false"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ── PROBLEM ────────────────────────────────────────────────────────── -->
-  <section class="bg-deep py-20 sm:py-24 border-t border-teal/10" style="background: linear-gradient(180deg, #0B1422 0%, #0F1B2D 40%, #0B1422 100%);">
-    <div class="max-w-site mx-auto px-5 sm:px-6">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white text-center max-w-3xl mx-auto">
-        Most productivity systems require you to show up.
-      </h2>
-
-      <div class="mt-14 grid md:grid-cols-3 gap-6">
-        <div class="rounded-lg border border-line bg-panel p-7">
-          <div class="w-11 h-11 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center mb-5">
-            <span class="material-symbols-outlined text-teal">build</span>
-          </div>
-          <h3 class="text-lg font-semibold text-white mb-2">You built a system. Then life happened.</h3>
-          <p class="text-sm text-muted leading-relaxed">Notion, Obsidian, Todoist. You set them up, used them for a week, and stopped. The system needs you more than you need it.</p>
-        </div>
-
-        <div class="rounded-lg border border-line bg-panel p-7">
-          <div class="w-11 h-11 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center mb-5">
-            <span class="material-symbols-outlined text-teal">visibility_off</span>
-          </div>
-          <h3 class="text-lg font-semibold text-white mb-2">Nothing finds you.</h3>
-          <p class="text-sm text-muted leading-relaxed">Every tool waits for you to open it. On the days you most need structure, you are least likely to go looking for it.</p>
-        </div>
-
-        <div class="rounded-lg border border-line bg-panel p-7">
-          <div class="w-11 h-11 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center mb-5">
-            <span class="material-symbols-outlined text-teal">hourglass_empty</span>
-          </div>
-          <h3 class="text-lg font-semibold text-white mb-2">The work piles up silently.</h3>
-          <p class="text-sm text-muted leading-relaxed">Commitments, follow-ups, and decisions accumulate while you are busy doing everything else. Nothing flags them until it is too late.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PRODUCT PROMISE ────────────────────────────────────────────────── -->
-  <section class="bg-bg py-20 sm:py-24">
-    <div class="max-w-[720px] mx-auto px-5 sm:px-6 text-center">
-      <p class="label text-teal mb-4">The SoloChief principle</p>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">
-        You stop maintaining the system. The system starts maintaining your week.
-      </h2>
-      <p class="mt-3 text-lg sm:text-xl font-normal text-muted">
-        One operating rhythm. Web and pocket.
-      </p>
-      <div class="max-w-[640px] mx-auto">
-        <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">
-          Use the web Command Center to plan your week. Chief stays with you during the day, checking in, logging updates, and keeping the same context behind both.
-        </p>
-        <p class="mt-4 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">
-          Most productivity tools wait for you to show up. Chief finds you.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── AUDIENCE (SEO) ─────────────────────────────────────────────────── -->
-  <section class="bg-deep py-20 sm:py-24">
-    <div class="max-w-[760px] mx-auto px-5 sm:px-6 text-center">
-      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-        Built for people managing too many open loops
-      </h2>
-      <p class="mt-6 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">
-        SoloChief is a personal Chief of Staff for people who need a clearer operating rhythm. It combines a weekly planner, daily focus tracker, follow-up tracker, morning brief, and AI productivity assistant in one simple system.
-      </p>
-      <p class="mt-4 text-base sm:text-lg text-[#CBD5E1] leading-relaxed">
-        Whether you are a founder, operator, freelancer, consultant, builder, or small team lead, SoloChief helps you protect focus, remember commitments, and keep important follow-ups from slipping.
-      </p>
-    </div>
-  </section>
-
-  <!-- ── HOW IT WORKS ───────────────────────────────────────────────────── -->
-  <section id="how-it-works" class="bg-deep py-20 sm:py-24">
-    <div class="max-w-site mx-auto px-5 sm:px-6">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white text-center max-w-3xl mx-auto">
-        Four steps to a sharper operating rhythm.
-      </h2>
-
-      <div class="mt-14 grid md:grid-cols-4 gap-8 md:gap-6">
-        <div class="how-it-works-item relative">
-          <div class="hidden md:block step-connector" aria-hidden="true"></div>
-          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">1</div>
-          <h3 class="mt-4 text-base font-semibold text-white">Plan the week</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Set your focus, outcomes, follow-ups, and stop list before the week takes over.</p>
-        </div>
-        <div class="how-it-works-item relative">
-          <div class="hidden md:block step-connector" aria-hidden="true"></div>
-          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">2</div>
-          <h3 class="mt-4 text-base font-semibold text-white">Get your morning brief</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Chief sends the day's focus and top priorities, right where you already are.</p>
-        </div>
-        <div class="how-it-works-item relative">
-          <div class="hidden md:block step-connector" aria-hidden="true"></div>
-          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">3</div>
-          <h3 class="mt-4 text-base font-semibold text-white">Operate during the day</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Reply with done, blocked, slipped, switched, or park. Chief logs everything in real time.</p>
-        </div>
-        <div class="how-it-works-item relative">
-          <div class="w-10 h-10 rounded-full bg-teal/10 border border-teal/30 text-teal font-bold flex items-center justify-center relative z-10">4</div>
-          <h3 class="mt-4 text-base font-semibold text-white">Review and adjust</h3>
-          <p class="mt-2 text-sm text-muted leading-relaxed">Close the week knowing what happened, what slipped, and what needs attention next.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FEATURES ───────────────────────────────────────────────────────── -->
-  <section id="features" class="bg-bg py-20 sm:py-24">
-    <div class="max-w-site mx-auto px-5 sm:px-6">
-      <div class="grid lg:grid-cols-2 gap-6">
-
-        <!-- Panel 1 -->
-        <div class="feature-card rounded-lg border border-line bg-panel p-7 sm:p-9">
-          <div class="flex items-center gap-3 mb-7">
-            <div class="w-11 h-11 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center">
-              <span class="material-symbols-outlined text-teal">desktop_windows</span>
-            </div>
-            <h3 class="text-xl font-semibold text-white">Web Command Center</h3>
-          </div>
-          <ul class="space-y-5">
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">check_circle</span>
-              <div><p class="text-sm font-semibold text-white">Today Focus</p><p class="text-sm text-muted mt-0.5">Start each day with one clear focus and outcome.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">list_alt</span>
-              <div><p class="text-sm font-semibold text-white">Weekly Plan</p><p class="text-sm text-muted mt-0.5">Set your priorities and outcomes before the week takes over.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">task_alt</span>
-              <div><p class="text-sm font-semibold text-white">Commitments</p><p class="text-sm text-muted mt-0.5">Every yes you say gets logged. Nothing falls through.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">pending_actions</span>
-              <div><p class="text-sm font-semibold text-white">Follow-ups</p><p class="text-sm text-muted mt-0.5">Track open loops and get reminded when things go cold.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">lightbulb</span>
-              <div><p class="text-sm font-semibold text-white">Parking Lot</p><p class="text-sm text-muted mt-0.5">Park ideas and distractions instantly without losing them.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">analytics</span>
-              <div><p class="text-sm font-semibold text-white">Friday Review</p><p class="text-sm text-muted mt-0.5">Close the week knowing what happened and what to fix.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">emergency</span>
-              <div><p class="text-sm font-semibold text-white">Rescue Me</p><p class="text-sm text-muted mt-0.5">Five clear paths when you're overwhelmed. Chief meets you where you are, not where you're supposed to be.</p></div>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Panel 2 -->
-        <div class="feature-card relative rounded-lg border border-teal/30 bg-panelhi p-7 sm:p-9" style="box-shadow: 0 0 0 1px rgba(0,194,168,0.15), 0 24px 60px rgba(0,194,168,0.08);">
-          <span class="absolute top-6 right-6 text-xs font-semibold text-teal border border-teal/40 rounded-full px-3 py-1">Pro</span>
-          <div class="flex items-center gap-3 mb-7">
-            <div class="w-11 h-11 rounded-lg bg-teal/10 border border-teal/20 flex items-center justify-center">
-              <span class="material-symbols-outlined text-teal">chat</span>
-            </div>
-            <h3 class="text-xl font-semibold text-white">Pocket Chief</h3>
-          </div>
-          <ul class="space-y-5">
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">sunny</span>
-              <div><p class="text-sm font-semibold text-white">Morning Brief</p><p class="text-sm text-muted mt-0.5">Your focus and top priorities delivered at your chosen time every morning.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">bolt</span>
-              <div><p class="text-sm font-semibold text-white">Quick commands</p><p class="text-sm text-muted mt-0.5">Reply to mark tasks done, log updates, or park ideas without opening the app.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">smart_toy</span>
-              <div><p class="text-sm font-semibold text-white">Talk to Chief</p><p class="text-sm text-muted mt-0.5">Ask Chief about your work, priorities, and next move. Chief knows your context.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">notifications_active</span>
-              <div><p class="text-sm font-semibold text-white">Follow-up reminders</p><p class="text-sm text-muted mt-0.5">Chief checks in when things go quiet or when follow-ups go cold.</p></div>
-            </li>
-            <li class="flex gap-3.5">
-              <span class="material-symbols-outlined text-teal mt-0.5" style="font-size:20px;">nightlight</span>
-              <div><p class="text-sm font-semibold text-white">End-of-day check-ins</p><p class="text-sm text-muted mt-0.5">A quick summary of what you logged and what is still open.</p></div>
-            </li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ── PRICING ────────────────────────────────────────────────────────── -->
-  <section id="pricing" class="bg-deep py-20 sm:py-24">
-    <div class="max-w-site mx-auto px-5 sm:px-6">
-      <div class="text-center max-w-2xl mx-auto">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white">Simple, transparent pricing.</h2>
-        <p class="mt-4 text-base sm:text-lg text-[#CBD5E1]">Start free. Upgrade when you are ready for more.</p>
-      </div>
-
-      <div class="mt-16 grid md:grid-cols-3 gap-6 items-stretch">
-
-        <!-- Free -->
-        <div class="rounded-lg border border-line bg-panel p-7 flex flex-col h-full">
-          <h3 class="text-lg font-semibold text-white">Free</h3>
-          <p class="text-sm text-muted mt-1">Organise your work on web.</p>
-          <p class="mt-5 text-3xl font-bold text-white">$0 <span class="text-sm font-normal text-muted">/ forever</span></p>
-          <ul class="mt-6 space-y-3">
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Today Focus</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Commitments</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Follow-ups</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Weekly Plan</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Parking Lot</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Basic Friday Review</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Limited AI chat</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>1 Rescue Me session per week</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-slate2" style="font-size:18px;">close</span>No WhatsApp</li>
-          </ul>
-          <div class="mt-auto pt-7">
-            <a href="https://solochief.app/auth/signup" class="block text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Start free</a>
-          </div>
-        </div>
-
-        <!-- Pro (highlighted) -->
-        <div class="relative rounded-lg border-2 border-teal bg-panelhi p-7 flex flex-col h-full" style="box-shadow: 0 24px 60px rgba(0,194,168,0.12);">
-          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-semibold bg-teal text-bg px-3 py-1 rounded-full">Most popular</span>
-          <h3 class="text-lg font-semibold text-white">Pro</h3>
-          <p class="text-sm text-muted mt-1">Chief helps you stay consistent every week.</p>
-          <p class="mt-5 text-3xl font-bold text-white">$19 <span class="text-sm font-normal text-muted">/ month</span></p>
-          <ul class="mt-6 space-y-3">
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Everything in Free</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Full web AI chat</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Daily Pocket Chief morning brief</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Quick commands and logging</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Standard Friday Review</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Unlimited Rescue Me</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Talk to Chief about your work and priorities</li>
-            <li class="flex items-start gap-2.5 text-sm text-white"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>7-day trial included</li>
-          </ul>
-          <div class="mt-auto pt-7">
-            <a href="https://solochief.app/auth/signup" class="block text-center text-sm font-semibold bg-teal hover:bg-tealh text-bg px-5 py-3 rounded-md transition-colors">Start 7-day trial</a>
-            <p class="mt-3 text-center text-xs text-muted">No credit card required for trial</p>
-          </div>
-        </div>
-
-        <!-- Operator -->
-        <div class="relative rounded-lg border border-line bg-panel p-7 flex flex-col h-full">
-          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 text-xs font-semibold border border-teal/40 bg-transparent text-teal px-3 py-1 rounded-full">Early Access</span>
-          <h3 class="text-lg font-semibold text-white">Operator</h3>
-          <p class="text-sm text-muted mt-1">For heavier weekly execution.</p>
-          <p class="mt-5 text-3xl font-bold text-white">$39 <span class="text-sm font-normal text-muted">/ month</span></p>
-          <ul class="mt-6 space-y-3">
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Everything in Pro</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Voice note logging via Pocket Chief</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>On-demand Pocket Chief check-ins</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Higher usage limits across all features</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Priority founder support</li>
-            <li class="flex items-start gap-2.5 text-sm text-muted"><span class="material-symbols-outlined text-teal" style="font-size:18px;">check</span>Early access to new features</li>
-          </ul>
-          <div class="mt-auto pt-7">
-            <a href="https://solochief.app/auth/signup" class="block text-center text-sm font-semibold border border-line hover:border-teal/50 text-white px-5 py-3 rounded-md transition-colors">Get early access</a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ── TRUST ──────────────────────────────────────────────────────────── -->
-  <section class="bg-bg py-20 sm:py-24">
-    <div class="max-w-[640px] mx-auto px-5 sm:px-6 text-center">
-      <p class="label text-teal mb-5">Private beta</p>
-      <h2 class="text-[28px] md:text-[32px] font-normal text-white">
-        Built for founders, operators, builders, freelancers, and anyone managing too many open loops.
-      </h2>
-      <p class="mt-6 text-base text-muted leading-relaxed">
-        SoloChief is being built with early founders and operators managing multiple products, clients, follow-ups, and weekly commitments. Access is currently limited.
-      </p>
-      <p class="mt-5 text-base text-[#CBD5E1] leading-relaxed">
-        Your data is never used to train AI models. We ask for explicit consent before sending you any message. You can disconnect anytime.
-      </p>
-    </div>
-  </section>
-
-  <!-- ── FAQ ────────────────────────────────────────────────────────────── -->
-  <section id="faq" class="py-20 sm:py-24" style="background:#0B1422;">
-    <div class="max-w-[720px] mx-auto px-5 sm:px-6">
-      <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white text-center mb-10">Frequently asked questions</h2>
-      <div class="faq-list border-b border-line">
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Is SoloChief free to use?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Yes. The web dashboard is free forever. It includes Today Focus, Commitments, Follow-ups, Weekly Plan, Parking Lot, and Friday Review. WhatsApp access is available on Pro at $19 per month, with a one-time 7-day WhatsApp trial.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>How does Pocket Chief work?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Go to Settings, tap Connect WhatsApp, and WhatsApp opens with a short code pre-filled. Send the message and Pocket Chief activates on your number. No manual setup, no phone number entry.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>What is the morning brief?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Every morning at your chosen time, Chief sends you a message with your focus for the day, any follow-ups due, and your active commitments. You start the day knowing what matters without opening another app.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Do I need to download anything to use SoloChief?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>No downloads required. The web dashboard works on any browser.</p>
-            <p>Pocket Chief, the mobile layer, is delivered through WhatsApp, which you likely already have on your phone. No new app to install, no new habit to build. Chief meets you where you are.</p>
-            <p>Pocket Chief is available on Pro.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>How is SoloChief different from other productivity tools?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Most productivity tools are pull-based. You have to go to them. SoloChief is push-based. Chief sends your brief, tracks your follow-ups, and keeps your work moving without requiring you to build or maintain a system from scratch.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Is SoloChief an AI productivity assistant?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Yes, but it is not a generic chatbot. SoloChief is built around execution: weekly planning, daily focus, follow-up tracking, morning briefs, and practical help with your next move.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Who is SoloChief for?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>SoloChief is for founders, operators, freelancers, consultants, builders, small team leads, and anyone managing too many open loops.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Is my data secure?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>We take data security seriously. Authentication is handled securely, your data is protected with access controls, and we do not sell your data or use it for advertising.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Can I cancel anytime?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Yes. You can cancel from Settings at any time. Your access continues until the end of your billing period.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>Is SoloChief available on mobile?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Yes. The web app is fully responsive and installable as a PWA on iPhone and Android. You can add it to your home screen from your browser for a native app-like experience.</p>
-          </div></div>
-        </div>
-
-        <div class="faq-item border-t border-line">
-          <button type="button" class="faq-q" aria-expanded="false">
-            <span>What is Rescue Me?</span>
-            <span class="faq-chevron material-symbols-outlined" aria-hidden="true">expand_more</span>
-          </button>
-          <div class="faq-a-wrap"><div class="faq-a-inner">
-            <p>Rescue Me gives you five clear paths when you feel overwhelmed. Free users get one session per week. Pro users get unlimited access. It is designed for the moments when you most need structure but least feel like finding it.</p>
-          </div></div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ── FINAL CTA ──────────────────────────────────────────────────────── -->
-  <section class="bg-deep py-20 sm:py-24">
-    <div class="max-w-site mx-auto px-5 sm:px-6">
-      <div class="rounded-[2rem] border border-teal/10 px-6 py-14 sm:px-12 sm:py-16 text-center" style="background: #1E2D43;">
-        <h2 class="text-[32px] md:text-[40px] font-bold tracking-tight text-white max-w-3xl mx-auto leading-snug">
-          Start with the web Command Center. Upgrade when you want Chief in your pocket.
-        </h2>
-        <div class="mt-9 flex flex-wrap items-center justify-center gap-4">
-          <a href="https://solochief.app/auth/signup" class="inline-flex items-center justify-center bg-teal hover:bg-tealh text-bg font-semibold px-7 py-3.5 rounded-md transition-colors">Start free</a>
-          <a href="#pricing" class="inline-flex items-center gap-1.5 text-muted hover:text-white font-medium transition-colors">See pricing</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<!-- ── FOOTER ───────────────────────────────────────────────────────────── -->
-<footer class="bg-bg border-t border-line">
-  <div class="max-w-site mx-auto px-5 sm:px-6 py-14 grid gap-10 md:grid-cols-2">
-    <div>
-      <a href="#top" class="text-xl font-extrabold tracking-tight text-teal">SoloChief</a>
-      <p class="mt-3 text-sm text-muted">Built by Astor Stack Technologies</p>
-      <p class="mt-1 text-xs text-muted">&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
-    </div>
-
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 md:justify-items-end">
-      <div>
-        <p class="label text-muted mb-3">Product</p>
-        <ul class="space-y-2.5">
-          <li><a href="#features" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Features</a></li>
-          <li><a href="#pricing" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Pricing</a></li>
-          <li><a href="/chief-of-staff" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Chief of Staff</a></li>
-          <li><a href="/productivity-system" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Productivity System</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="label text-muted mb-3">Use cases</p>
-        <ul class="space-y-2.5">
-          <li><a href="/ai-chief-of-staff" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">AI Chief of Staff</a></li>
-          <li><a href="/morning-brief-app" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Morning Brief App</a></li>
-          <li><a href="/follow-up-tracker" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Follow-up Tracker</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="label text-muted mb-3">Account</p>
-        <ul class="space-y-2.5">
-          <li><a href="https://solochief.app/auth/login" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Sign in</a></li>
-          <li><a href="https://solochief.app/auth/signup" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Sign up</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="label text-muted mb-3">Legal</p>
-        <ul class="space-y-2.5">
-          <li><a href="https://solochief.app/privacy" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Privacy Policy</a></li>
-          <li><a href="https://solochief.app/terms" class="text-sm text-[#CBD5E1] hover:text-teal transition-colors">Terms of Service</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script>
-  // Enable motion system — add this before any animations run
-  document.documentElement.setAttribute("data-motion-ready", "true");
-
-  (function () {
-    var btn = document.getElementById('menuBtn');
-    var menu = document.getElementById('mobileMenu');
-    if (!btn || !menu) return;
-    btn.addEventListener('click', function () {
-      var open = menu.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.querySelector('.material-symbols-outlined').textContent = open ? 'close' : 'menu';
-    });
-    menu.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        menu.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-        btn.querySelector('.material-symbols-outlined').textContent = 'menu';
-      });
-    });
-  })();
-
-  // FAQ accordion — one open at a time
-  (function () {
-    var buttons = document.querySelectorAll('.faq-q');
-    buttons.forEach(function (button) {
-      button.addEventListener('click', function () {
-        var item = button.closest('.faq-item');
-        var wasOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item.open').forEach(function (openItem) {
-          openItem.classList.remove('open');
-          var b = openItem.querySelector('.faq-q');
-          if (b) b.setAttribute('aria-expanded', 'false');
-        });
-        if (!wasOpen) {
-          item.classList.add('open');
-          button.setAttribute('aria-expanded', 'true');
-        }
-      });
-    });
-  })();
-
-  // Navigation scroll state enhancement
-  (function() {
-    const header = document.querySelector('header');
-    if (!header) return;
-
-    let lastScrollY = 0;
-    let ticking = false;
-
-    function updateHeader() {
-      const scrollY = window.scrollY;
-
-      if (scrollY > 80) {
-        header.classList.add('is-scrolled');
-      } else {
-        header.classList.remove('is-scrolled');
-      }
-
-      lastScrollY = scrollY;
-      ticking = false;
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        requestAnimationFrame(updateHeader);
-        ticking = true;
-      }
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    updateHeader();
-  })();
-
-  // Desktop parallax on hero phone
-  (function() {
-    const phoneParallax = document.querySelector('.hero-phone-parallax');
-    if (!phoneParallax || window.matchMedia('(max-width: 1024px)').matches) return;
-    if (window.matchMedia('(pointer: coarse)').matches) return;
-
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
-
-    let mouseX = 0, mouseY = 0;
-    let targetX = 0, targetY = 0;
-    let rafId;
-
-    function updateParallax() {
-      targetX += (mouseX - targetX) * 0.1;
-      targetY += (mouseY - targetY) * 0.1;
-
-      const px = (targetX / window.innerWidth) * 6;
-      const py = (targetY / window.innerHeight) * 6;
-      const rotX = (targetY / window.innerHeight) * 0.5;
-      const rotY = (targetX / window.innerWidth) * 0.8;
-
-      phoneParallax.style.transform = `translate(${px}px, ${py}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      rafId = requestAnimationFrame(updateParallax);
-    }
-
-    function onMouseMove(e) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    }
-
-    function onMouseLeave() {
-      mouseX = 0;
-      mouseY = 0;
-    }
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseleave', onMouseLeave);
-    updateParallax();
-
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseleave', onMouseLeave);
-      cancelAnimationFrame(rafId);
-    };
-  })();
-
-  // Feature cards and How It Works section scroll reveal animations
-  (function() {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          if (!prefersReduced) {
-            entry.target.classList.add('is-visible');
-          } else {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'none';
-          }
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.feature-card, .how-it-works-item').forEach(el => {
-      observer.observe(el);
-    });
-  })();
-</script>
-
-<!-- ── Structured data (JSON-LD) ────────────────────────────────────────── -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "SoloChief",
-  "description": "Your personal Chief of Staff. Plan the week, protect your focus, track follow-ups, and start every morning with clarity.",
-  "url": "https://usesolochief.com",
-  "applicationCategory": "ProductivityApplication",
-  "operatingSystem": "Web, iOS, Android",
-  "offers": [
-    { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
-    { "@type": "Offer", "name": "Pro", "price": "19", "priceCurrency": "USD", "billingIncrement": "Month" },
-    { "@type": "Offer", "name": "Operator", "price": "39", "priceCurrency": "USD", "billingIncrement": "Month" }
-  ],
-  "creator": {
+  <link rel="stylesheet" href="/styles/home-v2.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Astor Stack Technologies",
-    "url": "https://astorstack.com"
+    "name": "SoloChief",
+    "url": "https://usesolochief.com/",
+    "logo": "https://usesolochief.com/logo.png",
+    "founder": {
+      "@type": "Organization",
+      "name": "Astor Stack Technologies"
+    }
   }
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Astor Stack Technologies",
-  "url": "https://astorstack.com",
-  "logo": "https://usesolochief.com/logo.png",
-  "sameAs": [
-    "https://linkedin.com/company/solochief",
-    "https://twitter.com/fasathor"
-  ],
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "email": "hello@astorstack.com",
-    "contactType": "customer support"
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SoloChief",
+    "url": "https://usesolochief.com/",
+    "description": "SoloChief is a personal Chief of Staff that helps you plan the week, protect today's focus, track follow-ups and review what happened, on the web and in WhatsApp.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web browser, WhatsApp",
+    "brand": {
+      "@type": "Organization",
+      "name": "SoloChief"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Free",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      {
+        "@type": "Offer",
+        "name": "Pro",
+        "price": "19",
+        "priceCurrency": "USD",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "19",
+          "priceCurrency": "USD",
+          "unitText": "MONTH"
+        }
+      },
+      {
+        "@type": "Offer",
+        "name": "Operator",
+        "price": "39",
+        "priceCurrency": "USD",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "39",
+          "priceCurrency": "USD",
+          "unitText": "MONTH"
+        }
+      }
+    ]
   }
-}
-</script>
+  </script>
+</head>
+<body class="hv2-root">
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    { "@type": "Question", "name": "Is SoloChief free to use?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The web dashboard is free forever. It includes Today Focus, Commitments, Follow-ups, Weekly Plan, Parking Lot, and Friday Review. WhatsApp access is available on Pro at $19 per month, with a one-time 7-day WhatsApp trial." } },
-    { "@type": "Question", "name": "How does Pocket Chief work?", "acceptedAnswer": { "@type": "Answer", "text": "Go to Settings, tap Connect WhatsApp, and WhatsApp opens with a short code pre-filled. Send the message and Pocket Chief activates on your number. No manual setup, no phone number entry." } },
-    { "@type": "Question", "name": "What is the morning brief?", "acceptedAnswer": { "@type": "Answer", "text": "Every morning at your chosen time, Chief sends you a message with your focus for the day, any follow-ups due, and your active commitments. You start the day knowing what matters without opening another app." } },
-    { "@type": "Question", "name": "Do I need to download anything to use SoloChief?", "acceptedAnswer": { "@type": "Answer", "text": "No downloads required. The web dashboard works on any browser. Pocket Chief, the mobile layer, is delivered through WhatsApp, which you likely already have on your phone. No new app to install, no new habit to build. Chief meets you where you are. Pocket Chief is available on Pro." } },
-    { "@type": "Question", "name": "How is SoloChief different from other productivity tools?", "acceptedAnswer": { "@type": "Answer", "text": "Most productivity tools are pull-based. You have to go to them. SoloChief is push-based. Chief sends your brief, tracks your follow-ups, and keeps your work moving without requiring you to build or maintain a system from scratch." } },
-    { "@type": "Question", "name": "Is SoloChief an AI productivity assistant?", "acceptedAnswer": { "@type": "Answer", "text": "Yes, but it is not a generic chatbot. SoloChief is built around execution: weekly planning, daily focus, follow-up tracking, morning briefs, and practical help with your next move." } },
-    { "@type": "Question", "name": "Who is SoloChief for?", "acceptedAnswer": { "@type": "Answer", "text": "SoloChief is for founders, operators, freelancers, consultants, builders, small team leads, and anyone managing too many open loops." } },
-    { "@type": "Question", "name": "Is my data secure?", "acceptedAnswer": { "@type": "Answer", "text": "We take data security seriously. Authentication is handled securely, your data is protected with access controls, and we do not sell your data or use it for advertising." } },
-    { "@type": "Question", "name": "Can I cancel anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. You can cancel from Settings at any time. Your access continues until the end of your billing period." } },
-    { "@type": "Question", "name": "Is SoloChief available on mobile?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The web app is fully responsive and installable as a PWA on iPhone and Android. You can add it to your home screen from your browser for a native app-like experience." } },
-    { "@type": "Question", "name": "What is Rescue Me?", "acceptedAnswer": { "@type": "Answer", "text": "Rescue Me gives you five clear paths when you feel overwhelmed. Free users get one session per week. Pro users get unlimited access. It is designed for the moments when you most need structure but least feel like finding it." } }
-  ]
-}
-</script>
+  <header class="hv2-header">
+    <nav class="hv2-nav">
+      <a href="#hv2Top" class="hv2-logo">SoloChief</a>
 
+      <div class="hv2-nav-links">
+        <a href="/" class="hv2-nav-link" aria-current="page">Product</a>
+        <a href="/features/" class="hv2-nav-link">Features</a>
+        <a href="#hv2HowItWorks" class="hv2-nav-link">How it works</a>
+        <a href="/pricing/" class="hv2-nav-link">Pricing</a>
+        <a href="/faq/" class="hv2-nav-link">FAQ</a>
+        <a href="https://solochief.app/auth/login" class="hv2-nav-link">Sign in</a>
+        <a href="https://solochief.app/auth/signup" class="hv2-nav-cta">Start free</a>
+      </div>
+
+      <button id="hv2MenuBtn" class="hv2-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="hv2MobileMenu">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+    </nav>
+
+    <div id="hv2MobileMenu" class="hv2-mobile-menu">
+      <a href="/" aria-current="page">Product</a>
+      <a href="/features/">Features</a>
+      <a href="#hv2HowItWorks">How it works</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/faq/">FAQ</a>
+      <a href="https://solochief.app/auth/login">Sign in</a>
+      <a href="https://solochief.app/auth/signup">Start free</a>
+    </div>
+  </header>
+
+  <main id="hv2Top">
+
+    <!-- Hero: first-look composition — genuine product imagery only.
+         "Command Center on the web. Pocket Chief in WhatsApp." -->
+    <section class="hv2-hero">
+      <div class="hv2-container hv2-hero-inner">
+        <div class="hv2-hero-copy">
+          <h1 class="hv2-h1">
+            <span class="hv2-h1-line">Your personal</span>
+            <span class="hv2-h1-line hv2-h1-line--tight">Chief of Staff</span>
+            <span class="hv2-h1-line">for <span id="hv2RoleWord" class="hv2-role-word hv2-accent" data-hv2-roles="Founders,Operators,Managers,Agency Owners,Executives">Founders</span><span class="hv2-role-word-caret" aria-hidden="true">|</span></span>
+          </h1>
+          <p class="hv2-hero-kicker">Plan the week. Protect the focus. Keep work moving.</p>
+          <p class="hv2-lede">SoloChief turns commitments, follow-ups and unfinished work into a clear operating week, then stays with you in the Web Command Center and WhatsApp.</p>
+          <div class="hv2-cta-row">
+            <a href="https://solochief.app/auth/signup" class="hv2-btn hv2-btn-primary">Start free</a>
+            <a href="#hv2HowItWorks" class="hv2-btn hv2-btn-secondary">See how it works</a>
+          </div>
+          <p class="hv2-hero-support">Command Center on the web. Chief of Staff in WhatsApp.</p>
+        </div>
+
+        <div class="hv2-hero-scene">
+          <div class="hv2-scene" aria-hidden="true">
+            <div class="hv2-scene-glow"></div>
+            <div class="hv2-scene--product">
+              <img
+                src="/home-v2/assets/product/plan-focus/weekly-plan.webp"
+                alt=""
+                width="1800"
+                height="1227"
+                class="hv2-scene-web-img"
+                loading="eager"
+                fetchpriority="high">
+              <img
+                src="/img/solochief-phone-final.png"
+                alt=""
+                width="1024"
+                height="1536"
+                class="hv2-scene-phone-img"
+                loading="eager">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a href="#hv2Film" class="hv2-scroll-cue">
+        <span>Scroll to build the week</span>
+        <span class="hv2-scroll-cue-icon">&#8595;</span>
+      </a>
+    </section>
+
+    <!-- Film: a distinct cover-slide panel — rises and covers the hero
+         using the same .hv2-cover-panel mechanism as How It Works and
+         the paired chapters. -->
+    <section id="hv2Film" class="hv2-cover-shell">
+      <div class="hv2-film hv2-cover-panel hv2-cover-panel--film">
+      <div class="hv2-film-bg-word" aria-hidden="true">OPERATE</div>
+      <div class="hv2-container hv2-film-inner">
+        <div class="hv2-film-copy">
+          <span class="hv2-eyebrow hv2-reveal" data-hv2-stagger="0">The SoloChief Film</span>
+          <h2 class="hv2-film-title hv2-reveal" data-hv2-stagger="1">One operating rhythm.<br>Web and pocket.</h2>
+          <p class="hv2-film-lede hv2-reveal" data-hv2-stagger="2">See how SoloChief helps you plan the week, protect today's focus and keep important work moving across the Command Center and WhatsApp.</p>
+        </div>
+
+        <div class="hv2-film-stage hv2-reveal" data-hv2-stagger="1">
+          <div class="hv2-film-video-wrap">
+            <video
+              id="hv2FilmVideo"
+              class="hv2-film-video"
+              poster="/home-v2/assets/video/solochief-product-film-poster.jpg"
+              preload="metadata"
+              muted
+              playsinline
+              controls
+              width="1920"
+              height="1080"
+              aria-label="SoloChief product film">
+              <source src="/home-v2/assets/video/solochief-product-film-1080.mp4" type="video/mp4">
+            </video>
+          </div>
+          <button type="button" id="hv2FilmSoundBtn" class="hv2-film-sound-btn" aria-pressed="false" aria-label="Watch the SoloChief product film with sound">
+            <span class="hv2-film-sound-label">Watch with sound</span>
+          </button>
+        </div>
+
+        <a href="#hv2HowItWorks" class="hv2-film-next">
+          <span>Next: See how it works</span>
+          <span aria-hidden="true">&#8595;</span>
+        </a>
+      </div>
+      </div>
+    </section>
+
+    <!-- How It Works: rises directly over the Film panel using the same
+         shared cover-panel mechanism -->
+    <span id="how-it-works" aria-hidden="true"></span>
+    <section id="hv2HowItWorks" class="hv2-cover-shell">
+      <div class="hv2-hiw hv2-cover-panel hv2-cover-panel--hiw">
+      <div class="hv2-container hv2-hiw-inner">
+        <div class="hv2-hiw-header">
+          <span class="hv2-eyebrow hv2-reveal" data-hv2-stagger="0">How SoloChief Works</span>
+          <h2 class="hv2-hiw-title hv2-reveal" data-hv2-stagger="1">One system for the week.<br>One chief of staff beside you.</h2>
+          <p class="hv2-hiw-lede hv2-reveal" data-hv2-stagger="2">Plan in the Command Center, run the day through WhatsApp, and review what actually happened without rebuilding the week from memory.</p>
+        </div>
+
+        <div class="hv2-hiw-sequence">
+          <div class="hv2-hiw-line hv2-reveal" data-hv2-stagger="0" aria-hidden="true"></div>
+
+          <div class="hv2-hiw-step hv2-reveal" data-hv2-stagger="1">
+            <span class="hv2-hiw-step-number" aria-hidden="true">01</span>
+            <h3 class="hv2-hiw-step-title">Plan on web</h3>
+            <p class="hv2-hiw-step-copy">Bring commitments, deadlines and follow-ups together. SoloChief helps you build a realistic operating week in the Command Center.</p>
+          </div>
+
+          <div class="hv2-hiw-step hv2-reveal" data-hv2-stagger="2">
+            <span class="hv2-hiw-step-number" aria-hidden="true">02</span>
+            <h3 class="hv2-hiw-step-title">Run the day in WhatsApp</h3>
+            <p class="hv2-hiw-step-copy">Receive your focus, log progress, capture follow-ups and handle changes without opening another productivity tool.</p>
+          </div>
+
+          <div class="hv2-hiw-step hv2-reveal" data-hv2-stagger="3">
+            <span class="hv2-hiw-step-number" aria-hidden="true">03</span>
+            <h3 class="hv2-hiw-step-title">Review what happened</h3>
+            <p class="hv2-hiw-step-copy">SoloChief brings completions, blockers, switches and unfinished work together so the next week starts with context.</p>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- PLAN: real SoloChief Weekly Plan capture — its own independent
+         cover panel (not sharing a chapter/min-height budget with FOCUS). -->
+    <span id="plan" aria-hidden="true"></span>
+    <section id="hv2Plan" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--plan hv2-pf">
+      <div class="hv2-container hv2-pf-scene hv2-pf-scene--plan">
+        <div class="hv2-pf-copy hv2-reveal" data-hv2-stagger="0">
+          <span class="hv2-eyebrow">Plan</span>
+          <h2 class="hv2-pf-heading">Build the week.</h2>
+          <p class="hv2-pf-copy-lede">SoloChief turns commitments, deadlines and follow-ups into a realistic weekly plan built around what actually needs to move.</p>
+          <ul class="hv2-pf-points">
+            <li>Choose one main focus</li>
+            <li>Commit to exactly three outcomes</li>
+            <li>Define what will not be touched</li>
+          </ul>
+          <span class="hv2-pf-lock">Lock the plan</span>
+        </div>
+        <figure class="hv2-pf-shot hv2-pf-shot--plan hv2-reveal" data-hv2-stagger="1">
+          <img
+            src="/home-v2/assets/product/plan-focus/weekly-plan.webp"
+            alt="SoloChief Weekly Plan screen in draft state, showing this week's main focus commitment, three outcome fields to fill in, an empty stop list, and the planning rules that keep the week to one focus and three outcomes"
+            width="1800" height="1227" loading="lazy" class="hv2-pf-img">
+        </figure>
+      </div>
+      </div>
+    </section>
+
+    <!-- FOCUS: real SoloChief Today Focus capture — its own independent
+         cover panel, mirrored layout from PLAN. -->
+    <span id="focus" aria-hidden="true"></span>
+    <section id="hv2Focus" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--focus hv2-pf">
+      <p class="hv2-environment-word hv2-environment-word--focus" aria-hidden="true">SOLOCHIEF</p>
+      <div class="hv2-container hv2-pf-scene hv2-pf-scene--focus">
+        <figure class="hv2-pf-shot hv2-pf-shot--focus hv2-reveal" data-hv2-stagger="0">
+          <img
+            src="/home-v2/assets/product/plan-focus/today-focus.webp"
+            alt="SoloChief Today Focus screen showing today's one outcome (Content / Marketing) marked in progress, status controls to log the day or request a switch, a Not Today list for blocking work, and follow-ups due today"
+            width="1800" height="1133" loading="lazy" class="hv2-pf-img">
+        </figure>
+        <div class="hv2-pf-copy hv2-reveal" data-hv2-stagger="1">
+          <span class="hv2-eyebrow">Focus</span>
+          <h2 class="hv2-pf-heading">Protect today.</h2>
+          <p class="hv2-pf-copy-lede">When the day gets noisy, SoloChief keeps the priority clear.</p>
+          <ul class="hv2-pf-points">
+            <li>See today's one outcome</li>
+            <li>Update progress as work moves</li>
+            <li>Log a switch when priorities change</li>
+            <li>Keep blocked work out of today</li>
+          </ul>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- PRICING PREVIEW: sliding cover panel, rises over Focus — compact,
+         locked prices only. Full comparison lives on the standalone
+         /pricing/ page. -->
+    <span id="pricing" aria-hidden="true"></span>
+    <section id="hv2PricingPreview" class="hv2-cover-shell hv2-cover-shell--final">
+      <div class="hv2-cover-panel hv2-cover-panel--pricing">
+      <div class="hv2-container">
+        <div class="hv2-conv-2col">
+          <div class="hv2-conv-2col-copy hv2-reveal" data-hv2-stagger="0">
+            <span class="hv2-eyebrow">Choose your level of support</span>
+            <h2 class="hv2-conv-heading">Start with structure. Add your Chief when you need it.</h2>
+            <p class="hv2-conv-copy">Use SoloChief free on the web, carry it into WhatsApp with Pro, or unlock the highest operating support with Operator.</p>
+            <div class="hv2-conv-footline">
+              <a href="/pricing/" class="hv2-conv-link">Compare every feature <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </div>
+
+          <div class="hv2-pricing-preview-stack hv2-reveal" data-hv2-stagger="1">
+            <div class="hv2-pricing-preview-card">
+              <div>
+                <h3 class="hv2-pricing-preview-name">Free</h3>
+                <p class="hv2-pricing-preview-price">$0</p>
+              </div>
+              <p class="hv2-pricing-preview-purpose">Run the full week in the Web Command Center &mdash; planning, focus and review.</p>
+              <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+            </div>
+
+            <div class="hv2-pricing-preview-card hv2-pricing-preview-card--highlight">
+              <div>
+                <h3 class="hv2-pricing-preview-name">Pro <span class="hv2-pricing-badge">Most popular</span></h3>
+                <p class="hv2-pricing-preview-price">$19<span>/month</span></p>
+              </div>
+              <p class="hv2-pricing-preview-purpose">Everything in Free, plus Pocket Chief in WhatsApp and proactive briefs.</p>
+              <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--solid">Start free</a>
+            </div>
+
+            <div class="hv2-pricing-preview-card">
+              <div>
+                <h3 class="hv2-pricing-preview-name">Operator <span class="hv2-pricing-badge hv2-pricing-badge--outline">Early access</span></h3>
+                <p class="hv2-pricing-preview-price">$39<span>/month</span></p>
+              </div>
+              <p class="hv2-pricing-preview-purpose">Everything in Pro, plus voice-note logging and the highest usage allowance.</p>
+              <a href="https://solochief.app/auth/signup" class="hv2-pricing-cta hv2-pricing-cta--outline">Start free</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- TRUST AND PRIVACY: sliding cover panel, rises over Pricing —
+         concise editorial band — only verified claims, no encryption,
+         compliance or certification language unless confirmed against
+         the product. -->
+    <span id="trust" aria-hidden="true"></span>
+    <section id="hv2Trust">
+      <div class="hv2-cover-panel--trust">
+      <div class="hv2-container hv2-trust-layout">
+        <div class="hv2-conv-header hv2-conv-header--left hv2-reveal" data-hv2-stagger="0">
+          <span class="hv2-eyebrow">Built for your operating context</span>
+          <h2 class="hv2-conv-heading">Your work stays yours.</h2>
+          <p class="hv2-conv-copy">SoloChief uses your commitments, updates and conversations to help you operate your week. Your information is handled as private product data, not public content.</p>
+          <div class="hv2-trust-links">
+            <a href="https://solochief.app/privacy">Privacy</a>
+            <a href="https://solochief.app/terms">Terms</a>
+          </div>
+        </div>
+
+        <ul class="hv2-trust-points hv2-reveal" data-hv2-stagger="1">
+          <li>
+            <span class="hv2-trust-point-num" aria-hidden="true">01</span>
+            <span class="hv2-trust-point-title">You stay in control</span>
+            <span class="hv2-trust-point-copy">Your commitments and conversations are used to run your week, not shared publicly.</span>
+          </li>
+          <li>
+            <span class="hv2-trust-point-num" aria-hidden="true">02</span>
+            <span class="hv2-trust-point-title">Your week is not casual to change</span>
+            <span class="hv2-trust-point-copy">Switching focus takes a deliberate action, not an accidental overwrite.</span>
+          </li>
+          <li>
+            <span class="hv2-trust-point-num" aria-hidden="true">03</span>
+            <span class="hv2-trust-point-title">Your information is not sold</span>
+            <span class="hv2-trust-point-copy">Your data is not sold or used for advertising, ever.</span>
+          </li>
+          <li>
+            <span class="hv2-trust-point-num" aria-hidden="true">04</span>
+            <span class="hv2-trust-point-title">WhatsApp and web stay connected</span>
+            <span class="hv2-trust-point-copy">One account, one plan, controlled from Settings at any time.</span>
+          </li>
+          <li class="hv2-trust-proof">Authentication is handled securely, and access to your data is controlled at every step.</li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+    <!-- FAQ PREVIEW: sliding cover panel, rises over Trust — deliberately
+         compact (5 questions, two-column), matching the height of every
+         other panel in the stack. The full 9-question... list still lives
+         on the dedicated /faq/ page. -->
+    <span id="faq" aria-hidden="true"></span>
+    <section id="hv2Faq">
+      <div class="hv2-cover-panel--faq hv2-light-section">
+      <div class="hv2-container hv2-faq-container">
+        <div class="hv2-conv-2col">
+          <div class="hv2-conv-2col-copy hv2-reveal" data-hv2-stagger="0">
+            <span class="hv2-eyebrow">Questions before you begin</span>
+            <h2 class="hv2-conv-heading">Clear answers before you hand over your week.</h2>
+            <p class="hv2-conv-copy">The essentials, answered directly. Everything else — plans, WhatsApp, privacy and product behaviour — lives on the full FAQ.</p>
+            <div class="hv2-conv-footline">
+              <a href="/faq/" class="hv2-conv-link">Explore all questions <span aria-hidden="true">&rarr;</span></a>
+            </div>
+          </div>
+
+          <div class="hv2-faq-list hv2-faq-list--compact hv2-reveal" data-hv2-stagger="1">
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup" open>
+              <summary class="hv2-faq-q" id="hv2FaqQ1"><span>Is SoloChief free?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>Yes. The web Command Center is free and fully usable on its own — Weekly Plan, Today Focus, Follow-up Tracker and Friday Review.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ2"><span>How do web and WhatsApp work together?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>They share one plan and one focus. Pocket Chief, on Pro, carries that same context into WhatsApp.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ3"><span>Does SoloChief replace my existing tools?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>It replaces the planning and focus layer, not necessarily every tool. Most people run it alongside whatever they already use for deep work.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ4"><span>What happens during the trial?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>Free is not a time-limited trial — it stays free. Upgrade to Pro or Operator whenever the week needs more.</p></div>
+            </details>
+            <details class="hv2-faq-item" name="hv2FaqPreviewGroup">
+              <summary class="hv2-faq-q" id="hv2FaqQ5"><span>Is my data secure?</span><span class="hv2-faq-chevron" aria-hidden="true">&#9662;</span></summary>
+              <div class="hv2-faq-a-inner"><p>Yes. Authentication is handled securely, access is controlled, and your data is never sold or used for advertising.</p></div>
+            </details>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA: sliding cover panel, rises over FAQ Preview — the
+         LAST panel in the Homepage stack. It gets a short bounded dwell
+         (hv2-cover-shell--final) then releases directly into the
+         normal-flow Footer — restrained, one dominant action, no
+         product mockups or heavy motion. -->
+    <section id="hv2FinalCta">
+      <div class="hv2-cover-panel--finalcta">
+      <p class="hv2-environment-word hv2-environment-word--finalcta" aria-hidden="true">SOLOCHIEF</p>
+      <div class="hv2-container">
+        <div class="hv2-final-cta-panel hv2-reveal" data-hv2-stagger="0">
+          <span class="hv2-eyebrow">Your week does not need another app to manage</span>
+          <h2 class="hv2-final-cta-heading">Plan clearly. Protect your focus. Keep moving.</h2>
+          <p class="hv2-final-cta-copy">SoloChief keeps the operating rhythm with you, on the web and in WhatsApp.</p>
+          <div class="hv2-final-cta-actions">
+            <a href="https://solochief.app/auth/signup" class="hv2-nav-cta hv2-final-cta-primary">Start free</a>
+            <a href="/features/" class="hv2-conv-link">See all features <span aria-hidden="true">&rarr;</span></a>
+          </div>
+          <p class="hv2-final-cta-note">No card required.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="hv2-footer hv2-footer--separated hv2-dark-section">
+    <div class="hv2-container hv2-footer-inner">
+      <div class="hv2-footer-brand">
+        <a href="#hv2Top">SoloChief</a>
+        <p class="hv2-footer-tagline">Plan the week. Protect the focus.</p>
+        <p>Built by Astor Stack Technologies</p>
+        <p>&copy; 2026 Astor Stack Technologies. All rights reserved.</p>
+      </div>
+
+      <div class="hv2-footer-cols">
+        <div>
+          <p class="hv2-footer-label">Product</p>
+          <ul>
+            <li><a href="/features/">Features</a></li>
+            <li><a href="/pricing/">Pricing</a></li>
+            <li><a href="/faq/">FAQ</a></li>
+            <li><a href="/chief-of-staff">Chief of Staff</a></li>
+            <li><a href="/productivity-system">Productivity System</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="hv2-footer-label">Use cases</p>
+          <ul>
+            <li><a href="/ai-chief-of-staff">AI Chief of Staff</a></li>
+            <li><a href="/morning-brief-app">Morning Brief App</a></li>
+            <li><a href="/follow-up-tracker">Follow-up Tracker</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="hv2-footer-label">Account</p>
+          <ul>
+            <li><a href="https://solochief.app/auth/login">Sign in</a></li>
+            <li><a href="https://solochief.app/auth/signup">Sign up</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="hv2-footer-label">Legal</p>
+          <ul>
+            <li><a href="https://solochief.app/privacy">Privacy Policy</a></li>
+            <li><a href="https://solochief.app/terms">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/scripts/home-v2.js" defer></script>
 </body>
 </html>

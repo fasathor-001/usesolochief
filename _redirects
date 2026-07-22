@@ -4,3 +4,10 @@
 # static assets. With no rules here, Cloudflare Pages serves index.html at /,
 # serves /sitemap.xml, /robots.txt, /og-image.png, /favicon.png directly with
 # their correct content types, and returns a real 404 for unknown paths.
+
+# /home-v2/ was the internal preview path for the V2 homepage redesign.
+# The V2 homepage is now served at / directly (see index.html) — redirect
+# the old preview path permanently so it never becomes a duplicate-content
+# URL and any inbound links to it still land on the real homepage.
+/home-v2/    /    301
+/home-v2     /    301
