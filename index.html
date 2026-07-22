@@ -267,56 +267,97 @@
       </div>
     </section>
 
-    <!-- PLAN: real SoloChief Weekly Plan capture — its own independent
-         cover panel (not sharing a chapter/min-height budget with FOCUS). -->
+    <!-- OPERATING LOOP: interactive three-stage product demo — replaces
+         the previous standalone PLAN and FOCUS cover panels (kept them
+         separate would repeat Plan/Focus a second time right after this
+         section). Real captured SoloChief product video per stage
+         (operating-loop-*.mp4), not screenshots. Tab semantics reuse
+         initTabGroups() above untouched; this section's own script block
+         only reacts to the aria-selected state that produces, so it works
+         identically however a tab became active (click, keyboard, hash
+         deep-link, back/forward). All three panels stay in the static
+         markup with poster images — JS narrows to one and starts
+         playback only once it has actually run. -->
     <span id="plan" aria-hidden="true"></span>
-    <section id="hv2Plan" class="hv2-cover-shell">
-      <div class="hv2-cover-panel hv2-cover-panel--plan hv2-pf">
-      <div class="hv2-container hv2-pf-scene hv2-pf-scene--plan">
-        <div class="hv2-pf-copy hv2-reveal" data-hv2-stagger="0">
-          <span class="hv2-eyebrow">Plan</span>
-          <h2 class="hv2-pf-heading">Build the week.</h2>
-          <p class="hv2-pf-copy-lede">SoloChief turns commitments, deadlines and follow-ups into a realistic weekly plan built around what actually needs to move.</p>
-          <ul class="hv2-pf-points">
-            <li>Choose one main focus</li>
-            <li>Commit to exactly three outcomes</li>
-            <li>Define what will not be touched</li>
-          </ul>
-          <span class="hv2-pf-lock">Lock the plan</span>
-        </div>
-        <figure class="hv2-pf-shot hv2-pf-shot--plan hv2-reveal" data-hv2-stagger="1">
-          <img
-            src="/home-v2/assets/product/plan-focus/weekly-plan.webp"
-            alt="SoloChief Weekly Plan screen in draft state, showing this week's main focus commitment, three outcome fields to fill in, an empty stop list, and the planning rules that keep the week to one focus and three outcomes"
-            width="1800" height="1227" loading="lazy" class="hv2-pf-img">
-        </figure>
-      </div>
-      </div>
-    </section>
-
-    <!-- FOCUS: real SoloChief Today Focus capture — its own independent
-         cover panel, mirrored layout from PLAN. -->
     <span id="focus" aria-hidden="true"></span>
-    <section id="hv2Focus" class="hv2-cover-shell">
-      <div class="hv2-cover-panel hv2-cover-panel--focus hv2-pf">
-      <p class="hv2-environment-word hv2-environment-word--focus" aria-hidden="true">SOLOCHIEF</p>
-      <div class="hv2-container hv2-pf-scene hv2-pf-scene--focus">
-        <figure class="hv2-pf-shot hv2-pf-shot--focus hv2-reveal" data-hv2-stagger="0">
-          <img
-            src="/home-v2/assets/product/plan-focus/today-focus.webp"
-            alt="SoloChief Today Focus screen showing today's one outcome (Content / Marketing) marked in progress, status controls to log the day or request a switch, a Not Today list for blocking work, and follow-ups due today"
-            width="1800" height="1133" loading="lazy" class="hv2-pf-img">
-        </figure>
-        <div class="hv2-pf-copy hv2-reveal" data-hv2-stagger="1">
-          <span class="hv2-eyebrow">Focus</span>
-          <h2 class="hv2-pf-heading">Protect today.</h2>
-          <p class="hv2-pf-copy-lede">When the day gets noisy, SoloChief keeps the priority clear.</p>
-          <ul class="hv2-pf-points">
-            <li>See today's one outcome</li>
-            <li>Update progress as work moves</li>
-            <li>Log a switch when priorities change</li>
-            <li>Keep blocked work out of today</li>
-          </ul>
+    <section id="hv2OperatingLoop" class="hv2-cover-shell">
+      <div class="hv2-cover-panel hv2-cover-panel--oploop">
+      <div class="hv2-container">
+        <div class="hv2-conv-header hv2-reveal" data-hv2-stagger="0">
+          <span class="hv2-eyebrow">The operating loop</span>
+          <h2 class="hv2-conv-heading">One operating rhythm.<br>From weekly planning to daily follow-through.</h2>
+          <p class="hv2-conv-copy">SoloChief brings your priorities, capacity, follow-ups and progress into one connected system across the web and WhatsApp.</p>
+        </div>
+
+        <div class="hv2-ol hv2-reveal" data-hv2-stagger="1">
+          <div class="hv2-ol-nav" role="tablist" aria-label="SoloChief operating loop stages">
+            <button type="button" class="hv2-ol-btn" role="tab" id="hv2OlTabPlan" aria-controls="hv2OlPanelPlan" aria-selected="true" data-stage="plan">
+              <span class="hv2-ol-btn-head">
+                <span class="hv2-ol-btn-num">01</span>
+                <span class="hv2-ol-btn-name">Plan your week</span>
+              </span>
+              <span class="hv2-ol-btn-copy">Decide what matters, what can wait and when your capacity is already full.</span>
+              <span class="hv2-ol-progress" aria-hidden="true"><span class="hv2-ol-progress-fill"></span></span>
+            </button>
+            <button type="button" class="hv2-ol-btn" role="tab" id="hv2OlTabFocus" aria-controls="hv2OlPanelFocus" aria-selected="false" data-stage="focus" tabindex="-1">
+              <span class="hv2-ol-btn-head">
+                <span class="hv2-ol-btn-num">02</span>
+                <span class="hv2-ol-btn-name">Protect today&rsquo;s focus</span>
+              </span>
+              <span class="hv2-ol-btn-copy">Give one clear outcome protected attention and handle new work through deliberate trade-offs.</span>
+              <span class="hv2-ol-progress" aria-hidden="true"><span class="hv2-ol-progress-fill"></span></span>
+            </button>
+            <button type="button" class="hv2-ol-btn" role="tab" id="hv2OlTabWhatsapp" aria-controls="hv2OlPanelWhatsapp" aria-selected="false" data-stage="whatsapp" tabindex="-1">
+              <span class="hv2-ol-btn-head">
+                <span class="hv2-ol-btn-num">03</span>
+                <span class="hv2-ol-btn-name">Follow through in WhatsApp</span>
+              </span>
+              <span class="hv2-ol-btn-copy">Confirm your plan, report blockers and keep the Command Center accurate wherever you are.</span>
+              <span class="hv2-ol-progress" aria-hidden="true"><span class="hv2-ol-progress-fill"></span></span>
+            </button>
+          </div>
+
+          <div class="hv2-ol-stage">
+            <article class="hv2-ol-panel" id="hv2OlPanelPlan" role="tabpanel" aria-labelledby="hv2OlTabPlan" data-stage-panel="plan">
+              <div class="hv2-ol-media">
+              <video
+                class="hv2-ol-video"
+                id="hv2OlVideoPlan"
+                poster="/home-v2/assets/video/operating-loop-plan-poster.jpg"
+                data-src="/home-v2/assets/video/operating-loop-plan.mp4"
+                muted loop playsinline preload="none"
+                width="1920" height="1080"
+                aria-label="SoloChief Weekly Plan filling in with this week's outcomes and capacity">
+              </video>
+              </div>
+            </article>
+            <article class="hv2-ol-panel" id="hv2OlPanelFocus" role="tabpanel" aria-labelledby="hv2OlTabFocus" data-stage-panel="focus">
+              <div class="hv2-ol-media">
+              <video
+                class="hv2-ol-video"
+                id="hv2OlVideoFocus"
+                poster="/home-v2/assets/video/operating-loop-focus-poster.jpg"
+                data-src="/home-v2/assets/video/operating-loop-focus.mp4"
+                muted loop playsinline preload="none"
+                width="1920" height="1080"
+                aria-label="SoloChief Today Focus resolving a new-work trade-off without losing the day's main outcome">
+              </video>
+              </div>
+            </article>
+            <article class="hv2-ol-panel" id="hv2OlPanelWhatsapp" role="tabpanel" aria-labelledby="hv2OlTabWhatsapp" data-stage-panel="whatsapp">
+              <div class="hv2-ol-media">
+              <video
+                class="hv2-ol-video"
+                id="hv2OlVideoWhatsapp"
+                poster="/home-v2/assets/video/operating-loop-whatsapp-poster.jpg"
+                data-src="/home-v2/assets/video/operating-loop-whatsapp.mp4"
+                muted loop playsinline preload="none"
+                width="1920" height="1080"
+                aria-label="SoloChief WhatsApp conversation confirming today's outcome and reporting a blocker back to the Command Center">
+              </video>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
       </div>

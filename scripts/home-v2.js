@@ -308,6 +308,192 @@
     });
   })();
 
+  // ---------- Homepage: Operating Loop — three-stage video demo ----------
+  // Layers on top of initTabGroups() above without changing it: this only
+  // reacts to the aria-selected state that function already produces (via
+  // MutationObserver), so it works identically no matter which path
+  // activated a tab — click, keyboard, hash deep-link, its load-time
+  // fallback, hashchange, or back/forward. No-op wherever
+  // #hv2OperatingLoop doesn't exist.
+  (function initOperatingLoop() {
+    var section = document.getElementById('hv2OperatingLoop');
+    if (!section) { return; }
+
+    // The <section> itself is the full sticky-scroll track (well over
+    // viewport height by design — see .hv2-cover-shell), so its own
+    // intersection ratio never reaches a useful threshold even when the
+    // sticky panel is entirely on screen. Observe the actual visible
+    // content block instead, same as the film observes its <video>
+    // directly rather than its outer section.
+    var viewportTarget = section.querySelector('.hv2-ol') || section;
+
+    var tabs = Array.prototype.slice.call(section.querySelectorAll('[role="tab"]'));
+    if (!tabs.length) { return; }
+
+    // Matches each clip's own authored loop length (real motion + hold +
+    // crossfade) — advancing exactly when a clip finishes one loop reads
+    // as "it's done, moving on" rather than an arbitrary shared timer.
+    var DURATIONS = { plan: 6000, focus: 6770, whatsapp: 8030 };
+    var FALLBACK_DURATION = 6000;
+
+    var prefersReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var saveData = !!(navigator.connection && navigator.connection.saveData);
+    var motionAllowed = !prefersReducedMotion && !saveData && ('IntersectionObserver' in window);
+
+    var activeTab = null;
+    var inView = false;
+    var advancePaused = false;
+    var advanceTimer = null;
+
+    function stageOf(tab) { return tab.getAttribute('data-stage'); }
+
+    function videoFor(tab) {
+      var panelId = tab.getAttribute('aria-controls');
+      var panel = panelId ? document.getElementById(panelId) : null;
+      return panel ? panel.querySelector('.hv2-ol-video') : null;
+    }
+
+    function safePlay(video) {
+      var playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(function () {});
+      }
+    }
+
+    function loadIfNeeded(video) {
+      if (!video || video.hasAttribute('src')) { return; }
+      var src = video.getAttribute('data-src');
+      if (!src) { return; }
+      video.src = src;
+      video.load();
+    }
+
+    function pauseAll() {
+      tabs.forEach(function (tab) {
+        var video = videoFor(tab);
+        if (video && !video.paused) { video.pause(); }
+      });
+    }
+
+    function clearAdvanceTimer() {
+      if (advanceTimer) { clearTimeout(advanceTimer); advanceTimer = null; }
+    }
+
+    function resetProgress() {
+      tabs.forEach(function (tab) {
+        var fill = tab.querySelector('.hv2-ol-progress-fill');
+        if (!fill) { return; }
+        fill.style.transitionDuration = '0ms';
+        fill.style.width = '0%';
+      });
+    }
+
+    function startProgress(tab) {
+      resetProgress();
+      if (!motionAllowed) { return; }
+      var fill = tab.querySelector('.hv2-ol-progress-fill');
+      if (!fill) { return; }
+      var duration = DURATIONS[stageOf(tab)] || FALLBACK_DURATION;
+      // Force layout so the 0%/0ms reset above is committed before the
+      // fill-to-100% transition starts — otherwise the browser can
+      // coalesce both style writes and skip straight to the end state.
+      void fill.offsetWidth;
+      fill.style.transitionDuration = duration + 'ms';
+      fill.style.width = '100%';
+    }
+
+    function scheduleAdvance(tab) {
+      clearAdvanceTimer();
+      if (!motionAllowed || !inView || advancePaused) { return; }
+      var duration = DURATIONS[stageOf(tab)] || FALLBACK_DURATION;
+      var index = tabs.indexOf(tab);
+      advanceTimer = setTimeout(function () {
+        var nextIndex = index === tabs.length - 1 ? 0 : index + 1;
+        // A real tab click (see the trusted-event listener below) marks
+        // advancePaused permanently, so this synthetic click can never
+        // itself be mistaken for the user taking over.
+        tabs[nextIndex].click();
+      }, duration);
+    }
+
+    // Only runs once the section is actually in view and motion is
+    // allowed — never on setup alone, so nothing plays or advances while
+    // scrolled past.
+    function activateForView() {
+      if (!activeTab) { return; }
+      var video = videoFor(activeTab);
+      if (video) {
+        loadIfNeeded(video);
+        safePlay(video);
+      }
+      startProgress(activeTab);
+      scheduleAdvance(activeTab);
+    }
+
+    function selectTab(tab) {
+      if (activeTab === tab) { return; }
+      activeTab = tab;
+      pauseAll();
+      clearAdvanceTimer();
+      resetProgress();
+      if (inView && motionAllowed) { activateForView(); }
+    }
+
+    // React to whatever initTabGroups() above did to aria-selected —
+    // this file never calls its activate() and never duplicates its tab
+    // logic. Covers every activation path in one place.
+    tabs.forEach(function (tab) {
+      new MutationObserver(function () {
+        if (tab.getAttribute('aria-selected') === 'true') { selectTab(tab); }
+      }).observe(tab, { attributes: true, attributeFilter: ['aria-selected'] });
+    });
+
+    // The MutationObserver above only fires on later attribute changes —
+    // it necessarily misses initTabGroups()'s own initial activate()
+    // call, which already ran before this IIFE starts. Pick up whichever
+    // tab that left active now.
+    selectTab(tabs.filter(function (tab) {
+      return tab.getAttribute('aria-selected') === 'true';
+    })[0] || tabs[0]);
+
+    // A real interaction pauses auto-advance for the rest of this page
+    // view. element.click() from scheduleAdvance() above dispatches an
+    // untrusted event, so it can never trip this itself — only a genuine
+    // user click or keypress can.
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function (event) {
+        if (event.isTrusted) { advancePaused = true; clearAdvanceTimer(); }
+      });
+      tab.addEventListener('keydown', function (event) {
+        if (event.isTrusted) { advancePaused = true; clearAdvanceTimer(); }
+      });
+    });
+
+    if (motionAllowed) {
+      var viewportObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.intersectionRatio >= 0.5) {
+              if (!inView) { inView = true; activateForView(); }
+            } else if (!entry.isIntersecting) {
+              if (inView) {
+                inView = false;
+                pauseAll();
+                clearAdvanceTimer();
+                resetProgress();
+              }
+            }
+          });
+        },
+        { threshold: [0, 0.5] }
+      );
+      viewportObserver.observe(viewportTarget);
+    }
+    // Reduced motion / save-data: no video ever loads (data-src is never
+    // promoted to src), so only the poster image shows — same fallback
+    // the film section already uses.
+  })();
+
   if (!('IntersectionObserver' in window)) {
     // Fail safe: no observer support, just show everything immediately.
     revealEls.forEach(function (el) {

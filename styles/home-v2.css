@@ -1231,6 +1231,10 @@
    shadow is unaffected since it belongs to this same element, not a
    clipped descendant. */
 .hv2-cover-panel--focus { background: #142338; z-index: 5; padding: 2.5rem 0; overflow: hidden; }
+/* Reuses the PLAN panel's z-index slot — it replaces both PLAN and FOCUS
+   as a single panel, so skipping z5 (FOCUS's old slot) is fine; stacking
+   only needs each panel higher than the last, not contiguous numbers. */
+.hv2-cover-panel--oploop { background: var(--hv2-panel); z-index: 4; padding: 2.5rem 0; }
 /* Pricing preview is now the LAST panel in the sticky stack — Trust,
    FAQ preview and Final CTA (below) left the sliding-panel system
    entirely, see the "closing block" comment above .hv2-cover-panel--
@@ -1241,7 +1245,8 @@
 
 @media (min-width: 1024px) {
   .hv2-cover-panel--plan,
-  .hv2-cover-panel--focus {
+  .hv2-cover-panel--focus,
+  .hv2-cover-panel--oploop {
     padding: 1rem 0 10rem;
   }
 
@@ -1253,6 +1258,7 @@
   .hv2-cover-panel--hiw { padding-top: calc(var(--hv2-nav-height) + 1rem); }
   .hv2-cover-panel--plan,
   .hv2-cover-panel--focus,
+  .hv2-cover-panel--oploop,
   .hv2-cover-panel--pricing {
     padding-top: calc(var(--hv2-nav-height) + 1rem);
   }
@@ -1344,6 +1350,7 @@
 @media (max-width: 1023px) {
   .hv2-cover-panel--plan,
   .hv2-cover-panel--focus,
+  .hv2-cover-panel--oploop,
   .hv2-cover-panel--pricing,
   .hv2-cover-panel--trust,
   .hv2-cover-panel--faq,
@@ -3412,6 +3419,193 @@
 }
 
 .hv2-fx-map-example strong { color: var(--hv2-text); font-weight: 600; }
+
+/* ---------- Homepage: Operating Loop (Plan / Focus / WhatsApp) ----------
+   Same tab/panel semantics as .hv2-fx-map above (JS reused as-is) but a
+   different visual composition: tall step cards with their own copy and
+   a progress indicator on the left, a real product video on the right —
+   not a compact tab strip over a shared detail card. */
+
+.hv2-ol {
+  margin-top: 2.5rem;
+  max-width: 68rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .hv2-ol { flex-direction: row; align-items: stretch; gap: 2.5rem; }
+  .hv2-ol-nav { flex: 0 0 21rem; }
+  .hv2-ol-stage { flex: 1 1 auto; min-width: 0; }
+}
+
+.hv2-ol-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hv2-ol-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  padding: 1.1rem 1.25rem 1.3rem;
+  border: 1px solid var(--hv2-line);
+  border-radius: 0.9rem;
+  background: var(--hv2-bg);
+  color: var(--hv2-muted);
+  font: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 200ms var(--hv2-ease), background 200ms var(--hv2-ease);
+}
+
+.hv2-ol-btn:hover { border-color: var(--hv2-teal); }
+.hv2-ol-btn:focus-visible { outline: 2px solid var(--hv2-teal); outline-offset: 2px; }
+
+.hv2-ol-btn[aria-selected="true"] {
+  background: var(--hv2-panel);
+  border-color: var(--hv2-teal);
+}
+
+.hv2-ol-btn-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.hv2-ol-btn-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--hv2-teal);
+  letter-spacing: 0.04em;
+}
+
+.hv2-ol-btn-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--hv2-text);
+}
+
+.hv2-ol-btn-copy {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--hv2-muted);
+}
+
+/* Slim fill under each step — animates to 100% over that step's own
+   clip duration while active and in view; JS drives the width/duration,
+   this just defines the bar and its motion. Empty on inactive steps. */
+.hv2-ol-progress {
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--hv2-line);
+  overflow: hidden;
+}
+
+.hv2-ol-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--hv2-teal);
+  transition-property: width;
+  transition-timing-function: linear;
+}
+
+.hv2-ol-stage {
+  position: relative;
+  border: 1px solid var(--hv2-line);
+  border-radius: 1rem;
+  background: var(--hv2-panel);
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hv2-ol-panel {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Same [hidden] specificity fix as .hv2-fx-map-panel — an author
+   `display: flex` on this element would otherwise beat the UA
+   stylesheet's [hidden] { display: none } at equal specificity. */
+.hv2-ol-panel[hidden] { display: none; }
+
+.hv2-ol-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(58svh, 620px);
+  object-fit: contain;
+  border-radius: 0.6rem;
+  background: var(--hv2-bg);
+}
+
+/* No box of its own outside the 480px override below — the video reads
+   as a direct child of .hv2-ol-panel everywhere else, unchanged from
+   before this wrapper existed. */
+.hv2-ol-media { display: contents; }
+
+/* 390px-class phones only: the shared object-fit: contain crop (correct
+   at every wider size, confirmed in the desktop/tablet/laptop preview
+   review) leaves this dense UI footage too small to read once it's
+   squeezed into a ~330px-wide column. Break the stage out to near-full
+   viewport width and crop each stage's footage to its most legible
+   region instead of shrinking the whole frame to fit. Desktop, laptop
+   and tablet are untouched — nothing above this query changes. */
+@media (max-width: 480px) {
+  .hv2-ol-stage {
+    width: calc(100vw - 24px);
+    max-width: none;
+    margin-left: calc(50% - 50vw + 12px);
+    margin-right: calc(50% - 50vw + 12px);
+    padding: 0.5rem;
+  }
+
+  .hv2-ol-media {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 0.5rem;
+  }
+
+  .hv2-ol-video {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  /* Same crop for the poster image: the poster paints through this same
+     object-fit/object-position, so the no-JS/pre-play frame matches the
+     playing one exactly. */
+  .hv2-ol-panel[data-stage-panel="plan"] .hv2-ol-video { object-position: 58% center; }
+  .hv2-ol-panel[data-stage-panel="focus"] .hv2-ol-video { object-position: 55% center; }
+  /* WhatsApp: zoom in slightly and bias right so the phone and the
+     CONFIRMED/BLOCKED badges (both toward the right half of the source
+     frame) stay in view instead of the list's older, less relevant rows. */
+  .hv2-ol-panel[data-stage-panel="whatsapp"] .hv2-ol-video {
+    object-position: 64% center;
+    transform: scale(1.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv2-ol-progress-fill { transition-duration: 0ms !important; }
+}
 
 /* ---------- 1. Hero principle strip (One operating rhythm. Web and pocket.) ---------- */
 
