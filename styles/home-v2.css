@@ -14,6 +14,16 @@
   --hv2-tealh: #00A892;
   --hv2-text: #F0F4F8;
 
+  /* One shared corner-radius family for every panel in a page's closing
+     stack (sliding cover panels, the Homepage footer, and the combined
+     Features/Pricing/FAQ closing footer) — so the whole sequence reads
+     as one rounded-card system rather than some panels rounded and
+     others square. Same clamp already used by .hv2-cover-panel/
+     .hv2-fx-cover-panel; centralised here so .hv2-footer and .hv2-closing
+     can reference the identical value instead of carrying their own
+     copies that can drift out of sync. */
+  --hv2-shell-radius: clamp(1.5rem, 3vw, 2.5rem);
+
   --hv2-duration: 600ms;
   --hv2-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --hv2-stagger-step: 90ms;
@@ -54,6 +64,7 @@
 }
 
 .hv2-container {
+  width: 100%;
   max-width: 80rem;
   margin: 0 auto;
   padding: 0 1.25rem;
@@ -195,15 +206,29 @@
   min-height: 68svh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* Top-weighted, not vertically centred: the min-height above is a floor
+     (so Film's rounded top edge still peeks in on the first screen at
+     tall viewports), but the content itself should sit near the top of
+     that floor rather than drift toward the middle of empty vertical
+     space — completes the same nav-clearance fix already applied to
+     .hv2-hero-inner's align-items below. */
+  justify-content: flex-start;
   padding: 5.5rem 0 4.5rem;
   background:
     radial-gradient(65% 55% at 78% 12%, rgba(0, 194, 168, 0.09), transparent 60%),
     var(--hv2-deep);
+  /* Desktop override below adds nav-clearance breathing room — the
+     align-items fix above dropped the nav-to-eyebrow gap to 39px
+     (measured), under the 80-120px target, since padding-top alone
+     was doing all the positioning once centering was removed. */
   /* overflow-x alone (without a matching overflow-y) computes overflow-y
      to `auto` per the CSS Overflow spec's axis-pairing rule, silently
      creating a nested scroll container. Both axes explicit avoids it. */
   overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .hv2-hero { padding-top: 9.5rem; }
 }
 
 .hv2-hero-inner { width: 100%; }
@@ -238,11 +263,19 @@
   z-index: 1;
   display: grid;
   gap: 3.5rem;
-  align-items: center;
+  /* Was align-items: center — the copy column (eyebrow/H1/lede/CTAs)
+     is shorter than the phone-image column, so centering pulled the
+     eyebrow ~120px down from the row's actual top edge (measured:
+     146px nav-to-eyebrow gap at 1440x900, well past the ~80-120px
+     target). Both columns now align to the top of the row instead. */
+  align-items: start;
 }
 
 @media (min-width: 1024px) {
-  .hv2-hero-inner { grid-template-columns: 0.74fr 1fr; gap: 2.5rem; }
+  /* 0.85fr (was 0.74fr): the copy column needs enough width for "for
+     Agency Owners." on one line at the h1's clamped max font-size — a
+     narrower ratio wraps that phrase mid-word. */
+  .hv2-hero-inner { grid-template-columns: 0.85fr 1fr; gap: 2.5rem; }
 }
 
 .hv2-hero-copy { min-width: 0; }
@@ -262,25 +295,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* Hero audience rotation — "Built for [Managers/Operators/Students/
-   Founders/Builders]". min-width on the rotating word (sized to the
-   longest candidate, "Operators") keeps the eyebrow pill's own width
-   stable as the word changes, so surrounding layout never shifts; the
-   cross-fade (JS swaps textContent at a fixed interval) is the only
-   visible motion. Word itself stays left-aligned inside that reserved
-   width rather than centering, so it doesn't visibly jump sideways. */
-.hv2-role-word {
-  display: inline-block;
-  min-width: 6.2ch;
-  transition: opacity 220ms ease;
-}
-
-.hv2-role-word.hv2-role-word--fading { opacity: 0; }
-
-@media (prefers-reduced-motion: reduce) {
-  .hv2-role-word { transition: none; }
-}
-
 .hv2-h1 {
   font-size: clamp(2.1rem, 4.2vw, 3.35rem);
   font-weight: 800;
@@ -291,7 +305,52 @@
 
 .hv2-h1-line { display: block; }
 
+/* "Chief of Staff" must never break across lines — hold it on one
+   line at any width that can fit it; below ~420px there is no room
+   left to keep that promise without causing horizontal overflow, so
+   it falls back to normal wrapping there. */
+.hv2-h1-line--tight { white-space: nowrap; }
+
+@media (max-width: 420px) {
+  .hv2-h1-line--tight { white-space: normal; }
+}
+
 .hv2-h1 .hv2-accent { color: var(--hv2-teal); }
+
+/* Hero role rotation — "Your personal Chief of Staff for [Founders /
+   Operators / Managers / Agency Owners / Executives]." A character-by-
+   character typewriter effect (JS types the word in, holds, deletes it,
+   then types the next) rather than a cross-fade — the width is
+   *supposed* to change continuously as it types/deletes, so no
+   min-width reservation here (that was for the old cross-fade, where a
+   fixed slot stopped the line jumping when swapping whole words at
+   once). The blinking caret is a separate sibling span so deleting the
+   word's own text never touches it. */
+.hv2-role-word {
+  display: inline-block;
+}
+
+.hv2-role-word-caret {
+  display: inline-block;
+  margin-left: 0.05em;
+  animation: hv2CaretBlink 1s step-end infinite;
+}
+
+@keyframes hv2CaretBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv2-role-word-caret { animation: none; opacity: 0; }
+}
+
+.hv2-hero-kicker {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--hv2-text);
+  margin: 0 0 0.85rem;
+}
 
 .hv2-lede {
   font-size: 1.0625rem;
@@ -341,7 +400,12 @@
   margin: 0;
 }
 
-/* ---------- Hero product scene: Command Center + WhatsApp Pocket Chief ---------- */
+/* ---------- Hero product scene: genuine product imagery only ----------
+   "Command Center on the web. Pocket Chief in WhatsApp." — one real Web
+   Command Center screenshot (Weekly Plan) as the primary visual, with the
+   real WhatsApp phone photo placed partially in front, lower-right. Both
+   images are genuine SoloChief product screenshots — no hand-built
+   dashboard cards, no fabricated chat bubbles, no invented UI. */
 
 .hv2-hero-scene { position: relative; }
 
@@ -362,286 +426,47 @@
   z-index: 0;
 }
 
-/* Real product photo hero (replaces the earlier custom-built Command
-   Center + WhatsApp mockup) — a genuine screenshot of the actual
-   SoloChief WhatsApp onboarding flow, the same asset the previous
-   production homepage used at /img/solochief-phone-final.png. Not a
-   fabricated UI: real app chrome, real copy, transparent background. */
-.hv2-scene--photo {
-  display: flex;
-  justify-content: center;
-  padding: 0.5rem 0 2rem;
+.hv2-scene--product {
+  position: relative;
+  z-index: 1;
+  max-width: 30rem;
+  margin: 0 auto;
 }
 
-/* .hv2-root img (base reset, specificity 0,1,1) outranks a single
-   class selector (0,1,0) — the two-class .hv2-hero-scene descendant
-   selector below is required to actually win, not decorative. */
-.hv2-hero-scene .hv2-hero-phone-img {
+/* .hv2-root img (base reset, specificity 0,1,1) outranks a single class
+   selector (0,1,0) — the two-class .hv2-hero-scene descendant selectors
+   below are required to actually win, not decorative. */
+
+/* Web Command Center screenshot — the primary visual. Real screenshot,
+   real aspect ratio (1800x1227) preserved via height:auto; no stretching,
+   no cropping, no fake browser chrome. */
+.hv2-hero-scene .hv2-scene-web-img {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 21rem;
   height: auto;
-  filter: drop-shadow(0 40px 70px rgba(0, 0, 0, 0.45));
-}
-
-@media (min-width: 1024px) {
-  .hv2-hero-scene .hv2-hero-phone-img { max-width: 23rem; }
-}
-
-/* Command Center layer */
-
-.hv2-cc-panel {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  background: var(--hv2-panel);
-  border: 1px solid var(--hv2-line);
-  border-radius: 1.25rem;
-  padding: 1.5rem 1.5rem 1.75rem;
-  box-shadow: 0 30px 70px -35px rgba(0, 0, 0, 0.6);
-}
-
-@media (min-width: 1024px) {
-  .hv2-cc-panel {
-    width: calc(100% + 3.5rem);
-    margin-right: -3.5rem;
-    padding: 1.75rem 2rem 2rem;
-  }
-}
-
-.hv2-cc-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-}
-
-.hv2-cc-header-label {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--hv2-muted);
-}
-
-.hv2-cc-live-dot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: var(--hv2-teal);
-  flex-shrink: 0;
-}
-
-.hv2-cc-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.85rem;
-}
-
-.hv2-cc-block {
-  background: var(--hv2-panelhi);
-  border: 1px solid var(--hv2-line);
   border-radius: 0.75rem;
-  padding: 0.85rem 1rem;
+  border: 1px solid var(--hv2-line);
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.55);
 }
 
-.hv2-cc-block--wide { grid-column: 1 / -1; }
-
-.hv2-cc-block-label {
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--hv2-muted);
-  margin: 0 0 0.4rem;
-}
-
-.hv2-cc-block-value {
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  color: var(--hv2-text);
-  margin: 0;
-}
-
-.hv2-cc-progress {
-  height: 0.375rem;
-  border-radius: 999px;
-  background: var(--hv2-line);
-  overflow: hidden;
-  margin: 0.5rem 0 0.55rem;
-}
-
-.hv2-cc-progress-fill {
-  width: 60%;
-  height: 100%;
-  border-radius: 999px;
-  background: var(--hv2-teal);
-}
-
-/* WhatsApp Pocket Chief layer — original browser-built frame, no imagery */
-
-.hv2-phone {
-  position: relative;
+/* Real WhatsApp phone photo — placed partially in front of the web
+   screenshot's lower-right corner, its own real aspect ratio (1024x1536)
+   preserved via height:auto. */
+.hv2-hero-scene .hv2-scene-phone-img {
+  position: absolute;
   z-index: 2;
-  width: 15.5rem;
-  margin: -3rem 0 0 auto;
+  right: -1rem;
+  bottom: -1.75rem;
+  width: 34%;
+  max-width: 9.5rem;
+  height: auto;
+  filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.45));
 }
 
 @media (min-width: 1024px) {
-  .hv2-phone {
-    position: absolute;
-    right: -0.5rem;
-    bottom: -3.25rem;
-    width: 15rem;
-    margin: 0;
-  }
-}
-
-.hv2-phone-frame {
-  background: var(--hv2-deep);
-  border: 1px solid var(--hv2-line);
-  border-radius: 1.5rem;
-  padding: 0.6rem;
-  box-shadow: 0 35px 70px -30px rgba(0, 0, 0, 0.7);
-}
-
-.hv2-phone-notch {
-  width: 2.5rem;
-  height: 0.3rem;
-  border-radius: 999px;
-  background: var(--hv2-line);
-  margin: 0 auto 0.5rem;
-}
-
-.hv2-phone-screen {
-  background: var(--hv2-bg);
-  border-radius: 1rem;
-  padding: 0.85rem;
-}
-
-.hv2-wa-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 0.6rem;
-  margin-bottom: 0.6rem;
-  border-bottom: 1px solid var(--hv2-line);
-}
-
-.hv2-wa-avatar {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--hv2-teal), var(--hv2-tealh));
-  flex-shrink: 0;
-}
-
-.hv2-wa-name {
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--hv2-text);
-}
-
-.hv2-wa-status {
-  font-size: 0.625rem;
-  color: var(--hv2-muted);
-  margin: 0;
-}
-
-.hv2-wa-thread {
-  display: grid;
-  gap: 0.4rem;
-}
-
-.hv2-wa-bubble {
-  background: var(--hv2-panel);
-  border: 1px solid var(--hv2-line);
-  border-radius: 0.65rem 0.65rem 0.65rem 0.2rem;
-  padding: 0.5rem 0.65rem;
-  font-size: 0.6875rem;
-  line-height: 1.4;
-  color: var(--hv2-text);
-  max-width: 92%;
-}
-
-.hv2-wa-bubble strong { color: var(--hv2-teal); font-weight: 600; }
-
-.hv2-wa-actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: 0.6rem;
-}
-
-.hv2-wa-chip {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.625rem;
-  font-weight: 600;
-  padding: 0.35rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid var(--hv2-line);
-  color: var(--hv2-muted);
-}
-
-.hv2-wa-chip--primary {
-  background: var(--hv2-teal);
-  border-color: var(--hv2-teal);
-  color: var(--hv2-bg);
-}
-
-/* Connecting state — shows web + WhatsApp are one system */
-
-.hv2-connector {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  width: fit-content;
-  max-width: 15rem;
-  margin: -1.25rem 0 0 0.25rem;
-  background: var(--hv2-panelhi);
-  border: 1px solid var(--hv2-line);
-  border-radius: 0.85rem;
-  padding: 0.65rem 0.9rem;
-  box-shadow: 0 20px 45px -25px rgba(0, 0, 0, 0.6);
-}
-
-@media (min-width: 1024px) {
-  .hv2-connector {
-    position: absolute;
-    left: -0.75rem;
-    bottom: 2.5rem;
-    margin: 0;
-  }
-}
-
-.hv2-connector-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
-  background: rgba(0, 194, 168, 0.16);
-  color: var(--hv2-teal);
-  font-size: 0.75rem;
-  flex-shrink: 0;
-}
-
-.hv2-connector-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--hv2-text);
-}
-
-.hv2-connector-sub {
-  font-size: 0.6875rem;
-  color: var(--hv2-muted);
-  margin: 0;
+  .hv2-scene--product { max-width: 32rem; }
+  .hv2-hero-scene .hv2-scene-phone-img { max-width: 10.5rem; }
 }
 
 /* Scroll cue */
@@ -685,30 +510,14 @@
   html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(4) { animation-delay: 260ms; }
   html[data-hv2-hero-motion="ready"] .hv2-hero-copy > *:nth-child(5) { animation-delay: 330ms; }
 
-  html[data-hv2-hero-motion="ready"] .hv2-cc-panel {
+  html[data-hv2-hero-motion="ready"] .hv2-scene-web-img {
     animation: hv2SceneEnter 800ms var(--hv2-ease) both;
     animation-delay: 200ms;
   }
 
-  html[data-hv2-hero-motion="ready"] .hv2-phone {
+  html[data-hv2-hero-motion="ready"] .hv2-scene-phone-img {
     animation: hv2PhoneEnter 750ms var(--hv2-ease) both;
     animation-delay: 420ms;
-  }
-
-  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(1) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 640ms; }
-  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(2) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 740ms; }
-  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(3) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 840ms; }
-  html[data-hv2-hero-motion="ready"] .hv2-wa-bubble:nth-child(4) { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 940ms; }
-  html[data-hv2-hero-motion="ready"] .hv2-wa-actions { animation: hv2BubbleReveal 480ms var(--hv2-ease) both; animation-delay: 1040ms; }
-
-  html[data-hv2-hero-motion="ready"] .hv2-connector {
-    animation: hv2ConnectorPop 650ms var(--hv2-ease) both;
-    animation-delay: 1160ms;
-  }
-
-  html[data-hv2-hero-motion="ready"] .hv2-cc-progress-fill {
-    animation: hv2ProgressFill 700ms var(--hv2-ease) both;
-    animation-delay: 1300ms;
   }
 
   /* Settled idle state: one barely perceptible ambient movement, stops under reduced motion */
@@ -736,22 +545,6 @@
   to { opacity: 1; transform: none; }
 }
 
-@keyframes hv2BubbleReveal {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes hv2ConnectorPop {
-  0% { opacity: 0; transform: translateY(10px) scale(0.92); }
-  70% { opacity: 1; transform: translateY(-2px) scale(1.02); }
-  100% { opacity: 1; transform: none; }
-}
-
-@keyframes hv2ProgressFill {
-  from { width: 0%; }
-  to { width: 60%; }
-}
-
 @keyframes hv2Breathe {
   0%, 100% { opacity: 0.85; }
   50% { opacity: 1; }
@@ -762,84 +555,26 @@
   50% { transform: translateY(4px); }
 }
 
-/* ---------- Tablet: reduced overlap, both surfaces still visible ---------- */
+/* ---------- Tablet: scene scales down, both surfaces still visible ---------- */
 
 @media (min-width: 768px) and (max-width: 1023px) {
-  .hv2-scene { max-width: 30rem; margin: 0 auto; padding-bottom: 2.5rem; }
-  .hv2-phone { width: 13rem; margin-top: -2.5rem; }
-  .hv2-connector { margin-top: -1rem; }
+  .hv2-scene { padding-bottom: 2.5rem; }
+  .hv2-scene--product { max-width: 26rem; }
 }
 
-/* ---------- Mobile: normal flow, simplified scene ---------- */
+/* ---------- Mobile: copy first, scene stacks below, no overlap issues ---------- */
 
 @media (max-width: 767px) {
   .hv2-hero { padding-top: 7rem; }
 
-  .hv2-scene {
-    display: grid;
-    gap: 1rem;
-    padding: 0;
-  }
+  .hv2-scene { padding: 0; }
 
   .hv2-scene-glow { display: none; }
 
-  .hv2-cc-panel { width: 100%; margin: 0; }
+  .hv2-scene--product { max-width: 21rem; margin: 0 auto; }
 
-  .hv2-cc-grid { grid-template-columns: 1fr; }
-
-  .hv2-cc-block--secondary { display: none; }
-
-  .hv2-phone { position: static; width: 100%; max-width: 19rem; margin: 0 auto; }
-
-  .hv2-connector { position: static; margin: 0 auto; }
+  .hv2-hero-scene .hv2-scene-phone-img { right: -0.5rem; bottom: -1rem; max-width: 7.5rem; }
 }
-
-.hv2-mock-card {
-  background: var(--hv2-panel);
-  border: 1px solid var(--hv2-line);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  box-shadow: 0 20px 45px -25px rgba(0, 0, 0, 0.55);
-}
-
-.hv2-mock-label {
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--hv2-muted);
-  margin-bottom: 0.75rem;
-}
-
-.hv2-mock-row {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0;
-  border-top: 1px solid var(--hv2-line);
-  font-size: 0.8125rem;
-  color: var(--hv2-text);
-}
-
-.hv2-mock-row:first-of-type { border-top: none; }
-
-.hv2-mock-dot {
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: var(--hv2-teal);
-  flex-shrink: 0;
-}
-
-.hv2-mock-bubble {
-  background: var(--hv2-panelhi);
-  border-radius: 0.75rem;
-  padding: 0.6rem 0.85rem;
-  font-size: 0.8125rem;
-  max-width: 85%;
-}
-
-.hv2-mock-bubble + .hv2-mock-bubble { margin-top: 0.5rem; margin-left: auto; }
 
 /* ---------- Film section: a distinct cover-slide panel ----------
    Film is a real .hv2-cover-panel (see the shared cover-panel rules
@@ -1244,11 +979,34 @@
      topmost visible content again as Final CTA's shrinking box
      uncovered it — read as "FAQ reappearing after Final CTA". Sized
      to final panel height (~900px) + final dwell (~63px) + a small
-     margin, not copied from the generic value. */
-  --sc-cover-travel-penultimate: calc(100svh + 4.5rem);
+     margin, not copied from the generic value.
+
+     UPDATED: the final panel (Homepage's Final CTA, and Features'
+     equivalent) no longer forces the 100svh floor — both now use
+     min-height: 0 so a short CTA doesn't leave a huge empty gap below
+     it (a separate fix). That shrank the final panel's own shell to
+     roughly 560px (content + final dwell), so this value must shrink
+     to match or the exact bug described above reappears the other way:
+     the final panel finishes its whole rise-dwell-release cycle in
+     ~560px while this value still reserves ~972px, so for that
+     remaining ~400px the penultimate panel (FAQ Preview / Demo) is
+     still technically pinned and reappears on top of the Footer.
+     Fixed value, not vh-based, since the final panel's height is now
+     content-driven rather than viewport-driven. Re-tuned alongside the
+     --sc-cover-final-dwell reduction below — shrinking the dwell shrinks
+     the final shell's own total height by the same amount, so this must
+     shrink in step or the release-timing bug above reappears. */
+  --sc-cover-travel-penultimate: 33.5rem;
   --sc-cover-edge-overlap: clamp(2rem, 5vh, 4rem);
   --sc-cover-hero-overlap: clamp(2.5rem, 6vh, 4.5rem);
-  --sc-cover-final-dwell: clamp(3rem, 7vh, 5.5rem);
+  /* Trailing space after the final panel, before the Footer — was
+     clamp(3rem, 7vh, 5.5rem) (~63px at 900px viewport), which read as a
+     visible dead band of body-background colour between the Final CTA
+     card and the Footer. Fixed, smaller value keeps enough runway for
+     the sticky Final CTA to release cleanly (see --sc-cover-travel-
+     penultimate above, re-tuned to match) while landing the visible gap
+     in Frank's requested ~16-32px range. */
+  --sc-cover-final-dwell: 1.5rem;
 }
 
 .sc-cover-stack { position: relative; }
@@ -1452,6 +1210,19 @@
    its controls usable, not covered mid-interaction. */
 .hv2-film.hv2-cover-panel { justify-content: flex-start; }
 
+/* Section-specific alignment modifiers — the shared base rule
+   (.hv2-cover-panel { justify-content: flex-start }) is a sane default
+   for panels with substantial content (Plan/Focus/Film), but Frank's
+   review flagged that applying it to every panel left short content
+   (How It Works, Pricing preview) sitting near the top of a still-
+   100svh-tall box with a large empty field below. These panels get an
+   explicit centred composition instead, scoped to just these classes —
+   not a return to global centring. */
+.hv2-cover-panel--hiw,
+.hv2-cover-panel--pricing {
+  justify-content: center;
+}
+
 .hv2-cover-panel--film { z-index: 2; }
 .hv2-cover-panel--hiw { z-index: 3; }
 .hv2-cover-panel--plan { background: var(--hv2-panel); z-index: 4; padding: 2.5rem 0; }
@@ -1460,9 +1231,72 @@
    shadow is unaffected since it belongs to this same element, not a
    clipped descendant. */
 .hv2-cover-panel--focus { background: #142338; z-index: 5; padding: 2.5rem 0; overflow: hidden; }
+/* Pricing preview is now the LAST panel in the sticky stack — Trust,
+   FAQ preview and Final CTA (below) left the sliding-panel system
+   entirely, see the "closing block" comment above .hv2-cover-panel--
+   trust. Its own visual size/centring is unchanged; only its shell's
+   release runway changed (see .hv2-cover-shell--final on this panel's
+   <section> in the HTML). */
 .hv2-cover-panel--pricing { background: var(--hv2-deep); z-index: 6; padding: 2.5rem 0; }
-.hv2-cover-panel--trust { background: var(--hv2-panel); z-index: 7; padding: 2.5rem 0; }
-.hv2-cover-panel--faq { background: var(--hv2-bg); color: var(--hv2-text); z-index: 8; padding: 2.5rem 0; }
+
+@media (min-width: 1024px) {
+  .hv2-cover-panel--plan,
+  .hv2-cover-panel--focus {
+    padding: 1rem 0 10rem;
+  }
+
+  .hv2-cover-panel--pricing {
+    padding-bottom: 2.5rem;
+  }
+
+  .hv2-film.hv2-cover-panel { padding-top: calc(var(--hv2-nav-height) + 3.5rem); }
+  .hv2-cover-panel--hiw { padding-top: calc(var(--hv2-nav-height) + 1rem); }
+  .hv2-cover-panel--plan,
+  .hv2-cover-panel--focus,
+  .hv2-cover-panel--pricing {
+    padding-top: calc(var(--hv2-nav-height) + 1rem);
+  }
+}
+
+/* ---------- Closing block: Trust, FAQ preview, Final CTA (Homepage);
+   Final CTA (Features) ----------
+   These left the sliding cover-panel system entirely (no sticky, no
+   100svh floor, no per-panel rounded-top card) — Frank's review of the
+   recording: repeating the rounded-card treatment on every closing
+   section made the ending read as several stacked pages rather than
+   one deliberate closing sequence. Trust and FAQ preview are now plain
+   normal-flow bands (natural content height, no forced floor) that
+   scroll like ordinary page content. Final CTA is the ONE deliberate
+   rounded panel that starts the closing block; the Footer (see
+   .hv2-footer/.hv2-closing further down) connects directly beneath it
+   with no radius of its own and no meaningful gap — together they read
+   as one continuous surface, not two cards. */
+/* position: relative + z-index above every sticky panel still earlier
+   in the stack (Film 2 / How It Works 3 / Plan 4 / Focus 5 / Pricing
+   preview 6) — these panels keep painting at position: sticky; top: 0
+   for as long as their own shell's runway hasn't fully scrolled past,
+   regardless of DOM order, once they carry an explicit z-index. Trust/
+   FAQ/Final CTA left the sticky system but still need to out-rank that
+   z-index or the last still-active sticky panel paints over them
+   (confirmed live via elementFromPoint: without this, Focus's still-
+   pinned panel painted over Trust's normal-flow content). z-index on a
+   position: static element is a no-op, hence position: relative here
+   even though nothing else needs it structurally. */
+.hv2-cover-panel--trust {
+  position: relative;
+  z-index: 7;
+  background: var(--hv2-panel);
+  padding: 4.5rem 0;
+}
+
+.hv2-cover-panel--faq {
+  position: relative;
+  z-index: 8;
+  background: var(--hv2-bg);
+  color: var(--hv2-text);
+  padding: 4.5rem 0;
+}
+
 /* overflow: hidden crops the oversized environment word at this
    panel's own edge, matching FOCUS above — without it, the word's
    position:absolute box (no explicit width, sized by its own text at
@@ -1472,58 +1306,38 @@
    to this same element, not a clipped descendant), and this crops only
    the decorative word — the CTA text/buttons live in .hv2-container,
    raised to z-index: 1 below, and are never inside the clipped area
-   in a way that would cut off focus outlines or the button itself. */
-.hv2-cover-panel--finalcta { background: var(--hv2-deep); z-index: 9; padding: 2.5rem 0; overflow: hidden; }
+   in a way that would cut off focus outlines or the button itself.
+   position: relative gives the word's absolute positioning a local
+   anchor now that this panel is no longer part of the sticky system
+   (which previously supplied position: relative via its base class).
+   border-radius is the one deliberate rounded top in the whole closing
+   block — see the block comment above. */
+.hv2-cover-panel--finalcta,
+.hv2-fx-cover-panel--finalcta {
+  position: relative;
+  z-index: 9;
+  background: var(--hv2-deep);
+  padding: 4.5rem 0;
+  overflow: hidden;
+  border-radius: var(--hv2-shell-radius) var(--hv2-shell-radius) 0 0;
+}
 
-/* Each panel centers its content within the shared cover-panel's
-   min-height floor (a floor taller than most single-scene content
-   here, and here specifically because a scene's own min-height
-   cancels out under nested centering). Splitting the leftover space
-   evenly top/bottom would push real content down into a visible gap
-   the user sees first. Instead the padding is heavily bottom-weighted:
-   a small top inset gets content close to the panel's rounded top
-   edge, and the leftover space collects below it, where the next
-   panel's own rounded top slides up to cover it — never seen as a
-   static gap. */
 @media (min-width: 1024px) {
-  .hv2-cover-panel--plan,
-  .hv2-cover-panel--focus,
-  .hv2-cover-panel--pricing,
   .hv2-cover-panel--trust,
-  .hv2-cover-panel--faq,
-  .hv2-cover-panel--finalcta {
-    padding: 1rem 0 10rem;
+  .hv2-cover-panel--faq {
+    padding: 6rem 0;
   }
-}
 
-/* Final CTA (last panel in the Homepage stack) needs no trailing
-   runway padding of its own — nothing rises to cover it; it gets a
-   short bounded dwell via .hv2-cover-shell--final::after instead. */
-@media (min-width: 1024px) {
-  .hv2-cover-panel--finalcta { padding-bottom: 3.5rem; }
-}
+  .hv2-cover-panel--finalcta,
+  .hv2-fx-cover-panel--finalcta {
+    padding: 6rem 0 3.5rem;
+  }
 
-/* Nav clearance moves into padding-top here, added exactly once on top
-   of each panel's own existing design spacing, now that the panel
-   itself starts at the true viewport top (top: 0, above) and passes
-   BEHIND the fixed header instead of stopping below it. These rules
-   must win only the top side without disturbing the bottom/side values
-   already set above — Film's compound selector outranks its own base
-   rule by specificity; the rest rely on source order, which is why
-   this block sits after their own padding shorthand, not before it.
-   Each panel gets nav-height + its own pre-existing top value — one
-   navigation allowance, one design spacing, never both stacked on top
-   of a separate large sticky offset. */
-@media (min-width: 1024px) {
-  .hv2-film.hv2-cover-panel { padding-top: calc(var(--hv2-nav-height) + 6rem); }
-  .hv2-cover-panel--hiw { padding-top: calc(var(--hv2-nav-height) + 1rem); }
-  .hv2-cover-panel--plan,
-  .hv2-cover-panel--focus,
-  .hv2-cover-panel--pricing,
-  .hv2-cover-panel--trust,
-  .hv2-cover-panel--faq,
-  .hv2-cover-panel--finalcta {
-    padding-top: calc(var(--hv2-nav-height) + 1rem);
+  /* Features only: slightly more bottom breathing room before Footer
+     (56px → 80px, within Frank's requested 64-96px) — Homepage's Final
+     CTA keeps the shared 3.5rem value untouched. */
+  .hv2-fx-cover-panel--finalcta {
+    padding-bottom: 5rem;
   }
 }
 
@@ -1718,6 +1532,23 @@
   .hv2-environment-word--finalcta {
     font-size: clamp(3.5rem, 20vw, 6rem);
     bottom: -0.1em;
+  }
+}
+
+/* Features' Final CTA specifically: the shared sizing above (word
+   height ~190px, flush with the panel's own bottom edge) measured fine
+   on Homepage's taller Final CTA panel but, on Features' shorter one,
+   clipped right at the Final CTA/Footer seam with zero breathing room
+   — Frank's review: "extends too deeply into the Footer area" /
+   Footer reads as sitting on top of the word. Smaller, pulled further
+   up, and slightly fainter so it stays decorative inside the panel
+   with real clearance above Footer. Homepage's own word (same shared
+   class, no Features-scoped selector match) is untouched. */
+@media (min-width: 768px) {
+  .hv2-fx-cover-panel--finalcta .hv2-environment-word--finalcta {
+    font-size: clamp(4.5rem, 11vw, 8rem);
+    bottom: 1.1em;
+    color: rgba(184, 196, 214, 0.06);
   }
 }
 
@@ -2006,12 +1837,18 @@
    footer (not a separate centred "reveal" card above it) — overflow
    hidden crops it cleanly at the footer's own edges instead of paging
    the document. */
+/* No radius, no top border, no gap above — the Footer connects
+   directly beneath Final CTA (the one rounded panel that opens the
+   closing block) rather than being a second rounded card of its own.
+   Same background as Final CTA (.hv2-footer.hv2-dark-section override,
+   further down) so the two read as one continuous surface. */
 .hv2-footer {
   position: relative;
   background: var(--hv2-deep);
-  border-top: 1px solid var(--hv2-line);
   overflow: hidden;
-  z-index: 4;
+  /* Must outrank every sticky panel before it (highest is Final CTA's
+     own 9) — see the z-index comment on .hv2-cover-panel--trust. */
+  z-index: 10;
 }
 
 .hv2-footer--separated { border-top-color: rgba(0, 194, 168, 0.2); }
@@ -2071,12 +1908,18 @@
    .hv2-closing-legal's own border-top) — never a second background
    or a second rounded corner. */
 
+/* No radius, no top border — connects directly beneath the page's
+   Final CTA (Features' .hv2-fx-cover-panel--finalcta, or Pricing/FAQ's
+   #pricingFinalCta/#faqFinalCta, both below), which carries the one
+   rounded top for the whole closing block. Same background, so the two
+   read as one continuous surface rather than a second stacked card. */
 .hv2-closing {
   background: var(--hv2-deep);
-  border-radius: 2.5rem 2.5rem 0 0;
-  border-top: 1px solid rgba(0, 194, 168, 0.25);
   position: relative;
-  z-index: 4;
+  /* Must outrank Features' sticky panels before it (highest is Final
+     CTA's own 9) — see the z-index comment on .hv2-cover-panel--trust.
+     Pricing/FAQ have no sticky panels, so this is a no-op there. */
+  z-index: 10;
   padding: 4.5rem 0 3rem;
 }
 
@@ -2085,7 +1928,7 @@
 }
 
 @media (max-width: 767px) {
-  .hv2-closing { border-radius: 1.5rem 1.5rem 0 0; padding: 3rem 0 2rem; }
+  .hv2-closing { padding: 3rem 0 2rem; }
 }
 
 .hv2-closing-divider {
@@ -2108,23 +1951,6 @@
 @media (min-width: 640px) {
   .hv2-closing-nav { grid-template-columns: repeat(4, 1fr); }
 }
-
-.hv2-closing-wordmark {
-  margin: 0 0 1.75rem;
-  text-align: center;
-  font-size: clamp(2.75rem, 12vw, 7.5rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 0.9;
-  color: var(--hv2-text);
-  word-break: keep-all;
-}
-
-@media (max-width: 767px) {
-  .hv2-closing-wordmark { margin-bottom: 1.25rem; }
-}
-
-.hv2-closing-wordmark .hv2-fx-accent-dot { color: var(--hv2-teal); }
 
 .hv2-closing-legal {
   text-align: center;
@@ -2606,6 +2432,48 @@
   height: 0.4rem;
   border-radius: 50%;
   background: var(--hv2-teal);
+}
+
+/* ---------- How usage works: 3 compact explanation cards ahead of the
+   numeric table, so the section reads as a structured explanation
+   rather than a single centred paragraph floating above a table. ---------- */
+.hv2-usage-cards {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2rem 0 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .hv2-usage-cards { grid-template-columns: repeat(3, 1fr); }
+}
+
+.hv2-usage-card {
+  border: 1px solid var(--hv2-line);
+  border-radius: 1rem;
+  background: var(--hv2-panelhi);
+  padding: 1.5rem;
+}
+
+.hv2-usage-card-num {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--hv2-teal);
+  margin-bottom: 0.75rem;
+}
+
+.hv2-usage-card-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.hv2-usage-card-copy {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--hv2-muted);
+  margin: 0;
 }
 
 /* ---------- Usage table note: the flat proactive-message safeguard,
@@ -3158,6 +3026,14 @@
 .hv2-fx-cover-panel--demo { z-index: 5; }
 .hv2-fx-cover-panel--finalcta { z-index: 6; background: var(--hv2-deep); color: #fff; }
 
+/* Same reasoning as .hv2-cover-panel--finalcta on the Homepage: this is
+   the last panel in the Features stack — nothing ever slides up to
+   cover its trailing space, so the shared 100svh floor just left a
+   large empty gap below the CTA content before the footer. */
+@media (min-width: 1280px) {
+  .hv2-fx-cover-panel--finalcta { min-height: 0; }
+}
+
 /* Generic ascending z-index steps for pages built directly on the
    shared sc-cover-* system (FAQ, Pricing) — avoids inline styles while
    avoiding inventing a bespoke per-section modifier name for every
@@ -3185,24 +3061,22 @@
   .hv2-fx-hero { padding: 8.5rem 0 4.5rem; }
 }
 
-/* At the sliding breakpoint, the Hero must OWN the first viewport —
-   without a height floor, Hero's own (fairly short) content leaves it
-   far shorter than the viewport, and the small intentional hero-to-
-   first-panel overlap then exposes hundreds of px of the next panel's
-   still-empty surface at fresh load (measured on Pricing: Hero 592px
-   tall in a 900px viewport, Plans panel already 362px into view,
-   heading only 42px from the fold — exactly the "Plans intruding
-   halfway" defect). Shared by Features/FAQ/Pricing (all use this same
-   class) — this is also what caused Features' "blank white panel"
-   Hero-to-first-panel complaint, same root cause. Flex-centers the
-   existing grid/copy content within the taller box; the small overlap
-   variable still only exposes the next panel's rounded edge, not its
-   content. */
+/* Pricing/FAQ's .hv2-fx-hero--compact ("plans intruding halfway") is
+   handled entirely by its own dedicated rules further down (its own
+   padding shorthand at 1024px+, and its own min-height: 0/display:
+   block override at 1280px+) — this block no longer touches compact
+   heroes at all, so that history doesn't apply here.
+
+   Features (the plain, non-compact .hv2-fx-hero) previously shared a
+   min-height: 100svh floor with the compact heroes: forcing Features'
+   hero to a full viewport left ~250px of dead dark space below its
+   actual (shorter) content before the Overview panel began (Frank's
+   screenshot review: "oversized dead runway"). Natural content height
+   plus deliberate nav-clearance padding-top instead — no viewport
+   locking for Features. */
 @media (min-width: 1280px) {
-  .hv2-fx-hero {
-    min-height: 100svh;
-    display: flex;
-    align-items: center;
+  .hv2-fx-hero:not(.hv2-fx-hero--compact) {
+    padding-top: calc(var(--hv2-nav-height) + 6rem);
   }
 }
 
@@ -3238,7 +3112,10 @@
 }
 
 @media (min-width: 1024px) {
-  .hv2-fx-hero-inner { grid-template-columns: 1.05fr 0.95fr; align-items: center; gap: 2.5rem; }
+  /* Was align-items: center — the copy column is shorter than the
+     hero photo, so centering pulled the eyebrow further down within
+     the row than the outer hero's own padding-top already placed it. */
+  .hv2-fx-hero-inner { grid-template-columns: 1.05fr 0.95fr; align-items: start; gap: 2.5rem; }
 }
 
 /* Compact heroes (Pricing, FAQ) have no second-column visual — the
@@ -3972,6 +3849,44 @@
   --hv2-tealh: #00A892;
   background: var(--hv2-bg);
   color: var(--hv2-text);
+}
+
+/* .hv2-footer and .hv2-closing both also carry .hv2-dark-section (for
+   its text/border tokens) and both set their own, more specific intent
+   — background: var(--hv2-deep), one shade darker than --hv2-bg, to
+   match the Final CTA panel immediately above them. .hv2-dark-section's
+   own `background: var(--hv2-bg)` above has equal selector specificity
+   and comes later in the file, so it silently won that fight by source
+   order alone, leaving the footer/closing a visibly lighter navy than
+   the panel it sits directly beneath (confirmed live: #0F1B2D footer
+   vs #0B1422 Final CTA) — the "detached page" seam. Compound selectors
+   here outrank a single class regardless of source order, without
+   touching .hv2-dark-section itself (used broadly elsewhere). */
+.hv2-footer.hv2-dark-section,
+.hv2-closing.hv2-dark-section {
+  background: var(--hv2-deep);
+}
+
+/* Pricing/FAQ's Final CTA section (plain normal-flow content, not a
+   sliding cover panel like Homepage/Features) sits directly above
+   .hv2-closing and must match its background now that .hv2-closing
+   resolves to --hv2-deep above — otherwise fixing the Homepage/Features
+   seam would have introduced the same seam here in reverse (closing
+   darker than the section right above it). Targeted by ID, not a class
+   shared with the page's other, lighter --hv2-bg sections. */
+#pricingFinalCta.hv2-dark-section,
+#faqFinalCta.hv2-dark-section {
+  background: var(--hv2-deep);
+}
+
+/* Pricing/FAQ's Final CTA is the one rounded panel that opens the
+   closing block (same role as Homepage/Features' Final CTA panel) —
+   .hv2-closing, immediately below, now connects directly beneath it
+   with no radius of its own and no gap, so the two read as one
+   continuous surface instead of two stacked rounded cards. */
+#pricingFinalCta.hv2-dark-section,
+#faqFinalCta.hv2-dark-section {
+  border-radius: var(--hv2-shell-radius) var(--hv2-shell-radius) 0 0;
 }
 
 /* Pure-white variant — Features page only. Distinct from

@@ -107,13 +107,21 @@
     });
   })();
 
-  // ---------- Homepage hero: rotating audience word ----------
-  // "Built for [Managers/Operators/Students/Founders/Builders]" — the
-  // static markup already shows one real word (progressive enhancement:
-  // with JS blocked, the eyebrow just reads "Built for Managers" and
-  // nothing is missing). Respects prefers-reduced-motion by not
-  // rotating at all — auto-updating content with no user pause control
-  // is exactly what that preference exists to avoid.
+  // ---------- Homepage hero: rotating role word (typewriter) ----------
+  // "Your personal Chief of Staff for [Founders/Operators/Managers/
+  // Agency Owners/Executives]." — types each role in character by
+  // character, holds it, deletes it character by character, then types
+  // the next. The static markup already shows one real word fully
+  // typed (progressive enhancement: with JS blocked, the headline just
+  // reads "...for Founders." and nothing is missing — the blinking
+  // caret is pure CSS and renders regardless). Respects
+  // prefers-reduced-motion by not animating at all (both the type/
+  // delete cycle here and the caret's CSS blink, via its own
+  // reduced-motion rule) — auto-updating content with no user pause
+  // control is exactly what that preference exists to avoid. No
+  // aria-live region: this is decorative headline motion, not an
+  // announcement worth interrupting screen-reader users with on every
+  // keystroke.
   (function initHeroRoleRotation() {
     var el = document.getElementById('hv2RoleWord');
     if (!el) { return; }
@@ -130,14 +138,40 @@
     var index = roles.indexOf(el.textContent.trim());
     if (index === -1) { index = 0; }
 
-    setInterval(function () {
-      el.classList.add('hv2-role-word--fading');
-      setTimeout(function () {
+    var TYPE_MS = 70;
+    var DELETE_MS = 40;
+    var HOLD_MS = 1500;
+    var NEXT_MS = 300;
+
+    function typeWord(word, onDone) {
+      var i = 0;
+      (function step() {
+        i++;
+        el.textContent = word.slice(0, i);
+        if (i < word.length) { setTimeout(step, TYPE_MS); } else { setTimeout(onDone, HOLD_MS); }
+      })();
+    }
+
+    function deleteWord(word, onDone) {
+      var i = word.length;
+      (function step() {
+        i--;
+        el.textContent = word.slice(0, i);
+        if (i > 0) { setTimeout(step, DELETE_MS); } else { setTimeout(onDone, NEXT_MS); }
+      })();
+    }
+
+    function cycle() {
+      deleteWord(roles[index], function () {
         index = (index + 1) % roles.length;
-        el.textContent = roles[index];
-        el.classList.remove('hv2-role-word--fading');
-      }, 220);
-    }, 2600);
+        typeWord(roles[index], cycle);
+      });
+    }
+
+    // Static markup already shows the first role fully typed — hold it
+    // for the same duration every later word gets before its own
+    // delete begins.
+    setTimeout(cycle, HOLD_MS);
   })();
 
   // ---------- Features page: generic tab-group widget ----------
