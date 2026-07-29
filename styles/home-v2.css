@@ -999,6 +999,24 @@
   --sc-cover-travel-penultimate: 33.5rem;
   --sc-cover-edge-overlap: clamp(2rem, 5vh, 4rem);
   --sc-cover-hero-overlap: clamp(2.5rem, 6vh, 4.5rem);
+  /* HOMEPAGE-ONLY travel, tuned tighter than --sc-cover-travel above
+     (Features/FAQ/Pricing keep that shared value untouched). Frank's
+     reference video: the incoming panel's rounded edge should appear
+     almost immediately, not after an extra static viewport of nothing
+     moving. Split into two values because Homepage's four shells are
+     not uniformly tall: How It Works, Operating Loop and Pricing
+     Preview now render at exactly one viewport (their old "hidden
+     until the next panel covers it" bottom padding was removed — see
+     .hv2-cover-panel--oploop/--hiw padding, further down), so the
+     incoming panel for those three can start rising with almost no
+     prelude. Film alone still renders taller than one viewport (real
+     content: nav clearance, heading, lede, video, sound button) and
+     needs the taller value so How It Works doesn't start its rise
+     already short of top:0 when Film releases (the exact bug the
+     original --sc-cover-travel comment documents) — measured live at
+     1440x900: Film renders ~1058px, viewport 900px, ~158px over. */
+  --sc-cover-travel-hp: calc(100svh + 1rem);
+  --sc-cover-travel-hp-tall: calc(100svh + 10rem);
   /* Trailing space after the final panel, before the Footer — was
      clamp(3rem, 7vh, 5.5rem) (~63px at 900px viewport), which read as a
      visible dead band of body-background colour between the Final CTA
@@ -1045,11 +1063,24 @@
 @media (min-width: 1024px) {
   .sc-cover-shell:not(.sc-cover-shell--final)::after,
   .sc-cover-shell--long:not(.sc-cover-shell--final)::after,
-  .hv2-cover-shell:not(.hv2-cover-shell--final)::after,
   .hv2-fx-cover-shell:not(.hv2-fx-cover-shell--final)::after {
     content: '';
     display: block;
     height: var(--sc-cover-travel);
+  }
+
+  /* Homepage: per-shell travel (see --sc-cover-travel-hp/-tall above),
+     not the shared worst-case value Features/FAQ/Pricing still use. */
+  .hv2-cover-shell:not(.hv2-cover-shell--final):not(.hv2-cover-shell--tall)::after {
+    content: '';
+    display: block;
+    height: var(--sc-cover-travel-hp);
+  }
+
+  .hv2-cover-shell--tall::after {
+    content: '';
+    display: block;
+    height: var(--sc-cover-travel-hp-tall);
   }
 
   .sc-cover-shell--final::after,
@@ -1061,9 +1092,18 @@
   }
 
   .sc-cover-shell + .sc-cover-shell,
-  .hv2-cover-shell + .hv2-cover-shell,
   .hv2-fx-cover-shell + .hv2-fx-cover-shell {
     margin-top: calc(-1 * var(--sc-cover-travel));
+  }
+
+  /* Homepage: the pull-up must match whichever travel value the
+     PRECEDING shell actually used above. */
+  .hv2-cover-shell:not(.hv2-cover-shell--tall) + .hv2-cover-shell {
+    margin-top: calc(-1 * var(--sc-cover-travel-hp));
+  }
+
+  .hv2-cover-shell--tall + .hv2-cover-shell {
+    margin-top: calc(-1 * var(--sc-cover-travel-hp-tall));
   }
 
   /* First cover shell after the Hero: a smaller head-start overlap so
@@ -1245,16 +1285,33 @@
 
 @media (min-width: 1024px) {
   .hv2-cover-panel--plan,
-  .hv2-cover-panel--focus,
-  .hv2-cover-panel--oploop {
+  .hv2-cover-panel--focus {
     padding: 1rem 0 10rem;
+  }
+
+  /* Was padding-bottom: 10rem — that extra 160px only ever worked
+     because it stayed hidden beneath Pricing Preview sliding up to
+     cover it. It also inflated Operating Loop's own rendered height
+     well past one viewport, which is what forced --sc-cover-travel-hp
+     wide enough to leave Pricing Preview's incoming rounded edge stuck
+     out of view for an extra stretch of scroll before it started
+     rising — see --sc-cover-travel-hp above. Natural bottom padding
+     instead, tuned to the cover transition, not to being covered. */
+  .hv2-cover-panel--oploop {
+    padding-bottom: 3rem;
   }
 
   .hv2-cover-panel--pricing {
     padding-bottom: 2.5rem;
   }
 
-  .hv2-film.hv2-cover-panel { padding-top: calc(var(--hv2-nav-height) + 3.5rem); }
+  /* Was calc(nav-height + 3.5rem) — same "extra room to be covered"
+     pattern as Operating Loop's old bottom padding above, just at
+     Film's top instead. Trimmed to match How It Works' own nav
+     clearance (+1rem): still clears the fixed header, no longer pads
+     Film's rendered height past what its real content (heading, lede,
+     video) needs. */
+  .hv2-film.hv2-cover-panel { padding-top: calc(var(--hv2-nav-height) + 1rem); }
   .hv2-cover-panel--hiw { padding-top: calc(var(--hv2-nav-height) + 1rem); }
   .hv2-cover-panel--plan,
   .hv2-cover-panel--focus,
