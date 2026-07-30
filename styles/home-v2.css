@@ -703,9 +703,13 @@
   gap: 0.5rem;
   min-height: 2.75rem;
   margin-top: 0.75rem;
-  font-size: 0.875rem;
+  /* Matched to .hv2-btn's metrics (0.9375rem / 0.75rem 1.4rem) — it sat a
+     step smaller than Start free and See how it works and read as narrow
+     next to them. Keeps its own pill radius and aria-pressed teal state so
+     it still reads as a toggle rather than a third navigation CTA. */
+  font-size: 0.9375rem;
   font-weight: 600;
-  padding: 0.65rem 1.2rem;
+  padding: 0.75rem 1.4rem;
   border-radius: 999px;
   border: 1px solid var(--hv2-line);
   background: var(--hv2-panelhi);
