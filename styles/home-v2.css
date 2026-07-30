@@ -254,7 +254,13 @@
   right: 0;
   bottom: 0;
   height: 160px;
-  background: linear-gradient(to bottom, transparent, var(--hv2-panel));
+  /* Ramp starts at 30% rather than 0% — the enlarged hero scene (38rem,
+     see .hv2-scene--product) reaches further down into this band, and a
+     fade beginning at the very top of it washed the mockup out before it
+     got near the section edge. Band height and its final colour are
+     unchanged, so the handoff into the film panel reads exactly as
+     before; only the first ~48px stay clear. */
+  background: linear-gradient(to bottom, transparent, transparent 30%, var(--hv2-panel));
   pointer-events: none;
 }
 
@@ -465,7 +471,14 @@
 }
 
 @media (min-width: 1024px) {
-  .hv2-scene--product { max-width: 32rem; }
+  /* 38rem (was 32rem): a larger first-look product composition. Held at
+     38 rather than 40+ deliberately — the hero's min-height is a floor,
+     so the taller scene pushes the hero down, and past ~40rem the film
+     panel's rounded top edge stops peeking on a 900px viewport, which is
+     the whole point of the 68svh floor (see .hv2-hero). Measured live at
+     38rem: the film edge still shows 251px at 1440x900 and 410px at
+     1920x1080, so the "next panel rises" cue survives intact. */
+  .hv2-scene--product { max-width: 38rem; }
   .hv2-hero-scene .hv2-scene-phone-img { max-width: 10.5rem; }
 }
 
